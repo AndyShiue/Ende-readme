@@ -38,7 +38,7 @@ This language would have a strong type system, and its syntax would be whitespac
 
    Ende is generally an imperative language, so there are statements including control structures, statements include:
 
-   1. `let` binding:
+   1. **`let` binding**:
       A `let` binding bind its right-hand-side value to a variable.
       There are 2 flavors of `let` bindings, a mutable one and an immutable one.
       `let` is by default immutable.
