@@ -34,11 +34,18 @@ This language would have a strong type system, and its syntax would be whitespac
       Fixity of operators should follow the common sense.
       Parentheses (`()`) are used to disambiguate if the fixity isn't clear.
 
-   3. variables, which are going to be discussed immediately.
+   3. Variables, which are going to be discussed immediately.
 
    Ende is generally an imperative language, so there are statements including control structures, statements include:
 
    1. `let` binding:
       A `let` binding bind its right-hand-side value to a variable.
       There are 2 flavors of `let` bindings, a mutable one and an immutable one.
-      `let` is by default immutable, e.g. `let meaningOfLife = 42i32`
+      `let` is by default immutable.
+      For example, `let meaningOfLife = 42i32` binds `42i32` to a variable called `meaningOfLife`.
+      As you can see, variables are written in snake case in Ende.
+      variables can be made mutable by adding a keyword `mut` after `let`.
+      So, `let mut count = 0i32` binds `0i32` to a variable `count`.
+
+   2. mutation:
+      The value of a mutable variable can be mutated.
