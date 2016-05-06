@@ -320,8 +320,8 @@ Here is a function generic over types implementing `Monoid`; it sums up all the 
 
 ```rust
 fn concat[T][(Monoid[T])](Vec[T]) -> T {
-    (Slice::nil) => unit,
-    (Slice::cons(head, tail)) => head.append(concat(tail)),
+    (Vec::nil) => unit,
+    (Vec::cons(head, tail)) => head.append(concat(tail)),
 };
 ```
 
