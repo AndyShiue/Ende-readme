@@ -262,7 +262,7 @@ At runtime, functions can have several arguments natively.
 If arguments in normal mode were curryable, the compiler would have to retern lambdas often or generate several partially applied copies of the original function.
 Arguments in `const` mode are curryable, though, because that performance at compile time isn't that important, and programmers are supposed to do heavy calculation at runtime.
 
-Back to generics, here is a `compose` functionm, witch`compose`s its 2 function arguments.
+Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
 
 ```rust
 fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) = f(g(x));
