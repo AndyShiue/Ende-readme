@@ -291,7 +291,7 @@ class Monoid[T] = monoid {
 To implement a class, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 There are 3 kinds of `impl`s in Ende.
 
-## `impl` objects.
+## `impl` objects
 
 `impl` objects are the first kind of `impl`.
 The `i32Monoid` below is an `impl` object.
