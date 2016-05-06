@@ -379,7 +379,7 @@ class Abelian[T] = abelian {
 };
 
 impl abelianToGroup[T][(Abelian[T])] -> Group[T] = {
-    monoid {
+    group {
        unit => unit,
        append => append,
        inverse => inverse,
