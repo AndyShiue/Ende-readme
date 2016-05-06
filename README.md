@@ -53,6 +53,7 @@ This language would have a strong type system, and its syntax would be whitespac
    2. **mutation**:
       The value of a mutable variable can be mutated.
       `count = 1i32;` changes the value of `count` to `1i32`.
+      Mutating an immutable variable generates a compile error.
 
    3. **`while` loop**:
       Normal `while` loop similar to other imperative languages.
@@ -65,3 +66,28 @@ This language would have a strong type system, and its syntax would be whitespac
       ```
       
       Notice unlike in Rust, the semicolon after the whole loop is required.
+      In fact, `while` loop is just another kind of term returning value of type `Unit`.
+      `Unit` is a type that carries no data.
+      When a term is follow by a semicolon, it discards the value of the whole term.
+      But a `while` loop already has nothing to be discarded, so the semicolon just turns it into a statement.
+   
+   Now, introduce `if`,
+   unlike `while`, `if` can return something that isn't trivial.
+   So we can write code like:
+   
+   ```rust
+   let number = if count == 0i32  { 42 } else { 666 };
+   ```
+   
+   Of course, `if` can also be used in an old style, C-like fashion.
+   
+   ```rust
+   let mut number;
+   if count == 0i32  {
+       number = 42
+   } else {
+       number = 666
+   };
+   ```
+
+2.
