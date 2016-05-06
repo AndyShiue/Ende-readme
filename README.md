@@ -236,3 +236,39 @@ We say that the arguments inside the parentheses (`()`) (`t` in the above exampl
 In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are arguments in **`const` mode**.
 For now, you just have to know that arguments in `const` mode have to be supplied at compile time and can be inferred.
 Therefore, you can write `id(0i32)` instead of the more verbose `id[I32](0i32)`.
+
+I haven't mentioned function types, did I?
+function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
+`A, B, C, ...` are the types of the arguments, and `R` is the return type.
+As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in const mode can:
+
+```rust
+// They are different:
+
+foo(a, b);
+foo(a)(b);
+
+// But they aren't:
+
+bar[A, B];
+bar[A][B];
+```
+
+This is because of the way that current machine works.
+At runtime, functions can have several arguments natively.
+If arguments in normal mode were curryable, the compiler would have to retern lambdas often or generate several partially applied copies of the original function.
+Arguments in `const` mode are curryable, though, because that performance at compile time isn't that important, and programmers are supposed to do heavy calculation at runtime.
+
+Back to generics, here is a `compose` functionm, witch`compose`s its 2 function arguments.
+
+```rust
+fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) = f(g(x));
+```
+
+And here is the definition of a generic `Option` type:
+
+```rust
+data Option[T] = some(T), none;
+```
+
+# More general `class`
