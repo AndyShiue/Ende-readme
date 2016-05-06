@@ -1,9 +1,10 @@
 # Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
-This language would have a strong type system, and its syntax would be whitespace-insensitive because I prefer it.
+This language has a strong type system, and its syntax is whitespace-insensitive because I prefer it.
+It's very welcomed for someone to write an implementation for it.
 
-# Terms and statements
+# Terms and Statements
 
 At the very beginning, let me introduce the terms of the language.
 Terms can be seen as trees that build up value.
@@ -28,7 +29,7 @@ Terms include:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
 2. Applications of binary operators:
-   There will only be binary operators instead of unary of trinary ones, also because that's enough of illustrative purposes.
+   There will only be binary operators instead of unary or trinary ones, also because that's enough of illustrative purposes.
    In actual implementations, operators of any fixity could be introduced.
    There could even be user-defined mixfix operators, but that's way beyond the scope of this article.
    
@@ -118,7 +119,7 @@ fn factorial(n : U32) -> U32 = n * factorial(n - 1);
 # User-Defined Data Types
 
 Data types can be defined with the keyword `data`.
-They can be seen as `enum`s in Rust, but being more powerful.
+They can be seen as `enum`s in Rust.
 I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
@@ -161,7 +162,7 @@ We don't write the equal sign (`=`) after the return type in this case.
 fn isSummer(Season) -> Bool {
     (Season::summer) => true,
     (_) => false,
-}
+};
 ```
 
 Here, we directly match the arguments of the `fn`; now we don't need to pick a name for the argument of type `Season`; we can write `fn isSummer(Summer)` in lieu of `fn isSummer(_ : Summer)` in this case.
@@ -170,8 +171,8 @@ I'm going to provide another example for clarity:
 ```rust
 fn and(Bool, Bool) -> Bool {
     (true, b) => b,
-    (false, _) => false,
-}
+    (_, _) => false,
+};
 ```
 
 Variants may also take parameters.
@@ -179,4 +180,51 @@ The `OptionI32` below is a type that could possibly carry an `I32`.
 
 ```rust
 data OptionI32 = some(I32), none;
+```
+
+Parameters of Variants can also be pattern matched:
+
+```rust
+fn unwrapOr42(OptionI32) -> I32 {
+    (OptionI32::some(i)) => i,
+    (_) => 42i32,
+};
+```
+
+There's another way to define a data type, using `class`.
+`class`es in Ende are like `struct`s in Rust.
+`class`es can be seen as `data` with only one variant.
+The name of the variant isn't namespaced, though.
+
+```rust
+class Point = point {
+    x : I32,
+    y : I32,
+};
+```
+
+Members of an instance of a `class` can either be accessed by its name after a dot (`.`) or by pattern matching.
+
+```rust
+fn getX1(p : Point) -> I32 = p.x;
+fn getX2(Point) -> I32 {
+    (point {x => result, y => _}) => result,
+}
+```
+
+To pattern match or to construct an instance of a `class`, we write a fat arrow (`=>`) after each name of the fields instead of a colon (`:`) used when a `class` is defined:
+
+```rust
+let p = point { x => 0i32, y => 0i32 };
+```
+
+# Generics
+
+We've seen a `OptionI32` type above.
+In practice, we want a type that is generic over all types, not just `I32`.
+But let's start with a simplest generic function: `id`.
+`id` simply returns its only argument.
+
+```rust
+fn id[T](t : T) -> T = t;
 ```
