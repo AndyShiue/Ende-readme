@@ -228,3 +228,11 @@ But let's start with a simplest generic function: `id`.
 ```rust
 fn id[T](t : T) -> T = t;
 ```
+
+Here, I introduced another delimiter while defining the function: brackets (`[]`).
+different delimiters on a function represent different *modes* in which the paramenters are passed.
+**Modes** are a very important feature in Ende; different modes serve as different purposes and have different characteristics.
+We say that the arguments inside the parentheses (`()`) (`t` in the above example) are arguments in **normal mode**.
+In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are arguments in **`const` mode**.
+For now, you just have to know that arguments in `const` mode have to be supplied at compile time and can be inferred.
+Therefore, you can write `id(0i32)` instead of the more verbose `id[I32](0i32)`.
