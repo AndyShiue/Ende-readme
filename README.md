@@ -55,4 +55,13 @@ This language would have a strong type system, and its syntax would be whitespac
       `count = 1i32;` changes the value of `count` to `1i32`.
 
    3. **`while` loop**:
-   
+      Normal `while` loop similar to other imperative languages.
+      The syntax is especially similar to Rust's, because I'm a fan of Rust.
+
+      ```rust
+      while count == 0i32 {
+         forever();
+      };
+      ```
+      
+      Notice unlike in Rust, the semicolon after the whole loop is required.
