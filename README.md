@@ -113,7 +113,10 @@ Unlike Rust, there is a equal sign (`=`) after the type of the function so the b
 The trailing semicolon (`;`) is also required similar to the one of `while`.
 
 ```rust
-fn factorial(n : U32) -> U32 = n * factorial(n - 1);
+fn factorial(n : U32) -> U32 = {
+    if n == 0 { 0 }
+    else { n * factorial(n - 1) }
+};
 ```
 
 # User-Defined Data Types
@@ -238,7 +241,7 @@ For now, you just have to know that arguments in `const` mode have to be supplie
 Therefore, you can write `id(0i32)` instead of the more verbose `id[I32](0i32)`.
 
 I haven't mentioned function types, did I?
-function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
+Function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
 `A, B, C, ...` are the types of the arguments, and `R` is the return type.
 As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in const mode can:
 
@@ -271,4 +274,62 @@ And here is the definition of a generic `Option` type:
 data Option[T] = some(T), none;
 ```
 
-# More general `class`
+# More General `class`
+
+Why are Rust `struct`s called `class`es in Ende?
+Because they can not only act as Rust `struct`s but also Haskell `class`es.
+Here, I'm going to write a `Monoid` interface.
+Of course, it's just another `class`.
+
+```rust
+class Monoid[T] = monoid {
+    unit : T,
+    fn append(self : T, T) -> T,
+};
+```
+
+To implement a class, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
+There are 3 kinds of `impl`s in Ende.
+
+## `impl` objects.
+
+`impl` objects are the first kind of `impl`.
+The `i32Monoid` below is an `impl` object.
+
+```rust
+impl i32Monoid : Monoid[I32] = monoid {
+    unit => 0i32,
+    fn append(self : I32, another : I32) = self + another,
+};
+```
+
+If the `impl` object `i32Monoid` is in scope, now we can call the `append` method on `I32`:
+
+```
+// They are equivalent:
+
+let sum1 = append(1i32, 2i32);
+let sum2 = 1i32.append(2i32);
+```
+
+In order to write a function that is generic over types implementing a `class`, the third mode is introduced.
+It's called **instance mode**, and is delimited by `[()]`.
+`[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
+Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s
+Here is a function generic over types implementing `Monoid`; it sums up all the values in a `Vec` using `Monoid`'s `append` method:
+
+```rust
+fn concat[T][(Monoid[T])](Vec[T]) -> T {
+    (Slice::nil) => unit,
+    (Slice::cons(head, tail)) => head.append(concat(tail)),
+};
+```
+
+When you write `concat(vec)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or over 2 choices, the compiler generates an error.
+Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
+
+```rust
+let sum = concat[(I32)](i32Vec);
+```
+
+## `impl` functions
