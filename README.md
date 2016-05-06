@@ -212,7 +212,7 @@ Members of an instance of a `class` can either be accessed by its name after a d
 fn getX1(p : Point) -> I32 = p.x;
 fn getX2(Point) -> I32 {
     (point {x => result, y => _}) => result,
-}
+};
 ```
 
 To pattern match or to construct an instance of a `class`, we write a fat arrow (`=>`) after each name of the fields instead of a colon (`:`) used when a `class` is defined:
