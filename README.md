@@ -329,7 +329,7 @@ When you write `concat(vec)`, the compiler automatically chooses the right `impl
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
 
 ```rust
-let sum = concat[(I32)](i32Vec);
+let sum = concat[(i32Monoid)](i32Vec);
 ```
 
 ## `impl` functions
