@@ -305,7 +305,7 @@ impl i32Monoid : Monoid[I32] = monoid {
 
 If the `impl` object `i32Monoid` is in scope, now we can call the `append` method on `I32`:
 
-```
+```rust
 // They are equivalent:
 
 let sum1 = append(1i32, 2i32);
