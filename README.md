@@ -78,18 +78,105 @@ unlike `while`, `if` can return something that isn't trivial.
 So we can write code like:
 
 ```rust
-let number = if count == 0i32  { 42 } else { 666 };
+let number = if count == 0i32 { 42 } else { 666 };
 ```
 
-Of course, `if` can also be used in an old style, C-like fashion.
+Of course, `if` can also be used in an old-style, C-like fashion.
 
 ```rust
 let mut number;
-if count == 0i32  {
-    number = 42
+if count == 0i32 {
+    number = 42;
 } else {
-    number = 666
+    number = 666;
 };
 ```
 
 # Functions
+
+Functions are the simplest concept that has the ability to encapsulate information in functional programming languages; functions are terms.
+Every application needs to have an entry, traditionally called `main`.
+In Ende, `main` is a function of type `() -> Unit`.
+That is, a function that accepts no inputs and returns nothing.
+Now, let's write the well-known *Hello, world!* program in Ende.
+
+```rust
+fn main() -> Unit = {
+    putStrLn("Hello, world!");
+};
+```
+
+Nothing special.
+The syntax is heavily inspired by Rust; the keyword `fn` is used to declare a function.
+Unlike Rust, there is a equal sign (`=`) after the type of the function so the braces (`{}`) is optional if you just want to return a single term.
+The trailing semicolon (`;`) is also required similar to the one of `while`.
+
+```rust
+fn factorial(n : U32) -> U32 = n * factorial(n - 1);
+```
+
+# User-Defined Data Types
+
+Data types can be defined with the keyword `data`.
+They can be seen as `enum`s in Rust, but being more powerful.
+I'll first consider its easiest usage, though.
+Let's show how to define a C/Java-like `enum` in Ende:
+
+```rust
+data Unit = unit;
+data Bool = true, false;
+data Season = spring, summer, autumn, winter;
+```
+
+In Ende, `data` can have **variants**.
+Variants are the possible values of the defined type.
+Variants are namespaced; in order to access the varient `spring`, you need to write
+
+```rust
+let season = Season::spring;
+```
+
+instead of
+
+```rust
+let season = spring; // Doesn't compile.
+```
+
+`data` variants could be matched through pattern matching:
+
+```rust
+fn isSummer(season : Season) -> Bool = {
+    match season {
+        case Season::summer => true,
+        _ => false,
+    }
+};
+```
+
+`match`es are always irrefutable in Ende.
+By the way, there is an alternative `fn` syntax to do top-level pattern matching.
+We don't write the equal sign (`=`) after the return type in this case.
+
+```rust
+fn isSummer(Season) -> Bool {
+    (Season::summer) => true,
+    (_) => false,
+}
+```
+
+Here, we directly match the arguments of the `fn`; now we don't need to pick a name for the argument of type `Season`; we can write `fn isSummer(Summer)` in lieu of `fn isSummer(_ : Summer)` in this case.
+I'm going to provide another example for clarity:
+
+```rust
+fn and(Bool, Bool) -> Bool {
+    (true, b) => b,
+    (false, _) => false,
+}
+```
+
+Variants may also take parameters.
+The `OptionI32` below is a type that could possibly carry an `I32`.
+
+```rust
+data OptionI32 = some(I32), none;
+```
