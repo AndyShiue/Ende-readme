@@ -316,12 +316,12 @@ In order to write a function that is generic over types implementing a `class`, 
 It's called **instance mode**, and is delimited by `[()]`.
 `[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
 Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s
-Here is a function generic over types implementing `Monoid`; it sums up all the values in a `Vec` using `Monoid`'s `append` method:
+Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
 ```rust
-fn concat[T][(Monoid[T])](Vec[T]) -> T {
-    (Vec::nil) => unit,
-    (Vec::cons(head, tail)) => head.append(concat(tail)),
+fn concat[T][(Monoid[T])](List[T]) -> T {
+    (List::nil) => unit,
+    (List::cons(head, tail)) => head.append(concat(tail)),
 };
 ```
 
@@ -333,3 +333,84 @@ let sum = concat[(i32Monoid)](i32Vec);
 ```
 
 ## `impl` functions
+
+`impl` functions are literally, `impl`s that are functions.
+`impl`s need to be functions mainly because of 2 reasons:
+1. It's generic over an argument in the `const` mode.
+2. It's generic over an argument in the instance mode.
+I'm going to provide a `impl` function generic over both modes.
+First, define a `Group` `class`.
+
+```rust
+class Group[T] = group {
+    unit : T,
+    fn append(self : T, T) -> T,
+    fn inverse(self : T) -> T,
+};
+```
+
+We know all `Group`s are `Monoid`s, so all instances of `Group[T]` should be able to be automatically converted to instances of `Monoid[T]`.
+How do we automatically convert stuff?
+The answer is obviously, again, using `impl`s.
+
+```rust
+impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
+    monoid {
+       unit => unit,
+       append => append,
+    }
+};
+```
+
+`group` is indeed an `impl` function.
+
+## `dynamic impl`
+
+What we don't have yet is the ability to define one `class` to be a super`class` of another `class`. In other words, asserting if you implement a `class`, another `class` must be implemented.
+You may ask, isn't the above `impl` functions enough?
+Not really.
+Imagine you want to define an `Abelian` `class`, the code you need to add would be:
+
+```rust
+class Abelian[T] = abelian {
+    unit : T,
+    fn append(self : T, T) -> T,
+    fn inverse(self : T) -> T,
+};
+
+impl abelianToGroup[T][(Abelian[T])] -> Group[T] = {
+    monoid {
+       unit => unit,
+       append => append,
+       inverse => inverse,
+    }
+};
+```
+
+That's a lot of boilerplate!
+The code is very similar to implementing `Monoid`s for `Group`s; we have to write this kind of code again and again while creating an inheritance tree of `class`es.
+That is not tolerable.
+Imagine if we can write code like this:
+
+```rust
+// The type `Abelian` carries no additional data, but it extends the `class` `Group`.
+data Abelian[T] = abelian;
+impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = Extends::extension; // The extension happens here.
+```
+
+It's really concise code!
+But how do we get an instance of type `Group[T]` given the instances of type `Abelian[T]` and `Extends[Abelian[T], Group[T]]`?
+It's actually a hack: we need more `impl`s.
+I'll try to explain it.
+
+### The Hack
+
+First, I'll provide the hacky part of the source code:
+
+```rust
+data Extends[A, B] = extension;
+
+fn implicitly[T][(inst : T)] -> T = inst;
+
+dynamic impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+```
