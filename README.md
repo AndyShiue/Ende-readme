@@ -30,22 +30,29 @@ This language would have a strong type system, and its syntax would be whitespac
       In actual implementations, operators of any fixity could be introduced.
       There could even be user-defined mixfix operators, but that's way beyond the scope of this article.
       
-      Examples would be `1 + 1`, `42 * 666`, `1 << 2`, etc.
+      Examples would be `1 + 1`, `42 * 666`, `1 == 2`, etc.
       Fixity of operators should follow the common sense.
       Parentheses (`()`) are used to disambiguate if the fixity isn't clear.
 
    3. Variables, which are going to be discussed immediately.
 
-   Ende is generally an imperative language, so there are statements including control structures, statements include:
+   Throughout the article, more and more other kinds of terms will be introduced.
+   
+   Ende is generally an imperative language, so there are statements including control structures.
+   Statements include:
 
    1. **`let` binding**:
       A `let` binding bind its right-hand-side value to a variable.
       There are 2 flavors of `let` bindings, a mutable one and an immutable one.
       `let` is by default immutable.
-      For example, `let meaningOfLife = 42i32` binds `42i32` to a variable called `meaningOfLife`.
+      For example, `let meaningOfLife = 42i32;` binds `42i32` to a variable called `meaningOfLife`.
       As you can see, variables are written in snake case in Ende.
       variables can be made mutable by adding a keyword `mut` after `let`.
-      So, `let mut count = 0i32` binds `0i32` to a variable `count`.
+      So, `let mut count = 0i32;` binds `0i32` to a variable `count`.
 
-   2. mutation:
+   2. **mutation**:
       The value of a mutable variable can be mutated.
+      `count = 1i32;` changes the value of `count` to `1i32`.
+
+   3. **`while` loop**:
+   
