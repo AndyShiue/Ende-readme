@@ -399,7 +399,7 @@ impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = Extends::extensio
 ```
 
 It's really concise code!
-But how do we get an instance of type `Group[T]` given the instances of type `Abelian[T]` and `Extends[Abelian[T], Group[T]]`?
+But how do we get an instance of type `Group[T]` given the instances of types `Abelian[T]` and `Extends[Abelian[T], Group[T]]`?
 It's actually a hack: we need more `impl`s.
 I'll try to explain it.
 
