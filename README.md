@@ -25,7 +25,7 @@ Terms include:
       Instead of being built-in, `Nat` is just a normal recursively defined data type.
       I will also discuss that type later.
    
-   2. Floats
+   2. **Floats**:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
 2. Applications of binary operators:
