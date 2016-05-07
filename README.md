@@ -599,4 +599,9 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    They can be returned and passed as arguments.
    `impl` objects are always constants; `impl` functions and `dynamic impl`s are always constants and `const fn`s.
 
-## A `const` function `factorial`
+## A `const` version `factorial`
+
+I'll define a `const fn factorial` in this subchapter.
+The implementation of this `factorial` is different from the `U32` version above.
+This is not to suggest Ende has overloading.
+Just pretend the 2 functions are from different spaces.
