@@ -439,7 +439,7 @@ Without the limitation, the `impl` searching process could stuck at some weird r
 And `dynamic impl` surpresses that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is `class` inheritance.
-The `impl`s of the return type of the `dynamic impl` are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+The `impl`s of the return types of the `dynamic impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 # `const`
 
