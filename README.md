@@ -410,7 +410,8 @@ First, I'll provide the hacky part of the source code:
 ```rust
 data Extends[A, B] = extension;
 
-fn implicitly[T][(inst : T)] -> T = inst;
+// Ignore the `const` keyword before `fn` for now.
+const fn implicitly[T][(inst : T)] -> T = inst;
 
 dynamic impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
@@ -469,8 +470,8 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    2. The term immediately after `if` is a constant and evaluates to `false`, and the second branch of the `if` represents a constant.
 
 5. **Functions**:
-   Functions themselves are always constants, but there's a difference between `const fn`s and normal functions.
-   `const fn`s are functions that could be run at compile time.
+   Functions that aren't inside a `class` are always constants, but there's a difference between `const fn`s and normal functions.
+   `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
    The operations you can do in a `const fn` is more limited.
    You can only:
@@ -531,3 +532,71 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
 7. **`class`es**:
    An instance of a `class` is a constant if all of its fields are constants by default.
+   In comparison to `data`, the problem of constness is even more serious, though.
+   When you write a `class`, I assume you want not only that the fields are constants, but also the function members are `const fn`s, and that's the default.
+   Here is such an example, the `Monoid` class we've talked about.
+
+   ```rust
+   class Monoid[T] = monoid {
+       unit : T,
+       fn append(self : T, T) -> T,
+   };
+   
+   impl i32Monoid : Monoid[I32] = monoid {
+       unit => 0i32,
+       fn append(self : I32, another : I32) = self + another,
+   };
+   
+   const _ = 0i32.append(0i32); // It works.
+   ```
+
+   But sometimes you want to use `class`es as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
+   `dynamic class` is used to define such `class`es.
+   You can also write `dynamic` in front of a function member in a non-`dynamic` `class` to indicate it's not a `const` function.
+   
+   ```rust
+   dynamic class Counter = counter {
+       inner : I32,
+       fn increment(self : Counter) -> unit;
+   };
+   
+   fn newCounter() -> counter {
+       inner => 0i32,
+       fn increment(self : Counter) -> unit = {
+           self.inner += 1;
+       },
+   };
+   ```
+   
+   Notice that `newCounter.increment` **is** a constant although it's not a `const fn`.
+   
+   Sometimes you want to make the fields constants in a `dynamic class`.
+   You can write `const` in front of a non-function field to overwrite its constness.
+   If you want a function field to be `dynamic`, write `dynamic` **after** the keyword `fn`.
+   
+   ```rust
+   dynamic class MathUtil = mathUtil {
+       const pi : F64,
+       fn dynamic wierd : () -> unit,
+   };
+   
+   fn doNothing() -> unit = {};
+   
+   let util = mathUtil {
+       pi => 3.14f64,
+       wierd => main,
+   };
+   
+   const _ = util.pi; // It works.
+   util.weird = doNothing; // Also works.
+   ```
+   
+   An instance of a non-`dynamic` `class` is a constant if all of its fields are constants.
+   An instance of a `dynamic class` is never a constant.
+   
+8. **`impl`s**:
+   Did I mention `impl`s are first-class citizens of Ende?
+   They can be returned and passed as arguments.
+   `impl` objects are always constants; `impl` functions and `dynamic impl`s are always constants and `const fn`s.
+
+## A `const` function `factorial`
