@@ -442,3 +442,7 @@ In fact the only one I can think of is `class` inheritance.
 The `impl`s of the return type of the `dynamic impl` are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 # `const`
+
+You may found that I wrote *`const` mode* instead of *const mode* throughout the article.
+This is intentional.
+`const` is an important keyword in Ende, and is highly related to `const` mode.
