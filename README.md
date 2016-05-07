@@ -491,36 +491,41 @@ Now, let's go through all kinds of terms introduced and see if they are constant
       Only `const fn`s can be called.
 
 6. **`data`**:
-   In normal `data`, all variants are constants.
-   In addition, all variants with parameters are `const fn`s.
+   In `data`, all variants are constants.
+   In addition, all variants with parameters in normal `data` are `const fn`s.
    You can overwrite the default behavior, however.
    If you write `dynamic` before `data`, all variants become non-`const`.
-   You can make specific variants constants again by writing `const` before the variants.
-   You can write `const fn` before variants that has parameters to make them `const fn`s.
+   You can make specific variants `const` again by writing `const` before the variants.
+   Writing `dynamic` before a variant in a non-`dynamic` `data` makes it non-`const`.
 
    ```rust
-   data Data = data1, data2(I32);
+   data Data =
+       data1,
+       dynamic data2,
+       data3(I32),
+       dynamic data4(I32);
+   
    dynamic data Dynamic =
        dynamic1,
        const dynamic2,
        dynamic3(I32),
-       const dynamic4(I32),
-       const fn dynamic5(I32),
-       const fn const dynamic6(I32);
+       const dynamic4(I32);
    
    // Statements commented out can not be compiled.
    
-   const _ = data1;
-   const _ = data2;
-   const _ = data2(0i32);
-   // const _ = dynamic1;
-   const _ = dynamic2;
-   // const _ = dynamic3;
-   // const _ = dynamic3(0i32);
-   const _ = dynamic4;
-   // const _ = dynamic4(0i32);
-   // const _ = dynamic5;
-   const _ = dynamic5(0i32);
-   const _ = dynamic6;
-   const _ = dynamic6(0i32);
+   const _ = Data::data1;
+   // const _ = Data::data2;
+   const _ = Data::data3;
+   const _ = Data::data3(0i32);
+   const _ = Data::data4;
+   // const _ = Data::data4(0i32);
+   // const _ = Dynamic::dynamic1;
+   const _ = Dynamic::dynamic2;
+   const _ = Dynamic::dynamic3;
+   // const _ = Dynamic::dynamic3(0i32);
+   const _ = Dynamic::dynamic4;
+   const _ = Dynamic::dynamic4(0i32);
    ```
+
+7. **`class`es**:
+   An instance of a `class` is a constant if all of its fields are constants by default.
