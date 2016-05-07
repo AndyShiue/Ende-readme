@@ -490,6 +490,8 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    4. function calls:
       Only `const fn`s can be called.
 
+   `const fn`s are also checked to be *positive*, meaning they don't recurse forever.
+
 6. **`data`**:
    In `data`, all variants are constants.
    In addition, all variants with parameters in normal `data` are `const fn`s.
