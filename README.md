@@ -114,7 +114,7 @@ The trailing semicolon (`;`) is also required similar to the one of `while`.
 
 ```rust
 fn factorial(n : U32) -> U32 = {
-    if n == 0 { 0 }
+    if n == 0 { 0u32 }
     else { n * factorial(n - 1) }
 };
 ```
