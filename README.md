@@ -478,10 +478,49 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    1. declare a variable with `const`.
    
    2. declare a variable with `let`:
+      The right-hand-side after the equal sign (`=`) must be a constant.
       Note that declaring a variable with `const` and `let` are also different in a `const fn`.
       They are both constants in a `const fn`.
-      But a variable declared with `const` cannot depend on the argument in normal mode, while a variable declared with `let` can.
+      But a variable declared with `const` cannot depend on the arguments in normal mode, while a variable declared with `let` can.
       The gist of the design is to make changing a non-`const` function to a `const fn` (on conversely) the most seamless.
 
    3. normal statements:
       The term before the semicolon (`;`) must be a constant, so `while` cannot be used in a `const fn`, so if you want to do something again and again, use recursion.
+
+   4. function calls:
+      Only `const fn`s can be called.
+
+6. **`data`**:
+   In normal `data`, all variants are constants.
+   In addition, all variants with parameters are `const fn`s.
+   You can overwrite the default behavior, however.
+   If you write `dynamic` before `data`, all variants become non-`const`.
+   You can make specific variants constants again by writing `const` before the variants.
+   You can write `const fn` before variants that has parameters to make them `const fn`s.
+
+   ```rust
+   data Data = data1, data2(I32);
+   dynamic data Dynamic =
+       dynamic1,
+       const dynamic2,
+       dynamic3(I32),
+       const dynamic4(I32),
+       const fn dynamic5(I32),
+       const fn const dynamic6(I32);
+   
+   // Statements commented out can not be compiled.
+   
+   const _ = data1;
+   const _ = data2;
+   const _ = data2(0i32);
+   // const _ = dynamic1;
+   const _ = dynamic2;
+   // const _ = dynamic3;
+   // const _ = dynamic3(0i32);
+   const _ = dynamic4;
+   // const _ = dynamic4(0i32);
+   // const _ = dynamic5;
+   const _ = dynamic5(0i32);
+   const _ = dynamic6;
+   const _ = dynamic6(0i32);
+   ```
