@@ -243,7 +243,7 @@ Therefore, you can write `id(0i32)` instead of the more verbose `id[I32](0i32)`.
 I haven't mentioned function types, did I?
 Function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
 `A, B, C, ...` are the types of the arguments, and `R` is the return type.
-As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in const mode can:
+As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
 
 ```rust
 // They are different:
@@ -265,7 +265,7 @@ Arguments in `const` mode are curryable, though, because that performance at com
 Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
 
 ```rust
-fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) = f(g(x));
+fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x));
 ```
 
 And here is the definition of a generic `Option` type:
