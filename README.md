@@ -446,3 +446,42 @@ The `impl`s of the return type of the `dynamic impl` are recursively added to th
 You may found that I wrote *`const` mode* instead of *const mode* throughout the article.
 This is intentional.
 `const` is an important keyword in Ende, and is highly related to `const` mode.
+The basic idea is that a *`const` something* is a *something* that can be done at compile time.
+So a `const` value (a constant) is a value known at compile time, and a `const fn` is a function that could be run at compile time.
+
+Now, let's go through all kinds of terms introduced and see if they are constants.
+
+1. **Literals**: They are definately constants.
+
+2. **Operator applications**: An application of an operator outputs a constant if and only if all of its arguments are constants.
+
+3. **Variables**:
+   A variable is a constant if it's declared as `const var`.
+   For example, in `const meaningOfLife = 42i32;`, `meaningOfLife` is a constant.
+   By contrast, in `let devil = 666i32`, devil **isn't** a constant
+
+4. **Control structures**:
+   The value of a `while` loop is not a constant.
+   The value of a `if` construct is a constant if and only if at least one of the conditions below are met.
+
+   1. The term immediately after `if` is a constant and evaluates to `true`, and the first branch of the `if` represents a constant.
+   
+   2. The term immediately after `if` is a constant and evaluates to `false`, and the second branch of the `if` represents a constant.
+
+5. **Functions**:
+   Functions themselves are always constants, but there's a difference between `const fn`s and normal functions.
+   `const fn`s are functions that could be run at compile time.
+   The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
+   The operations you can do in a `const fn` is more limited.
+   You can only:
+
+   1. declare a variable with `const`.
+   
+   2. declare a variable with `let`:
+      Note that declaring a variable with `const` and `let` are also different in a `const fn`.
+      They are both constants in a `const fn`.
+      But a variable declared with `const` cannot depend on the argument in normal mode, while a variable declared with `let` can.
+      The gist of the design is to make changing a non-`const` function to a `const fn` (on conversely) the most seamless.
+
+   3. normal statements:
+      The term before the semicolon (`;`) must be a constant, so `while` cannot be used in a `const fn`, so if you want to do something again and again, use recursion.
