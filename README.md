@@ -414,3 +414,31 @@ fn implicitly[T][(inst : T)] -> T = inst;
 
 dynamic impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
+
+The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
+In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
+Why is the keyword `dynamic` before the `impl superClass` required then?
+To know why it's needed, we need to go deeper to know how an `impl` is found.
+
+### Searching for `impl`s
+
+First, we search for `impl` objects.
+We add an `impl` object in scope to the current **`impl` context** if the `class` it implements is also in scope.
+
+Second, we add the `impl` functions to the `impl` context.
+There is a necessary limitation of normal `impl` functions:
+a normal `impl` function can only have a return type that is not a variable, so the example below does't work:
+
+```rust
+// impl abuseOfImplicitly[T] -> T = implicitly[T]; // Doesn't compile.
+```
+
+The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
+Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
+
+And `dynamic impl` surpresses that limitation.
+It has to be used more carefully, but I don't think there's a lot of uses of it.
+In fact the only one I can think of is `class` inheritance.
+The `impl`s of the return type of the `dynamic impl` are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+
+# `const`
