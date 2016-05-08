@@ -49,7 +49,7 @@ Statements include:
    There are 2 flavors of `let` bindings, a mutable one and an immutable one.
    `let` is by default immutable.
    For example, `let meaningOfLife = 42i32;` binds `42i32` to a variable called `meaningOfLife`.
-   As you can see, variables are written in snake case in Ende.
+   As you can see, variables are written in camel case in Ende.
    variables can be made mutable by adding a keyword `mut` after `let`.
    So, `let mut count = 0i32;` binds `0i32` to a variable `count`.
 
