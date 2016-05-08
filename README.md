@@ -726,7 +726,7 @@ It would be easier to understand by providing the example than describing it in 
 
 ```rust
 const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
-    (_) => 0i32,
+    () => 0i32,
     (head, dynamic tail) => head + sum(tail),
 }
 ```
