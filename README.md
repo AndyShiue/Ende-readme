@@ -605,3 +605,80 @@ I'll define a `const fn factorial` in this subchapter.
 The implementation of this `factorial` is different from the `U32` version above.
 This is not to suggest Ende has overloading.
 Just pretend the 2 functions are from different spaces.
+
+The problem with `U32` is that it's is not defined recursively, so it would be harder for the computer to figure out if the functions terminate.
+The solution is to use a recursively defined data type: `Nat`
+
+```rust
+data Nat = zero, succ(Nat);
+```
+
+And here's the `const fn factorial`:
+
+```rust
+const fn factorial(Nat) -> Nat {
+    (0) => 1,
+    (Nat::succ(n)) = Nat::succ(n) * factorial(n),
+};
+```
+
+# More Powerful Generics
+
+Arguments in `const` mode need not be types; they can be constants as well.
+In fact, **any** constants can be passed to a function in `const` mode.
+So I can write something like:
+
+```rust
+const fn factorial[_ : Nat] -> Nat {
+    [0] => 1,
+    [Nat::succ(n)] = Nat::succ(n) * factorial(n),
+};
+```
+
+But then we lose the ability to call `factorial` at runtime.
+
+Actually, types are also first-class citizens of Ende.
+They are constants.
+In Ende, we can also be generic over type constructors, which are `const fn`s at the type level.
+That is, to pass higher-kinded types around.
+Normal types have kind `Type`.
+However, `Option` is a type constructor and is of kind `[Type] -> Type`, which means it is a function from a type at compile time to another type.
+Here's the `Functor` `class`.
+
+```rust
+class Functor[F : [Type] -> Type] = functor {
+    fn map[From, To](self : F[From], (From) -> To) -> F[To],
+};
+```
+
+Types of arguments in `const` mode are not always inferred to be `Type`, they can be inferred to be types or higher-kinded types as well.
+For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
+
+```rust
+fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
+```
+
+# Modes: A Summary
+
+|                           | normal    | `const`      | instance     |
+|:-------------------------:|:---------:|:------------:|:------------:|
+| `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`  |
+| type inference            | no        | yes          | no           |
+| phase (if not `const fn`) | runtime   | compile time | compile time |
+| curryable                 | no        | yes          | yes          |
+| argument inference        | no        | yes          | proof search |
+| can be dependent on       | no        | yes          | yes          |
+
+`(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectivly, but `[T]` means `[T : _]`
+types of arguments in `const` mode are inferred.
+Usually arguments in normal mode are supplied at runtime, but not arguments in `const` or instance modes.
+Arguments in `const` or instance modes are curryable because they hav nothing to do with the runtime.
+Arguments in normal mode cannot be infered and cannot be dependent on obviously.
+
+# Variadic Arguments
+
+Usually, we don't want to make arguments in normal mode curryable.
+But sometimes we do want to supply variable length of arguments.
+There is a kind of mechanism in Ende to make generic over arity possible.
+
+(To be continued ...)
