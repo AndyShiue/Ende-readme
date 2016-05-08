@@ -677,5 +677,51 @@ Arguments in normal mode cannot be infered and cannot be dependent on obviously.
 Usually, we don't want to make arguments in normal mode curryable.
 But sometimes we do want to supply variable length of arguments.
 There is a kind of mechanism in Ende to make genericity over arity possible.
+Because I want to make variadic arguments as flexible as possible, it could be a little bit harder to understand.
+I need to introduce a new kind of type called **tuple types**.
+They are not really the same as tuples in Rust or Haskell.
+Tuple types are type-level lists.
+for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
+Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
+A tuple type cannot contain any type constructors.
+What is the kind of all tuple types then?
+It's called **dynamic type**, and is written `..()`
+
+Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
+For clarity, let's consider a rather easy example first.
+The function `sum` sums up all the `I32`s in the argument list no matter how many arguments there are.
+First, I have to define a helper function for it:
+
+```rust
+const fn replicate[_ : Nat](Type) -> ..() {
+    [0](_) => dynamic (),
+    [Nat::succ(n)](T) => dynamic (T, replicate[n](T))
+}
+```
+
+Because of the ambiguity I mentioned before, a tuple type cannot be written down directly.
+Instead, we write `dynamic (something)` to write down a tuple type.
+(The keyword `dynamic` is overloaded again.)
+`dynamic ()` is an empty tuple type; `dynamic (A, B, C)` is `A, B, C`; `dynamic (A, B, C, D)` is `A, B, C, D`, etc.
+A tuple type with only one element is written `dynamic (A,)`.
+Now focus on the `replicate` function above.
+`replicate[0](T)` is an empty tuple type.
+`replicate[1](T)` = `dynamic (T, replicate[0](T))` = `T`.
+(It's not the type `T`, but the tuple type that has only one element.)
+`replicate[2](T)` = `dynamic (T, replicate[1](T))` = `dynamic (T, T)` = `T, T`.
+So `replicate[n](T)` is `T` repeated for `n` times.
+
+What are the types of the arguments of the `sum` function?
+They are `I32` repeated for arbitrarily times!
+Now you can see how `replicate` could be useful.
+In order to say that an argument in fact represents many arguments, we use the keyword `dynamic` again.
+It would be easier to understand by providing the example than describing it in words:
+
+```rust
+const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
+    (_) => 0i32,
+    (head, dynamic tail) => head + sum(tail),
+}
+```
 
 (To be continued ...)
