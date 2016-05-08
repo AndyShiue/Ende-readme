@@ -143,7 +143,7 @@ let season = Season::spring;
 instead of
 
 ```rust
-let season = spring; // Doesn't compile.
+// let season = spring; // Doesn't compile.
 ```
 
 `data` variants could be matched through pattern matching:
