@@ -257,7 +257,7 @@ bar[A, B];
 bar[A][B];
 ```
 
-This is because of the way that current machine works.
+This is because of the way that current machines work.
 At runtime, functions can have several arguments natively.
 If arguments in normal mode were curryable, the compiler would have to retern lambdas often or generate several partially applied copies of the original function.
 Arguments in `const` mode are curryable, though, because that performance at compile time isn't that important, and programmers are supposed to do heavy calculation at runtime.
