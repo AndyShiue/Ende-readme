@@ -233,7 +233,7 @@ fn id[T](t : T) -> T = t;
 ```
 
 Here, I introduced another delimiter while defining the function: brackets (`[]`).
-different delimiters on a function represent different *modes* in which the paramenters are passed.
+different delimiters on a function represent different *modes* in which the parameters are passed.
 **Modes** are a very important feature in Ende; different modes serve as different purposes and have different characteristics.
 We say that the arguments inside the parentheses (`()`) (`t` in the above example) are arguments in **normal mode**.
 In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are arguments in **`const` mode**.
