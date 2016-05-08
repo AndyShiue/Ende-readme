@@ -7,7 +7,7 @@ It's very welcomed for anyone to write an implementation for it.
 # Terms and Statements
 
 At the very beginning, let me introduce the terms of the language.
-Terms can be seen as trees that build up value.
+Terms can be seen as trees that build up values.
 Terms include:
 
 1. **Literals**:
