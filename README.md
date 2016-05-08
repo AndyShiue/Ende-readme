@@ -223,7 +223,7 @@ let p = point { x => 0i32, y => 0i32 };
 
 # Generics
 
-We've seen a `OptionI32` type above.
+We've seen an `OptionI32` type above.
 In practice, we want a type that is generic over all types, not just `I32`.
 But let's start with a simplest generic function: `id`.
 `id` simply returns its only argument.
