@@ -475,7 +475,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    Functions that aren't inside a `class` are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
-   The operations you can do in a `const fn` is more limited.
+   The operations you can do in a `const fn` are more limited.
    You can only:
 
    1. declare a variable with `const`.
