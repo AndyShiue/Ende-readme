@@ -439,7 +439,7 @@ a normal `impl` function can only have a return type that is not a variable, so 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
 Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
 
-And `dynamic impl` surpresses that limitation.
+And `dynamic impl` surpasses that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is `class` inheritance.
 The `impl`s of the return types of the `dynamic impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
