@@ -315,7 +315,7 @@ let sum2 = 1i32.append(2i32);
 In order to write a function that is generic over types implementing a `class`, the third mode is introduced.
 It's called **instance mode**, and is delimited by `[()]`.
 `[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
-Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s
+Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
 ```rust
