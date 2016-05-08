@@ -572,25 +572,19 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    Notice that `newCounter.increment` **is** a constant although it's not a `const fn`.
    
-   Sometimes you want to make the fields constants in a `dynamic class`.
-   You can write `const` in front of a non-function field to overwrite its constness.
-   `const` fields of instances of `dynamic class`es binded with `let` as well as `const` but not `let mut` are constants.
-   If you want a function field to be `dynamic`, write `dynamic` **after** the keyword `fn`.
+   If you want a single function field to be `dynamic`, write `dynamic` **after** the keyword `fn`.
    
    ```rust
-   dynamic class MathUtil = mathUtil {
-       const pi : F64,
+   dynamic class Wierd = duh {
        fn dynamic wierd : () -> Unit,
    };
    
    fn doNothing() -> Unit = {};
    
-   let util = mathUtil {
-       pi => 3.14f64,
+   let wierd = duh {
        wierd => main,
    };
    
-   const _ = util.pi; // It works.
    util.weird = doNothing; // Also works.
    ```
    
