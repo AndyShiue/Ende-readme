@@ -681,6 +681,6 @@ Arguments in normal mode cannot be infered and cannot be dependent on obviously.
 
 Usually, we don't want to make arguments in normal mode curryable.
 But sometimes we do want to supply variable length of arguments.
-There is a kind of mechanism in Ende to make generic over arity possible.
+There is a kind of mechanism in Ende to make genericity over arity possible.
 
 (To be continued ...)
