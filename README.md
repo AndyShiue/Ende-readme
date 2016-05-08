@@ -299,7 +299,7 @@ The `i32Monoid` below is an `impl` object.
 ```rust
 impl i32Monoid : Monoid[I32] = monoid {
     unit => 0i32,
-    fn append(self : I32, another : I32) = self + another,
+    fn append(self : I32, another : I32) -> I32 = self + another,
 };
 ```
 
@@ -544,7 +544,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    impl i32Monoid : Monoid[I32] = monoid {
        unit => 0i32,
-       fn append(self : I32, another : I32) = self + another,
+       fn append(self : I32, another : I32) -> I32 = self + another,
    };
    
    const _ = 0i32.append(0i32); // It works.
