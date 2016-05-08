@@ -19,8 +19,8 @@ Terms include:
    1. **Integers**:
       There would be several types of integers of different size, being either signed or not.
       A literal of type `I32` would be written as `42i32`.
-      `42` is its actual value, and `i32` means it's a 32-bit unsigned integer.
-      Similarly, `666u64` would be a 64-bit signed integer.
+      `42` is its actual value, and `i32` means it's a 32-bit signed integer.
+      Similarly, `666u64` would be a 64-bit unsigned integer.
       An integer without any suffix would have type `Nat`.
       Instead of being built-in, `Nat` is just a normal recursively defined data type.
       I will also discuss that type later.
