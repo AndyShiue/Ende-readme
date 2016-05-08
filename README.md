@@ -671,8 +671,8 @@ fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
 | argument inference        | no        | yes          | proof search |
 | can be dependent on       | no        | yes          | yes          |
 
-`(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectivly, but `[T]` means `[T : _]`
-types of arguments in `const` mode are inferred.
+`(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` means `[T : _]`.
+Types of arguments in `const` mode are inferred.
 Usually arguments in normal mode are supplied at runtime, but not arguments in `const` or instance modes.
 Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
 Arguments in normal mode cannot be infered and cannot be dependent on obviously.
