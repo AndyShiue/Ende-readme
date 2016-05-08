@@ -585,7 +585,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        wierd => main,
    };
    
-   util.weird = doNothing; // Also works.
+   wierd.weird = doNothing; // Also works.
    ```
    
    An instance of a non-`dynamic` `class` is a constant if all of its fields are constants.
