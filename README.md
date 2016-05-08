@@ -364,7 +364,7 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 };
 ```
 
-`group` is indeed an `impl` function.
+`groupToMonoid` is indeed an `impl` function.
 
 ## `dynamic impl`
 
