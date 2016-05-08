@@ -336,8 +336,10 @@ let sum = concat[(i32Monoid)](i32Vec);
 
 `impl` functions are literally, `impl`s that are functions.
 `impl`s need to be functions mainly because of 2 reasons:
+
 1. It's generic over an argument in the `const` mode.
 2. It's generic over an argument in the instance mode.
+
 I'm going to provide a `impl` function generic over both modes.
 First, define a `Group` `class`.
 
