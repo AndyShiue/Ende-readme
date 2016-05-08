@@ -151,8 +151,8 @@ instead of
 ```rust
 fn isSummer(season : Season) -> Bool = {
     match season {
-        case Season::summer => true,
-        _ => false,
+        case Season::summer => Bool::true,
+        _ => Bool::false,
     }
 };
 ```
@@ -163,8 +163,8 @@ We don't write the equal sign (`=`) after the return type in this case.
 
 ```rust
 fn isSummer(Season) -> Bool {
-    (Season::summer) => true,
-    (_) => false,
+    (Season::summer) => Bool::true,
+    (_) => Bool::false,
 };
 ```
 
