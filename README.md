@@ -174,7 +174,7 @@ I'm going to provide another example for clarity:
 ```rust
 fn and(Bool, Bool) -> Bool {
     (Bool::true, b) => b,
-    (_, _) => false,
+    (_, _) => Bool::false,
 };
 ```
 
