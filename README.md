@@ -557,12 +557,12 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```rust
    dynamic class Counter = counter {
        inner : I32,
-       fn increment(self : Counter) -> unit;
+       fn increment(self : Counter) -> Unit;
    };
    
    fn newCounter() -> counter {
        inner => 0i32,
-       fn increment(self : Counter) -> unit = {
+       fn increment(self : Counter) -> Unit = {
            self.inner += 1;
        },
    };
@@ -577,10 +577,10 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```rust
    dynamic class MathUtil = mathUtil {
        const pi : F64,
-       fn dynamic wierd : () -> unit,
+       fn dynamic wierd : () -> Unit,
    };
    
-   fn doNothing() -> unit = {};
+   fn doNothing() -> Unit = {};
    
    let util = mathUtil {
        pi => 3.14f64,
