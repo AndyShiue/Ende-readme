@@ -712,7 +712,7 @@ Now focus on the `replicate` function above.
 So `replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
-They are `I32` repeated for arbitrarily times!
+They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
 In order to say that an argument in fact represents many arguments, we use the keyword `dynamic` again.
 It would be easier to understand by providing the example than describing it in words:
