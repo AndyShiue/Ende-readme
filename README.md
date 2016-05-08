@@ -705,10 +705,10 @@ Instead, we write `dynamic (something)` to write down a tuple type.
 `dynamic ()` is an empty tuple type; `dynamic (A, B, C)` is `A, B, C`; `dynamic (A, B, C, D)` is `A, B, C, D`, etc.
 A tuple type with only one element is written `dynamic (A,)`.
 Now focus on the `replicate` function above.
-`replicate[0](T)` is an empty tuple type.
-`replicate[1](T)` = `dynamic (T, replicate[0](T))` = `T`.
-(It's not the type `T`, but the tuple type that has only one element.)
-`replicate[2](T)` = `dynamic (T, replicate[1](T))` = `dynamic (T, T)` = `T, T`.
+- `replicate[0](T)` is an empty tuple type.
+- `replicate[1](T)` = `dynamic (T, replicate[0](T))` = `T`.
+  (It's not the type `T`, but the tuple type that has only one element.)
+- `replicate[2](T)` = `dynamic (T, replicate[1](T))` = `dynamic (T, T)` = `T, T`.
 So `replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
