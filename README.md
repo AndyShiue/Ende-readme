@@ -715,6 +715,7 @@ What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
 In order to say that an argument in fact represents many arguments, we use the keyword `dynamic` again.
+a `dynamic` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
 ```rust
