@@ -670,7 +670,7 @@ fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
 Types of arguments in `const` mode are inferred.
 Usually arguments in normal mode are supplied at runtime, but not arguments in `const` or instance modes.
 Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
-Arguments in normal mode cannot be infered and cannot be dependent on obviously.
+Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
 
 # GADTs
 
