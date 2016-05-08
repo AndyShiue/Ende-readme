@@ -651,7 +651,7 @@ class Functor[F : [Type] -> Type] = functor {
 };
 ```
 
-Types of arguments in `const` mode are not always inferred to be `Type`, they can be inferred to be types or higher-kinded types as well.
+Types of arguments in `const` mode are not always inferred to be `Type`, they can be inferred to be types or kinds of higher-kinded types as well.
 For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
 
 ```rust
@@ -672,7 +672,7 @@ fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
 `(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectivly, but `[T]` means `[T : _]`
 types of arguments in `const` mode are inferred.
 Usually arguments in normal mode are supplied at runtime, but not arguments in `const` or instance modes.
-Arguments in `const` or instance modes are curryable because they hav nothing to do with the runtime.
+Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
 Arguments in normal mode cannot be infered and cannot be dependent on obviously.
 
 # Variadic Arguments
