@@ -699,7 +699,6 @@ They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
 for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
 Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
-A tuple type cannot contain any type constructors.
 What is the kind of all tuple types then?
 It's called **dynamic type**, and is written `..(Type)`
 
@@ -742,6 +741,8 @@ const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
     (head, dynamic tail) => head + sum(tail),
 }
 ```
+
+# Dependent Types
 
 # Universes
 
