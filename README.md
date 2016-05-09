@@ -674,7 +674,19 @@ Arguments in normal mode cannot be inferred and cannot be dependent on obviously
 
 # GADTs
 
-(TBD)
+Normal `data` are called ADTs in Haskell.
+GADTs are the **G**enralized version of ADTs.
+GADTs let you be specific on the return types of the variants.
+We can define a type with GADT by not writing an equal sign (`=`) after the name of the `data`.
+
+```rust
+data Array[_ : Nat, T] {
+    nil : Array[0, T],
+    fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T],
+};
+```
+
+You can mix `dynamic data` and GADTs; variants in GADTs can also be made `dynamic`.
 
 # Variadic Arguments
 
@@ -730,5 +742,7 @@ const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
     (head, dynamic tail) => head + sum(tail),
 }
 ```
+
+# Universes
 
 (To be continued ...)
