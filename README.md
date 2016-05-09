@@ -828,7 +828,7 @@ What it actually does is to create another hierarchy:
 AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
 ```
 
-Normally data types live in `Type`, but we can also define a data types that live in another hierarchy:
+Normally data types live in `Type`, but we can also define data types that live in another hierarchy:
 
 ```
 data WhatTheHeck : AnotherWorld = whatever;
