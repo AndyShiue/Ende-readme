@@ -756,6 +756,8 @@ In order to be fully dependently-typed, a fourth mode called **pi mode** has to 
 | argument inference        | no        | yes          | proof search | no          |
 | can be dependent on       | no        | yes          | yes          | yes         |
 
+The last argument in a list of arguments in pi mode can also be `dynamic` so it can accept variadic arguments.
+
 # Universes
 
 What's the type of `Type`?
