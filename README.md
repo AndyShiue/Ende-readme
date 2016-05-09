@@ -824,7 +824,7 @@ data AnotherWorld : AnotherWorld;
 ```
 
 It seems that the type of `AnotherWorld` is itself, but that would make the type system inconsistent.
-What it actually does is to create another hierarchy:
+What it actually does is to create another hierarchy that is also cumulative:
 
 ```rust
 AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
