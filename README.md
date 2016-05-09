@@ -701,7 +701,7 @@ for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
 Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
 A tuple type cannot contain any type constructors.
 What is the kind of all tuple types then?
-It's called **dynamic type**, and is written `..()`
+It's called **dynamic type**, and is written `..(Type)`
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
@@ -709,7 +709,7 @@ The function `sum` sums up all the `I32`s in the argument list no matter how man
 First, I have to define a helper function for it:
 
 ```rust
-const fn replicate[_ : Nat](Type) -> ..() {
+const fn replicate[_ : Nat](Type) -> ..(Type) {
     [0](_) => dynamic (),
     [Nat::succ(n)](T) => dynamic (T, replicate[n](T))
 }
