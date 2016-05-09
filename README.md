@@ -761,8 +761,7 @@ In order to be fully dependently-typed, a fourth mode called **pi mode** has to 
 What's the type of `Type`?
 In Ende, `Type` is actually not a single type, but a series of type.
 You can think that `Type` has a hidden natural number parameter.
-The `Type` that all of us are familiar about is `Type[0]`
-But the type of `Type[0]` is `Type[1]`, the type of which is `Type[2]`, and going on and on.
+The `Type` that all of us are familiar about is `Type[0]`, but the type of `Type[0]` is `Type[1]`, the type of which is `Type[2]`, and going on and on.
 What about the types of function types?
 The answer is:
 
@@ -774,7 +773,7 @@ A : Type[m]    B : Type[n]
 
 Imagine if we want to accept a potentially infinite list of arguments types of which are `Int, Type[0], Int, Type[0], Int, Type[0] ...`.
 How do we write a helper function to generate the tuple type?
-The dynamic type of the return type of the function cannot be `..(Type[0])` either, because the type of `Type[0]` isn't `Type[0]`.
+The dynamic type of the return type of the function cannot be `..(Type[0])` because the type of `Type[0]` isn't `Type[0]`.
 The answer is to make universes cumulative:
 
 ```
@@ -815,7 +814,7 @@ Type[0] : Type[1] : Type[2] : Type[3] ...
 ..(Type[0]) : ..(Type[1]) : ..(Type[2]) : ..(Type[3]) ...
 ```
 
-What comes first in your mind is to make hierarchies user-definable.
+What comes next in your mind is to make hierarchies user-definable.
 Here is the syntax for defining a new hierarchy:
 
 ```rust
@@ -827,6 +826,14 @@ What it actually does is to create another hierarchy:
 
 ```
 AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
+```
+
+Now types of function types are:
+
+```
+A : World[m]    B : World[n]    World : Hierarchy
+-------------------------------------------------
+            A -> B : World[max(m, n)]
 ```
 
 Functions from a hierarchy to another hierarchy such as the above `replicate` has no type; they are similar to `Setω` in Agda.
