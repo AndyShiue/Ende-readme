@@ -562,7 +562,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        fn increment(self : Counter) -> Unit;
    };
    
-   fn newCounter() -> counter {
+   fn newCounter() -> Counter = counter {
        inner => 0i32,
        fn increment(self : Counter) -> Unit = {
            self.inner += 1;
