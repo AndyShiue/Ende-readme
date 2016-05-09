@@ -804,7 +804,15 @@ Now that `Int : Type[1]`, so the type of `Int, Type[0], Int, Type[0], Int, Type[
 
 ## Hierarchies
 
-Now we have 2 different hierarchies of universes, one is
+It seams reasonable to assume that:
+
+```
+    A <: B
+--------------
+..(A) <: ..(B)
+```
+
+Now we have at least 2 different hierarchies of universes, one is
 
 ```rust
 Type[0] : Type[1] : Type[2] : Type[3] ...
@@ -816,7 +824,8 @@ Type[0] : Type[1] : Type[2] : Type[3] ...
 ..(Type[0]) : ..(Type[1]) : ..(Type[2]) : ..(Type[3]) ...
 ```
 
-What comes next in your mind is to make hierarchies user-definable.
+In reality there are infinite hierarchies because `..(..(Type))` and `..(..(..(Type)))` are also hierarchies.
+What comes next in my mind is to make hierarchies user-definable.
 Here is the syntax for defining a new hierarchy:
 
 ```rust
