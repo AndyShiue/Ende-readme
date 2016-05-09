@@ -677,7 +677,7 @@ Arguments in normal mode cannot be inferred and cannot be dependent on obviously
 Normal `data` are called ADTs in Haskell.
 GADTs are the **G**enralized version of ADTs.
 GADTs let you be specific on the return types of the variants.
-We can define a type with GADT by not writing an equal sign (`=`) after the name of the `data`.
+We can define a type with GADT by dropping the equal sign (`=`) after the name of the `data`.
 
 ```rust
 data Array[_ : Nat, T] {
