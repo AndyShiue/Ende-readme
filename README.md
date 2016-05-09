@@ -804,13 +804,13 @@ Now that `Int : Type[1]`, so the type of `Int, Type[0], Int, Type[0], Int, Type[
 
 Now we have 2 different hierarchies of universes, one is
 
-```
+```rust
 Type[0] : Type[1] : Type[2] : Type[3] ...
 ```
 
 , another is
 
-```
+```rust
 ..(Type[0]) : ..(Type[1]) : ..(Type[2]) : ..(Type[3]) ...
 ```
 
@@ -824,13 +824,13 @@ data AnotherWorld : AnotherWorld;
 It seems that the type of `AnotherWorld` is itself, but that would make the type system inconsistent.
 What it actually does is to create another hierarchy:
 
-```
+```rust
 AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
 ```
 
 Normally data types live in `Type`, but we can also define data types that live in another hierarchy:
 
-```
+```rust
 data WhatTheHeck : AnotherWorld = whatever;
 class YouAreCrazy : AnotherWorld = youAreCrazy {};
 ```
