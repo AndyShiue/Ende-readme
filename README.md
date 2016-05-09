@@ -744,6 +744,89 @@ const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
 
 # Dependent Types
 
+In the above examples, we've seen types depending on values at compile time, but not values at runtime.
+In order to be fully dependently-typed, a fourth mode called **pi mode** has to be introduced:
+
+|                           | normal    | `const`      | instance     | pi          |
+|:-------------------------:|:---------:|:------------:|:------------:|:-----------:|
+| `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`  | `([T : _])` |
+| type inference            | no        | yes          | no           | yes         |
+| phase (if not `const fn`) | runtime   | compile time | compile time | runtime     |
+| curryable                 | no        | yes          | yes          | no          |
+| argument inference        | no        | yes          | proof search | no          |
+| can be dependent on       | no        | yes          | yes          | yes         |
+
 # Universes
 
-(To be continued ...)
+What's the type of `Type`?
+In Ende, `Type` is actually not a single type, but a series of type.
+You can think that `Type` has a hidden natural number parameter.
+The `Type` that all of us are familiar about is `Type[0]`
+But the type of `Type[0]` is `Type[1]`, the type of which is `Type[2]`, and going on and on.
+What about the types of function types?
+The answer is:
+
+```
+A : Type[m]    B : Type[n]
+--------------------------
+ A -> B : Type[max(m, n)]
+```
+
+Imagine if we want to accept a potentially infinite list of arguments types of which are `Int, Type[0], Int, Type[0], Int, Type[0] ...`.
+How do we write a helper function to generate the tuple type?
+The dynamic type of the return type of the function cannot be `..(Type[0])` either, because the type of `Type[0]` isn't `Type[0]`.
+The answer is to make universes cumulative:
+
+```
+      m < n
+------------------
+Type[m] <: Type[n]
+```
+
+and
+
+```
+T : Type[m]    Type[m] <: Type[n]
+---------------------------------
+           T : Type[n]
+```
+
+A term of a dynamic type is a list of types the types of all of which are the same:
+
+```
+T1 : U    T2 : U    T3 : U    ...
+---------------------------------
+     T1, T2, T3 ... : ..(U)
+```
+
+Now that `Int : Type[1]`, so the type of `Int, Type[0], Int, Type[0], Int, Type[0] ...` is `..(Type[1])`.
+
+## Hierarchies
+
+Now we have 2 different hierarchies of universes, one is
+
+```
+Type[0] : Type[1] : Type[2] : Type[3] ...
+```
+
+, another is
+
+```
+..(Type[0]) : ..(Type[1]) : ..(Type[2]) : ..(Type[3]) ...
+```
+
+What comes first in your mind is to make hierarchies user-definable.
+Here is the syntax for defining a new hierarchy:
+
+```rust
+data AnotherWorld : AnotherWorld;
+```
+
+It seems that the type of `AnotherWorld` is itself, but that would make the type system inconsistent.
+What it actually does is to create another hierarchy:
+
+```
+AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
+```
+
+Functions from a hierarchy to another hierarchy such as the above `replicate` has no type; they are similar to `Setω` in Agda.
