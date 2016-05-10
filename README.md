@@ -700,7 +700,7 @@ Tuple types are type-level lists.
 for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
 Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
 What is the kind of all tuple types then?
-It's called **dynamic type**, and is written `..(Type)`
+It's called the **dynamic type**, and is written `..(Type)`
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
