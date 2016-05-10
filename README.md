@@ -768,7 +768,7 @@ data Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 # Universes
 
 What's the type of `Type`?
-In Ende, `Type` is actually not a single type, but a series of type.
+In Ende, `Type` is actually not a single type, but a series of types.
 You can think that `Type` has a hidden natural number parameter.
 The `Type` that all of us are familiar about is `Type[0]`, but the type of `Type[0]` is `Type[1]`, the type of which is `Type[2]`, and going on and on.
 What about the types of function types?
