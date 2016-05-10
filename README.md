@@ -761,7 +761,7 @@ The last argument in a list of arguments in pi mode can also be `dynamic` so it 
 Existential types as an example:
 
 ```rust
-data Sigma[A : Type][B : ([A]) -> Type] = sigma([a : A])(B([a]));
+data Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 ```
 
 # Universes
