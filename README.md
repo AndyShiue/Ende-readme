@@ -623,7 +623,7 @@ const fn factorial(Nat) -> Nat {
 # More Powerful Generics
 
 Arguments in `const` mode need not be types; they can be constants as well.
-In fact, **any** constants can be passed to a function in `const` mode.
+In fact, **any** constants which is typeable can be passed to a function in `const` mode.
 So I can write something like:
 
 ```rust
