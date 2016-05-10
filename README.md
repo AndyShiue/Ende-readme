@@ -486,6 +486,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
       They are both constants in a `const fn`.
       But a variable declared with `const` cannot depend on the arguments in normal mode, while a variable declared with `let` can.
       The gist of the design is to make changing a non-`const` function to a `const fn` (or conversely) the most seamless.
+      Of course, `let mut` is forbidden in a `const fn`.
 
    3. normal statements:
       The term before the semicolon (`;`) must be a constant, so `while` cannot be used in a `const fn`, so if you want to do something again and again, use recursion.
