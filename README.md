@@ -758,6 +758,12 @@ In order to be fully dependently-typed, a fourth mode called **pi mode** has to 
 
 The last argument in a list of arguments in pi mode can also be `dynamic` so it can accept variadic arguments.
 
+Existential types as an example:
+
+```rust
+data Sigma[A : Type][B : ([A]) -> Type] = sigma([a : A])(B([a]));
+```
+
 # Universes
 
 What's the type of `Type`?
