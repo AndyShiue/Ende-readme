@@ -854,4 +854,4 @@ World : Hierarchy    A : World[m]    B : World[n]
             A -> B : World[max(m, n)]
 ```
 
-Functions from a hierarchy to another hierarchy such as the above `replicate` has no type; they are similar to `Setω` in Agda.
+Function types from a hierarchy to another hierarchy such as the above `replicate` has no type; they are similar to `Setω` in Agda.
