@@ -10,7 +10,7 @@ This article was initially designed to be implemented from the beginning to the 
 As some people suggested, I provide a brief overview here.
 
 The core feature of Ende is **modes**.
-**modes** are ways to pass arguments to a function.
+Modes are ways to pass arguments to a function.
 In current programming languages, the boundary between phases, which means compile time and runtime, are either not blurry enough or too blurry.
 The former includes more conservative languages like Java or Go.
 The latter are basically those dependently-typed languages.
