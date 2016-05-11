@@ -4,6 +4,33 @@ I just want to share what I've come up with about the design of a new programmin
 This language has a strong type system, and its syntax is whitespace-insensitive because I prefer it.
 It's very welcomed for anyone to write an implementation for it.
 
+# Overview
+
+This article was initially designed to be implemented from the beginning to the end, but it has already been to long.
+As some people suggested, I provide a brief overview here.
+
+The core feature of Ende is **modes**.
+**modes** are ways to pass arguments to a function.
+In current programming languages, the boundary between phases, which means compile time and runtime, are either not blurry enough or too blurry.
+The former includes more conservative languages like Java or Go.
+The latter are basically those dependently-typed languages.
+The lack of compile-time constructs make higher abstraction at compile time impossible, but dependent types make the phase of which the term is evaluated unpredictable.
+The idea of modes is basically genericity over phases.
+In complement to modes, you can specify stuff that only works at runtime or works at both runtime and compile time using the `const` system of Ende.
+
+The presence of modes makes almost everything in Ende first-class, which means they can be passed as arguments and returned.
+They include:
+
+1. all functions
+2. all structs
+3. all class constructors (in the sense of Java jargon)
+4. all interfaces
+5. all implementations of interfaces
+6. all extensions between interfaces
+7. the vast majority of types
+
+As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
+
 # Terms and Statements
 
 At the very beginning, let me introduce the terms of the language.
@@ -495,8 +522,14 @@ Now, let's go through all kinds of terms introduced and see if they are constant
       Only `const fn`s can be called.
 
    `const fn`s are also checked to be *positive*, meaning they don't recurse forever.
+   A constant that evaluates to a `const fn` is also a `const fn`.
 
-6. **`data`**:
+6. **`impl`s**:
+   Did I mention `impl`s are first-class citizens of Ende?
+   They can be returned and passed as arguments.
+   `impl` objects are always constants; `impl` functions and `dynamic impl`s are always constants and `const fn`s.
+
+7. **`data`**:
    In `data`, all variants are constants.
    In addition, all variants with parameters in normal `data` are `const fn`s.
    You can overwrite the default behavior, however.
@@ -533,7 +566,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    const _ = Dynamic::dynamic4(0i32);
    ```
 
-7. **`class`es**:
+8. **`class`es**:
    An instance of a `class` is a constant if all of its fields are constants by default.
    In comparison to `data`, the problem of constness is even more serious, though.
    When you write a `class`, I assume you want not only that the fields are constants, but also the function members are `const fn`s, and that's the default.
@@ -591,11 +624,6 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    An instance of a non-`dynamic` `class` is a constant if all of its fields are constants.
    An instance of a `dynamic class` is never a constant.
-   
-8. **`impl`s**:
-   Did I mention `impl`s are first-class citizens of Ende?
-   They can be returned and passed as arguments.
-   `impl` objects are always constants; `impl` functions and `dynamic impl`s are always constants and `const fn`s.
 
 ## A `const` version `factorial`
 
