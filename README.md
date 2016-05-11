@@ -827,6 +827,7 @@ Variants in `data` have types, what is the type of `example` then?
 In order to assign a type to it, we need another new mode in which parameters are named.
 Let's simply call it **named mode**.
 The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
+There could also be named modes other than the normal named mode, but one named mode is enough for illustrative purposes.
 The above `example` now has type `{example : Unit} -> Example`
 To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
 Also, we can have `..{Type}`, which is the type of maps from identifiers to *small* types.
@@ -891,13 +892,14 @@ Now we have at least 2 different hierarchies of universes, one is
 Type[0] : Type[1] : Type[2] : Type[3] ...
 ```
 
-, another is
+, another two are
 
 ```rust
 ..(Type[0]) : ..(Type[1]) : ..(Type[2]) : ..(Type[3]) ...
+..{Type[0]} : ..{Type[1]} : ..{Type[2]} : ..{Type[3]} ...
 ```
 
-In reality there are infinite hierarchies because `..(..(Type))` and `..(..(..(Type)))` are also hierarchies.
+In reality there are infinite hierarchies because `..(..{Type})` and `..{..(Type)}` are also hierarchies.
 What comes next in my mind is to make hierarchies user-definable.
 Here is the syntax for defining a new hierarchy:
 
