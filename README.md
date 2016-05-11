@@ -872,13 +872,17 @@ A term of a dynamic type is a list of types the types of all of which are the sa
 T1 : U    T2 : U    T3 : U    ...
 ---------------------------------
      T1, T2, T3 ... : ..(U)
+
+T1 : U    T2 : U    T3 : U    ...
+---------------------------------
+     T1, T2, T3 ... : ..{U}
 ```
 
 Now that `Int : Type[1]`, so the type of `Int, Type[0], Int, Type[0], Int, Type[0] ...` is `..(Type[1])`.
 
 ## Hierarchies
 
-It seams reasonable to assume that:
+It seams reasonable to assume that
 
 ```
     A <: B
@@ -886,7 +890,15 @@ It seams reasonable to assume that:
 ..(A) <: ..(B)
 ```
 
-Now we have at least 2 different hierarchies of universes, one is
+and
+
+```
+    A <: B
+--------------
+..{A} <: ..{B}
+```
+
+Now we have at least 3 different hierarchies of universes, one is
 
 ```rust
 Type[0] : Type[1] : Type[2] : Type[3] ...
