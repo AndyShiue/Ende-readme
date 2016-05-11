@@ -819,9 +819,9 @@ struct Example {
 }
 ```
 
-Why do we need to write *example* twice, one starts in upper case and another starts in lower case?
+Why do we need to write *example* twice, one starting in upper case and another starting in lower case?
 The intention is to disambiguate between the type `Example` and the constructor `example`.
-In a system that doesn't have dependent types, a usage of `Example` can always be resolved, but not in a language in which types are first-class.
+In a system that doesn't have dependent types, an usage of `Example` can always be resolved, but not in a language in which types are first-class.
 
 Variants in `data` have types, what is the type of `example` then?
 In order to assign a type to it, we need another new mode in which parameters are named.
