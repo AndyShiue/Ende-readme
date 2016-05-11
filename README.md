@@ -6,12 +6,12 @@ It's very welcomed for anyone to write an implementation for it.
 
 # Overview
 
-This article was initially designed to be implemented from the beginning to the end, but it has already been to long.
+This article was initially designed to be implemented from the beginning to the end, but it has already been too long.
 As some people suggested, I provide a brief overview here.
 
 The core feature of Ende is **modes**.
 Modes are ways to pass arguments to a function.
-In current programming languages, the boundary between phases, which means compile time and runtime, are either not blurry enough or too blurry.
+In current programming languages, the boundary between phases, which mean compile time and runtime, are either not blurry enough or too blurry.
 The former includes more conservative languages like Java or Go.
 The latter are basically those dependently-typed languages.
 The lack of compile-time constructs make higher abstraction at compile time impossible, but dependent types make the phase of which the term is evaluated unpredictable.
@@ -32,7 +32,7 @@ They include:
 As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
 
 The syntax is very similar to Rust.
-If you are familiar of Rust, you might start reading from [this section](#more-general-class).
+If you are familiar with Rust, you might start reading from [this section](#more-general-class).
 Just be aware of the top-level pattern matching syntax and that generic parameters are written inside square brackets (`[]`) instead of angle brackets (`<>`).
 Users of Scala might also find the similarities between Scala and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
