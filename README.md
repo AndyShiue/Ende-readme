@@ -777,7 +777,9 @@ const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
 }
 ```
 
-# Dependent Types
+# More Modes
+
+## Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
 In order to be fully dependently-typed, a fourth mode called **pi mode** has to be introduced:
@@ -798,6 +800,36 @@ Existential types as an example:
 ```rust
 data Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 ```
+
+## Named Fields
+
+Compare this `class` in Ende
+
+```rust
+class Example = example {
+    example : Unit,
+};
+```
+
+and this `struct` in Rust:
+
+```rust
+struct Example {
+    example: (),
+}
+```
+
+Why do we need to write *example* twice, one starts in upper case and another starts in lower case?
+The intention is to disambiguate between the type `Example` and the constructor `example`.
+In a system that doesn't have dependent types, a usage of `Example` can always be resolved, but not in a language in which types are first-class.
+
+Variants in `data` have types, what is the type of `example` then?
+In order to assign a type to it, we need another new mode in which parameters are named.
+Let's simply call it **named mode**.
+The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
+The above `example` now has type `{example : Unit} -> Example`
+To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
+Also, we can have `..{Type}`, which is the type of maps from identifiers to *small* types.
 
 # Universes
 
