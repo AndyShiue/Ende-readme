@@ -631,7 +631,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    An instance of a non-`dynamic` `class` is a constant if all of its fields are constants.
    An instance of a `dynamic class` is never a constant.
 
-## A `const` version `factorial`
+## A `const` Version `factorial`
 
 I'll define a `const fn factorial` in this subchapter.
 The implementation of this `factorial` is different from the `U32` version above.
