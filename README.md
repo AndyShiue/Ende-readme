@@ -254,6 +254,21 @@ To pattern match or to construct an instance of a `class`, we write a fat arrow 
 let p = point { x => 0i32, y => 0i32 };
 ```
 
+Someone mentioned that I sometimes write a trailing comma after the last matching arm or the last field of a `class`.
+That's intentionally designed.
+It's the same as the situation in Rust: all trailing commas are optional.
+(Oh, except one case that I will mention.)
+you can even write
+
+```rust
+data A =
+    a,
+    b,
+    c,
+    d,
+;
+```
+
 # Generics
 
 We've seen an `OptionI32` type above.
