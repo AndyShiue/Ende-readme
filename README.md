@@ -1,7 +1,7 @@
 # Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
-This language has a strong type system, and its syntax is whitespace-insensitive because I prefer it.
+This language has a strong type system, its functions are call-by-value, and its syntax is whitespace-insensitive because I prefer it.
 It's very welcomed for anyone to write an implementation for it.
 
 # Overview
