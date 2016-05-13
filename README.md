@@ -843,9 +843,9 @@ In order to assign a type to it, we need another new mode in which parameters ar
 Let's simply call it **named mode**.
 The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
 There could also be named modes other than the normal named mode, but one named mode is enough for illustrative purposes.
-The above `example` now has type `{example : Unit} -> Example`
+The above `example` now has type `{example : Unit} -> Example`.
 To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
-Also, we can have `..{Type}`, which is the type of maps from identifiers to *small* types.
+Also, we can have `..{Type}`, which is the type of maps from identifiers to types.
 
 # Universes
 
