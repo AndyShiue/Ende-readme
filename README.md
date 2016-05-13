@@ -507,9 +507,10 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 2. **Operator applications**: An application of an operator outputs a constant if and only if all of its arguments are constants.
 
 3. **Variables**:
-   A variable is a constant if it's declared as `const var`.
+   A variable is a constant if it's declared as `const varName`.
    For example, in `const meaningOfLife = 42i32;`, `meaningOfLife` is a constant.
-   By contrast, in `let devil = 666i32`, devil **isn't** a constant
+   By contrast, in `let devil = 666i32`, devil **isn't** a constant.
+   Of course, the right hand side of the `const` binding must be a constant as well.
 
 4. **Control structures**:
    The value of a `while` loop is not a constant.
