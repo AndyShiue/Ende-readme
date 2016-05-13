@@ -965,8 +965,8 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 # Open Problems
 
-1. Can function types from a hierarchy from another hierarchy have a type?
-2. What it the use of hierarchies other than `Type`?
+1. Can function types from a hierarchy to another hierarchy have a type?
+2. What is the use of hierarchies other than `Type`?
    I'm thinking that it should be able to postulate extra axioms which should't be done in `Type` because they break the totality of `const fn`s at runtime.
 2. Is it possible to be generic over hierarchies?
 3. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
