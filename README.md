@@ -576,6 +576,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    `const fn`s are also checked to be *positive*, meaning they don't recurse forever.
    A constant that evaluates to a `const fn` is also a `const fn`.
+   If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
 
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
