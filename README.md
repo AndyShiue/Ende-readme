@@ -444,7 +444,7 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 
 `groupToMonoid` is indeed an `impl` function.
 
-## `dynamic impl`
+## `dyn impl`
 
 What we don't have yet is the ability to define one `class` to be a super`class` of another `class`. In other words, asserting if you implement a `class`, another `class` must be implemented.
 You may ask, isn't the above `impl` functions enough?
@@ -493,12 +493,13 @@ data Extends[A, B] = extension;
 // Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
-dynamic impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+dyn impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
 
+The keyword `dyn` is short for *dynamic*.
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
 In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
-Why is the keyword `dynamic` before the `impl superClass` required then?
+Why is the keyword `dyn` before the `impl superClass` required then?
 To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
@@ -517,10 +518,10 @@ a normal `impl` function can only have a return type that is not a variable, so 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
 Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
 
-And `dynamic impl` surpasses that limitation.
+And `dyn impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is `class` inheritance.
-The `impl`s of the return types of the `dynamic impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+The `impl`s of the return types of the `dyn impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 # `const`
 
@@ -579,24 +580,24 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments.
-   `impl` objects are always constants; `impl` functions and `dynamic impl`s are always constants and `const fn`s.
+   `impl` objects are always constants; `impl` functions and `dyn impl`s are always constants and `const fn`s.
 
 7. **`data`**:
    In `data`, all variants are constants.
    In addition, all variants with parameters in normal `data` are `const fn`s.
    You can overwrite the default behavior, however.
-   If you write `dynamic` before `data`, all variants become non-`const`.
+   If you write `dyn` before `data`, all variants become non-`const`.
    You can make specific variants `const` again by writing `const` before the variants.
-   Writing `dynamic` before a variant in a non-`dynamic` `data` makes it non-`const`.
+   Writing `dyn` before a variant in a non-`dyn` `data` makes it non-`const`.
 
    ```rust
    data Data =
        data1,
-       dynamic data2,
+       dyn data2,
        data3(I32),
-       dynamic data4(I32);
+       dyn data4(I32);
    
-   dynamic data Dynamic =
+   dyn data Dynamic =
        dynamic1,
        const dynamic2,
        dynamic3(I32),
@@ -639,11 +640,11 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```
 
    But sometimes you want to use `class`es as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
-   `dynamic class` is used to define such `class`es.
-   You can also write `dynamic` in front of a function member in a non-`dynamic` `class` to indicate it's not a `const` function.
+   `dyn class` is used to define such `class`es.
+   You can also write `dyn` in front of a function member in a non-`dyn` `class` to indicate it's not a `const` function.
    
    ```rust
-   dynamic class Counter = counter {
+   dyn class Counter = counter {
        inner : I32,
        fn increment(self : Counter) -> Unit;
    };
@@ -658,11 +659,11 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    Notice that `newCounter.increment` **is** a constant although it's not a `const fn`.
    
-   If you want a single function field to be `dynamic`, write `dynamic` **after** the keyword `fn`.
+   If you want a single function field to be dynamic, write `dyn` **after** the keyword `fn`.
    
    ```rust
-   dynamic class Wierd = duh {
-       fn dynamic wierd : () -> Unit,
+   dyn class Wierd = duh {
+       fn dyn wierd : () -> Unit,
    };
    
    fn doNothing() -> Unit = {};
@@ -674,8 +675,8 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    wierd.weird = doNothing; // It works.
    ```
    
-   An instance of a non-`dynamic` `class` is a constant if all of its fields are constants.
-   An instance of a `dynamic class` is never a constant.
+   An instance of a non-`dyn` `class` is a constant if all of its fields are constants.
+   An instance of a `dyn class` is never a constant.
 
 ## A `const` Version `factorial`
 
@@ -750,7 +751,7 @@ data Array[_ : Nat, T] {
 };
 ```
 
-You can mix `dynamic data` and GADTs; variants in GADTs can also be made `dynamic`.
+You can mix `dyn data` and GADTs; variants in GADTs can also be made `dyn`.
 
 # Variadic Arguments
 
@@ -773,37 +774,37 @@ First, I have to define a helper function for it:
 
 ```rust
 const fn replicate[_ : Nat](Type) -> ..(Type) {
-    [0](_) => dynamic (),
-    [Nat::succ(n)](T) => dynamic (T, replicate[n](T))
+    [0](_) => dyn (),
+    [Nat::succ(n)](T) => dyn (T, replicate[n](T))
 }
 ```
 
 Because of the ambiguity I mentioned before, a tuple type cannot be written down directly.
-Instead, we write `dynamic (something)` to write down a tuple type.
-(The keyword `dynamic` is overloaded again.)
-`dynamic ()` is an empty tuple type; `dynamic (A, B, C)` is `A, B, C`; `dynamic (A, B, C, D)` is `A, B, C, D`, etc.
-A tuple type with only one element is written `dynamic (A,)`.
+Instead, we write `dyn (something)` to write down a tuple type.
+(The keyword `dyn` is overloaded again.)
+`dyn ()` is an empty tuple type; `dyn (A, B, C)` is `A, B, C`; `dyn (A, B, C, D)` is `A, B, C, D`, etc.
+A tuple type with only one element is written `dyn (A,)`.
 Now focus on the `replicate` function above.
 
 - `replicate[0](T)` is an empty tuple type.
-- `replicate[1](T)` = `dynamic (T, replicate[0](T))` = `T`.
+- `replicate[1](T)` = `dyn (T, replicate[0](T))` = `T`.
   (It's not the type `T`, but the tuple type that has only one element.)
-- `replicate[2](T)` = `dynamic (T, replicate[1](T))` = `dynamic (T, T)` = `T, T`.
+- `replicate[2](T)` = `dyn (T, replicate[1](T))` = `dyn (T, T)` = `T, T`.
 
 So `replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
-In order to say that an argument in fact represents many arguments, we use the keyword `dynamic` again.
-a `dynamic` argument can only appear at the end of an argument list.
+In order to say that an argument in fact represents many arguments, we use the keyword `dyn` again.
+a `dyn` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
 ```rust
-const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
+const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 {
     () => 0i32,
-    (head, dynamic tail) => head + sum(tail),
-}
+    (head, dyn tail) => head + sum(tail),
+};
 ```
 
 In contrast to the ordered dynamic type, there is `..{Type}`, which is the **unordered dynamic type**, the type of maps from identifiers to types.
@@ -832,7 +833,7 @@ Usually arguments in normal mode or pi mode are supplied at runtime, but not arg
 Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
 
-The last argument in a list of arguments in pi mode can also be `dynamic` so it can accept variadic arguments.
+The last argument in a list of arguments in pi mode can also be `dyn` so it can accept variadic arguments.
 
 Existential types as an example of pi-types:
 
