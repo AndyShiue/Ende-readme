@@ -322,6 +322,36 @@ And here is the definition of a generic `Option` type:
 data Option[T] = some(T), none;
 ```
 
+# Named Mode
+
+Compare this `class` in Ende
+
+```rust
+class Example = example {
+    example : Unit,
+};
+```
+
+and this `struct` in Rust:
+
+```rust
+struct Example {
+    example: (),
+}
+```
+
+Why do we need to write *example* twice, one starting in upper case and another starting in lower case?
+The intention is to disambiguate between the type `Example` and the constructor `example`.
+In a system that doesn't have dependent types, an usage of `Example` can always be resolved, but not in a language in which types are first-class.
+
+Variants in `data` have types, what is the type of `example` then?
+In order to assign a type to it, we need another new mode in which parameters are named.
+Let's simply call it **named mode**.
+The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
+There could also be named modes other than the normal named mode, but one named mode is enough for illustrative purposes.
+The above `example` now has type `{example : Unit} -> Example`.
+To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
+
 # More General `class`
 
 Why are Rust `struct`s called `class`es in Ende?
@@ -502,7 +532,7 @@ So a `const` value (a constant) is a value known at compile time, and a `const f
 
 Now, let's go through all kinds of terms introduced and see if they are constants.
 
-1. **Literals**: They are definately constants.
+1. **Literals**: They are definitely constants.
 
 2. **Operator applications**: An application of an operator outputs a constant if and only if all of its arguments are constants.
 
@@ -706,23 +736,6 @@ For example, if you want to write a function generic over functors, you don't ne
 fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
 ```
 
-# Modes: A Summary
-
-|                           | normal    | `const`      | instance     |
-|:-------------------------:|:---------:|:------------:|:------------:|
-| `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`  |
-| type inference            | no        | yes          | no           |
-| phase (if not `const fn`) | runtime   | compile time | compile time |
-| curryable                 | no        | yes          | yes          |
-| argument inference        | no        | yes          | proof search |
-| can be dependent on       | no        | yes          | yes          |
-
-`(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` means `[T : _]`.
-Types of arguments in `const` mode are inferred.
-Usually arguments in normal mode are supplied at runtime, but not arguments in `const` or instance modes.
-Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
-Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
-
 # GADTs
 
 Normal `data` are called ADTs in Haskell.
@@ -751,7 +764,7 @@ Tuple types are type-level lists.
 for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
 Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
 What is the kind of all tuple types then?
-It's called the **dynamic type**, and is written `..(Type)`
+It's called the **ordered dynamic type**, and is written `..(Type)`
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
@@ -793,12 +806,15 @@ const fn sum[Args : replicate(I32)](dynamic _ : Args) -> I32 {
 }
 ```
 
-# More Modes
+In contrast to the ordered dynamic type, there is `..{Type}`, which is the **unordered dynamic type**, the type of maps from identifiers to types.
+This could be used for duck typing or extensible effects, e.g.
 
-## Dependent Types
+(TBD)
+
+# Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
-In order to be fully dependently-typed, a fourth mode called **pi mode** has to be introduced:
+In order to be fully dependently-typed, a fifth mode called **pi mode** has to be introduced:
 
 |                           | normal    | `const`      | instance     | pi          |
 |:-------------------------:|:---------:|:------------:|:------------:|:-----------:|
@@ -809,44 +825,31 @@ In order to be fully dependently-typed, a fourth mode called **pi mode** has to 
 | argument inference        | no        | yes          | proof search | no          |
 | can be dependent on       | no        | yes          | yes          | yes         |
 
+The normal named mode isn't on the table because it's almost the same as the normal mode.
+`(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` and `([T])` mean `[T : _]` and `([T : _])`, respectively.
+Types of arguments in `const` and `pi` mode are inferred.
+Usually arguments in normal mode or pi mode are supplied at runtime, but not arguments in `const` or instance modes.
+Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
+Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
+
 The last argument in a list of arguments in pi mode can also be `dynamic` so it can accept variadic arguments.
 
-Existential types as an example:
+Existential types as an example of pi-types:
 
 ```rust
-data Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
+class Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 ```
 
-## Named Fields
+## `with`
 
-Compare this `class` in Ende
+Dependent functions might return terms of different types depending on the arguments in pi mode.
+But all arms of a `match` must return terms of the same type.
+To solve it, I introduce **dependent pattern matching** through `with` clauses.
+If you write the function without the equal sign before the curly braces, you can do pattern matching at the top level.
+Top-level pattern matching can include arms with `with` clauses.
+Here's an example:
 
-```rust
-class Example = example {
-    example : Unit,
-};
-```
-
-and this `struct` in Rust:
-
-```rust
-struct Example {
-    example: (),
-}
-```
-
-Why do we need to write *example* twice, one starting in upper case and another starting in lower case?
-The intention is to disambiguate between the type `Example` and the constructor `example`.
-In a system that doesn't have dependent types, an usage of `Example` can always be resolved, but not in a language in which types are first-class.
-
-Variants in `data` have types, what is the type of `example` then?
-In order to assign a type to it, we need another new mode in which parameters are named.
-Let's simply call it **named mode**.
-The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
-There could also be named modes other than the normal named mode, but one named mode is enough for illustrative purposes.
-The above `example` now has type `{example : Unit} -> Example`.
-To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
-Also, we can have `..{Type}`, which is the type of maps from identifiers to types.
+(TBD)
 
 # Universes
 
@@ -958,3 +961,13 @@ World : Hierarchy    A : World[m]    B : World[n]
 ```
 
 Function types from a hierarchy to another hierarchy such as the above `replicate` has no type; they are similar to `Setω` in Agda.
+
+# Open Problems
+
+1. Can function types from a hierarchy from another hierarchy have a type?
+2. What it the use of hierarchies other than `Type`?
+   I'm thinking that it should be able to postulate extra axioms which should't be done in `Type` because they break the totality of `const fn`s at runtime.
+2. Is it possible to be generic over hierarchies?
+3. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
+   If it's possible, I shouldn't use special syntax on dynamic types but something like `OrderedDynamic[Hierarchy]`.
+   Is the ambiguity between an universe and a hierarchy okay?
