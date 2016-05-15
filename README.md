@@ -841,7 +841,7 @@ const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 {
 ```
 
 In contrast to the ordered dynamic type, there is `..{Type}`, which is the **unordered dynamic type**, the type of maps from identifiers to types.
-This could be used for duck typing or extensible effects, e.g.
+This could be used for duck typing or row polymorphism, e.g.
 
 (TBD)
 
