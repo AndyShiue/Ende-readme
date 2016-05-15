@@ -546,9 +546,7 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct interface should be:
 
 ```rust
-class Add[L, R] = add {[ // The named `const` mode.
-    Output : Type, // It means `Output` is a normal type.
-]} {
+class Add[L, R] = add[Output] {
     fn add(self : L, R) -> Output,
 };
 ```
