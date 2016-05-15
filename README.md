@@ -373,6 +373,7 @@ There are 3 kinds of `impl`s in Ende.
 
 `impl` objects are the first kind of `impl`.
 The `i32Monoid` below is an `impl` object.
+An `impl` object must be an instance of a `class`.
 
 ```rust
 impl i32Monoid : Monoid[I32] = monoid {
@@ -392,6 +393,7 @@ let sum2 = 1i32.append(2i32);
 
 In order to write a function that is generic over types implementing a `class`, the third mode is introduced.
 It's called **instance mode**, and is delimited by `[()]`.
+Arguments passed in instance mode must be instances of `class`es.
 `[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
 Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
@@ -413,6 +415,7 @@ let sum = concat[(i32Monoid)](i32Vec);
 ## `impl` functions
 
 `impl` functions are literally, `impl`s that are functions.
+An `impl` function must return an instance of a `class`.
 `impl`s need to be functions mainly because of 2 reasons:
 
 1. It's generic over an argument in the `const` mode.
@@ -444,7 +447,7 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 
 `groupToMonoid` is indeed an `impl` function.
 
-## `dyn impl`
+## `special impl`
 
 What we don't have yet is the ability to define one `class` to be a super`class` of another `class`. In other words, asserting if you implement a `class`, another `class` must be implemented.
 You may ask, isn't the above `impl` functions enough?
@@ -475,7 +478,7 @@ Imagine if we can write code like this:
 ```rust
 // The type `Abelian` carries no additional data, but it extends the `class` `Group`.
 data Abelian[T] = abelian;
-impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = Extends::extension; // The extension happens here.
+impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension; // The extension happens here.
 ```
 
 It's really concise code!
@@ -488,18 +491,17 @@ I'll try to explain it.
 First, I'll provide the hacky part of the source code:
 
 ```rust
-data Extends[A, B] = extension;
+class Extends[A, B] = extension;
 
 // Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
-dyn impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+special impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
 
-The keyword `dyn` is short for *dynamic*.
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
 In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
-Why is the keyword `dyn` before the `impl superClass` required then?
+Why is the keyword `special` before the `impl superClass` required then?
 To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
@@ -518,10 +520,40 @@ a normal `impl` function can only have a return type that is not a variable, so 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
 Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
 
-And `dyn impl`s surpass that limitation.
+And `special impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is `class` inheritance.
-The `impl`s of the return types of the `dyn impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+The `impl`s of the return types of the `special impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+
+# Associated Types
+
+Fields of an instance of a `class` can also be dependent on.
+They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
+They are *output parameters*.
+For example, imagine if there is a way to overload operators.
+There should be an interface for each operator.
+To achieve maximal flexibility, I want to make types of the right-hand-side, the left-hand-side, and the returned term possibly different.
+It means it has to be generic over these 3 types.
+So maybe the interface could be like:
+
+```rust
+class Add[L, R, Output] = add {
+    fn add(self : L, R) -> Output;
+}
+```
+
+However, the interface is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`
+This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
+The correct interface should be:
+
+```rust
+class Add[L, R] = add {
+    Output : Type, // This means `Output` is a normal type.
+    fn add(self : L, R) -> Output;
+}
+```
+
+If you want to access the output type specified by an instance of a `class`, simply write `inst.Output`.
 
 # `const`
 
@@ -581,7 +613,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments.
-   `impl` objects are always constants; `impl` functions and `dyn impl`s are always constants and `const fn`s.
+   `impl` objects are always constants; `impl` functions and `special impl`s are always constants and `const fn`s.
 
 7. **`data`**:
    In `data`, all variants are constants.
