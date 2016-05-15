@@ -525,7 +525,7 @@ It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is `class` inheritance.
 The `impl`s of the return types of the `special impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
-# Associated Types
+## Associated Types
 
 Fields of an instance of a `class` can also be dependent on.
 They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
@@ -542,7 +542,7 @@ class Add[L, R, Output] = add {
 }
 ```
 
-However, the interface is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`
+However, the interface is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
 This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
 The correct interface should be:
 
@@ -1000,7 +1000,7 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 1. Can function types from a hierarchy to another hierarchy have a type?
 2. What is the use of hierarchies other than `Type`?
-   I'm thinking that it should be able to postulate extra axioms which should't be done in `Type` because they break the totality of `const fn`s at runtime.
+   I'm thinking that it should be able to postulate extra axioms which shouldn't be done in `Type` because they break the totality of `const fn`s at runtime.
 2. Is it possible to be generic over hierarchies?
 3. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
    If it's possible, I shouldn't use special syntax on dynamic types but something like `OrderedDynamic[Hierarchy]`.
