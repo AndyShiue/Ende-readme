@@ -536,9 +536,7 @@ It means it has to be generic over these 3 types.
 So maybe the interface could be like:
 
 ```rust
-class Add[L, R] = add {[ // The named `const` mode.
-    Output : Type, // It means `Output` is a normal type.
-]} {
+class Add[L, R, Output] = add {
     fn add(self : L, R) -> Output,
 };
 ```
@@ -548,7 +546,9 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct interface should be:
 
 ```rust
-class Add[L, R] = add[Output] {
+class Add[L, R] = add {[ // The named `const` mode.
+    Output : Type, // It means `Output` is a normal type.
+]} {
     fn add(self : L, R) -> Output,
 };
 ```
