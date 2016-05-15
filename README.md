@@ -531,7 +531,7 @@ They are different from normal *input parameters* in that they don't determine t
 They are *output parameters*.
 For example, imagine if there is a way to overload operators.
 There should be an interface for each operator.
-To achieve maximal flexibility, I want to make types of the right-hand-side, the left-hand-side, and the returned term possibly different.
+To achieve maximal flexibility, I want to make types of the right-hand-side, the left-hand-side, and the returned terms possibly different.
 It means it has to be generic over these 3 types.
 So maybe the interface could be like:
 
