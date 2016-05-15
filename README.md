@@ -345,10 +345,9 @@ The intention is to disambiguate between the type `Example` and the constructor 
 In a system that doesn't have dependent types, an usage of `Example` can always be resolved, but not in a language in which types are first-class.
 
 Variants in `data` have types, what is the type of `example` then?
-In order to assign a type to it, we need another new mode in which parameters are named.
-Let's simply call it **named mode**.
-The normal named mode is similar to the normal mode, except that the parameters are named and unordered.
-There could also be named modes other than the normal named mode, but one named mode is enough for illustrative purposes.
+In order to assign a type to it, we new modes in which parameters are named.
+Let's simply call them **named mode**.
+The named normal mode is similar to the normal mode, except that the parameters are named and unordered; and the named `const` mode corresponds to the `const` mode.
 The above `example` now has type `{example : Unit} -> Example`.
 To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
 
@@ -538,8 +537,8 @@ So maybe the interface could be like:
 
 ```rust
 class Add[L, R, Output] = add {
-    fn add(self : L, R) -> Output;
-}
+    fn add(self : L, R) -> Output,
+};
 ```
 
 However, the interface is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
@@ -547,10 +546,11 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct interface should be:
 
 ```rust
-class Add[L, R] = add {
-    Output : Type, // This means `Output` is a normal type.
-    fn add(self : L, R) -> Output;
-}
+class Add[L, R] = add {[ // The named `const` mode.
+    Output : Type, // It means `Output` is a normal type.
+]} {
+    fn add(self : L, R) -> Output,
+};
 ```
 
 If you want to access the output type specified by an instance of a `class`, simply write `inst.Output`.
@@ -848,23 +848,30 @@ This could be used for duck typing or extensible effects, e.g.
 # Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
-In order to be fully dependently-typed, a fifth mode called **pi mode** has to be introduced:
+In order to be fully dependently-typed, another mode called **pi mode** has to be introduced:
 
-|                           | normal    | `const`      | instance     | pi          |
-|:-------------------------:|:---------:|:------------:|:------------:|:-----------:|
-| `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`  | `([T : _])` |
-| type inference            | no        | yes          | no           | yes         |
-| phase (if not `const fn`) | runtime   | compile time | compile time | runtime     |
-| curryable                 | no        | yes          | yes          | no          |
-| argument inference        | no        | yes          | proof search | no          |
-| can be dependent on       | no        | yes          | yes          | yes         |
+| ordered                   | normal    | `const`      | instance      | pi            |
+|:-------------------------:|:---------:|:------------:|:-------------:|:-------------:|
+| `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`   | `([T : _])`   |
+| type inference            | no        | yes          | no            | yes           |
+| phase (if not `const fn`) | runtime   | compile time | compile time  | runtime       |
+| curryable                 | no        | yes          | yes           | no            |
+| argument inference        | no        | yes          | proof search  | no            |
+| can be dependent on       | no        | yes          | yes           | yes           |
+| unordered                 | `{t : T}` | `{[t : T]}`  | `{[(t : T)]}` | `{([t : T])}` |
+| type inference            | no        | no           | no            | no            |
+| phase (if not `const fn`) | runtime   | compile time | compile time  | runtime       |
+| curryable                 | no        | yes          | yes           | no            |
+| argument inference        | no        | yes          | proof search  | no            |
+| can be dependent on       | no        | yes          | yes           | yes           |
 
-The normal named mode isn't on the table because it's almost the same as the normal mode.
+
 `(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` and `([T])` mean `[T : _]` and `([T : _])`, respectively.
 Types of arguments in `const` and `pi` mode are inferred.
 Usually arguments in normal mode or pi mode are supplied at runtime, but not arguments in `const` or instance modes.
 Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
+Arguments in an argument list can only be dependent on arguments in previous argument lists.
 
 The last argument in a list of arguments in pi mode can also be `dyn` so it can accept variadic arguments.
 
