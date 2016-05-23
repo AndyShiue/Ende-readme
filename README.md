@@ -561,9 +561,7 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct interface should be:
 
 ```rust
-class Add[L, R] = add {[ -- The named `const` mode.
-    Output : Type, -- It means `Output` is a normal type.
-]} {
+class Add[L, R] = add[Output] {
     fn add(self : L, R) -> Output,
 };
 ```
@@ -1018,10 +1016,14 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 # Open Problems
 
-1. Can function types from a hierarchy to another hierarchy have a type?
-2. What is the use of hierarchies other than `Type`?
+1. Does `dyn impl` makes sense?
+   They are partial functions operating at runtime.
+   They are probably needed if we want to make the object-oriented perspective of the language better.
+   But do we actually need OO?
+2. Can function types from a hierarchy to another hierarchy have a type?
+3. What is the use of hierarchies other than `Type`?
    I'm thinking that it should be able to postulate extra axioms which shouldn't be done in `Type` because they break the totality of `const fn`s at runtime.
-2. Is it possible to be generic over hierarchies?
-3. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
+4. Is it possible to be generic over hierarchies?
+5. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
    If it's possible, I shouldn't use special syntax on dynamic types but something like `OrderedDynamic[Hierarchy]`.
    Is the ambiguity between an universe and a hierarchy okay?
