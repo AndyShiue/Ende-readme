@@ -811,7 +811,7 @@ Tuple types are type-level lists.
 for example, `Unit, Bool` is a tuple type, `I32, F32, U64` is also a tuple type.
 Although they are not real Ende terms because making them real terms would make the grammer ambiguous.
 What is the kind of all tuple types then?
-It's called the **ordered dynamic type**, and is written `..(Type)`
+It's called the **ordered variadic type**, and is written `..(Type)`
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
@@ -851,7 +851,7 @@ const fn sum[Args : replicate(I32)](variadic _ : Args) -> I32 {
 };
 ```
 
-In contrast to the ordered dynamic type, there is `..{Type}`, which is the **unordered dynamic type**, the type of maps from identifiers to types.
+In contrast to the ordered variadic type, there is `..{Type}`, which is the **unordered variadic type**, the type of maps from identifiers to types.
 This could be used for duck typing or row polymorphism, e.g.
 
 (TBD)
