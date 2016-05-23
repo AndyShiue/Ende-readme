@@ -856,6 +856,8 @@ This could be used for duck typing or row polymorphism, e.g.
 
 (TBD)
 
+# Constness Polymorphism
+
 # Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
