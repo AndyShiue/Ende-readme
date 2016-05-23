@@ -62,9 +62,6 @@ Terms include:
       A literal of type `I32` would be written as `42i32`.
       `42` is its actual value, and `i32` means it's a 32-bit signed integer.
       Similarly, `666u64` would be a 64-bit unsigned integer.
-      An integer without any suffix would have type `Nat`.
-      Instead of being built-in, `Nat` is just a normal recursively defined data type.
-      I'm going to defer the discussion of that type to later.
    
    2. **Floats**:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
@@ -120,7 +117,7 @@ unlike `while`, `if` can return something that isn't trivial.
 So we can write code like:
 
 ```rust
-let number = if count == 0i32 { 42 } else { 666 };
+let number = if count == 0i32 { 42u32 } else { 666u32 };
 ```
 
 Of course, `if` can also be used in an old-style, C-like fashion.
@@ -128,9 +125,9 @@ Of course, `if` can also be used in an old-style, C-like fashion.
 ```rust
 let mut number;
 if count == 0i32 {
-    number = 42;
+    number = 42u32;
 } else {
-    number = 666;
+    number = 666u32;
 };
 ```
 
@@ -741,9 +738,9 @@ data Nat = zero, succ(Nat);
 And here's the `const fn factorial`:
 
 ```rust
-const fn factorial(Nat) -> Nat {
-    (0) => 1,
-    (Nat::succ(n)) = Nat::succ(n) * factorial(n),
+const fn factorial(m : Nat) -> Nat {
+    (Nat::zero) => 1,
+    (Nat::succ(n)) = m * factorial(n),
 };
 ```
 
