@@ -357,7 +357,7 @@ The intention is to disambiguate between the type `Example` and the constructor 
 In a system that doesn't have dependent types, an usage of `Example` can always be resolved, but not in a language in which types are first-class.
 
 Variants in `data` have types, what is the type of `example` then?
-In order to assign a type to it, we new modes in which parameters are named.
+In order to assign a type to it, we need new modes in which parameters are named.
 Let's simply call them **named mode**.
 The named normal mode is similar to the normal mode, except that the parameters are named and unordered; and the named `const` mode corresponds to the `const` mode.
 The above `example` now has type `{example : Unit} -> Example`.
