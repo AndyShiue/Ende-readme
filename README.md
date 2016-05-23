@@ -37,6 +37,14 @@ Just be aware of the top-level pattern matching syntax and that generic paramete
 Users of Scala might also find the similarities between Scala and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
 
+# Comments
+
+There are 2 kinds of comments in Ende.
+The first is line comments: they start with `--` and extend toward the end of the line.
+The other one is block comments.
+They can span over multiple lines.
+They start with `{-` and end with `-}`.
+
 # Terms and Statements
 
 At the very beginning, let me introduce the terms of the language.
@@ -176,7 +184,7 @@ let season = Season::spring;
 instead of
 
 ```rust
-// let season = spring; // Doesn't compile.
+-- let season = spring; -- Doesn't compile.
 ```
 
 `data` variants could be matched through pattern matching:
@@ -294,12 +302,12 @@ Function types are literally the types of functions and are written as `(A, B, C
 As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
 
 ```rust
-// They are different:
+-- They are different:
 
 foo(a, b);
 foo(a)(b);
 
-// But they aren't:
+-- But they aren't:
 
 bar[A, B];
 bar[A][B];
@@ -384,7 +392,7 @@ impl i32Monoid : Monoid[I32] = monoid {
 If the `impl` object `i32Monoid` is in scope, now we can call the `append` method on `I32`:
 
 ```rust
-// They are equivalent because the first argument of `append` is `self`:
+-- They are equivalent because the first argument of `append` is `self`:
 
 let sum1 = append(1i32, 2i32);
 let sum2 = 1i32.append(2i32);
@@ -475,9 +483,9 @@ That is not tolerable.
 Imagine if we can write code like this:
 
 ```rust
-// The type `Abelian` carries no additional data, but it extends the `class` `Group`.
+-- The type `Abelian` carries no additional data, but it extends the `class` `Group`.
 data Abelian[T] = abelian;
-impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension; // The extension happens here.
+impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension; -- The extension happens here.
 ```
 
 It's really concise code!
@@ -492,7 +500,7 @@ First, I'll provide the hacky part of the source code:
 ```rust
 class Extends[A, B] = extension;
 
-// Ignore the `const` keyword before `fn` for now.
+-- Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
 special impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
@@ -513,7 +521,7 @@ There is a necessary limitation of normal `impl` functions:
 a normal `impl` function can only have a return type that is not a variable, so the example below does't work:
 
 ```rust
-// impl abuseOfImplicitly[T] -> T = implicitly[T]; // Doesn't compile.
+-- impl abuseOfImplicitly[T] -> T = implicitly[T]; -- Doesn't compile.
 ```
 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
@@ -546,8 +554,8 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct interface should be:
 
 ```rust
-class Add[L, R] = add {[ // The named `const` mode.
-    Output : Type, // It means `Output` is a normal type.
+class Add[L, R] = add {[ -- The named `const` mode.
+    Output : Type, -- It means `Output` is a normal type.
 ]} {
     fn add(self : L, R) -> Output,
 };
@@ -636,18 +644,18 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        dynamic3(I32),
        const dynamic4(I32);
    
-   // Statements commented out can not be compiled.
+   -- Statements commented out can not be compiled.
    
    const _ = Data::data1;
-   // const _ = Data::data2;
+   -- const _ = Data::data2;
    const _ = Data::data3;
    const _ = Data::data3(0i32);
    const _ = Data::data4;
-   // const _ = Data::data4(0i32);
-   // const _ = Dynamic::dynamic1;
+   -- const _ = Data::data4(0i32);
+   -- const _ = Dynamic::dynamic1;
    const _ = Dynamic::dynamic2;
    const _ = Dynamic::dynamic3;
-   // const _ = Dynamic::dynamic3(0i32);
+   -- const _ = Dynamic::dynamic3(0i32);
    const _ = Dynamic::dynamic4;
    const _ = Dynamic::dynamic4(0i32);
    ```
@@ -669,7 +677,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        fn append(self : I32, another : I32) -> I32 = self + another,
    };
    
-   const _ = 0i32.append(0i32); // It works.
+   const _ = 0i32.append(0i32); -- It works.
    ```
 
    But sometimes you want to use `class`es as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
@@ -705,7 +713,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        wierd => main,
    };
    
-   wierd.weird = doNothing; // It works.
+   wierd.weird = doNothing; -- It works.
    ```
    
    An instance of a non-`dyn` `class` is a constant if all of its fields are constants.
