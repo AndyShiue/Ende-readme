@@ -739,7 +739,7 @@ And here's the `const fn factorial`:
 
 ```rust
 const fn factorial(m : Nat) -> Nat {
-    (Nat::zero) => 1,
+    (Nat::zero) => Nat::succ(Nat::zero),
     (Nat::succ(n)) = m * factorial(n),
 };
 ```
