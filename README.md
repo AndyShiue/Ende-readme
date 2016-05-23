@@ -31,7 +31,7 @@ They include:
 
 As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
 
-The syntax is very similar to Rust.
+The syntax is very similar to Rust's.
 If you are familiar with Rust, you might start reading from [this section](#more-general-class).
 Just be aware of the top-level pattern matching syntax and that generic parameters are written inside square brackets (`[]`) instead of angle brackets (`<>`).
 Users of Scala might also find the similarities between Scala and Ende.
