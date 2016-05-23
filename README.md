@@ -265,7 +265,6 @@ let p = point { x => 0i32, y => 0i32 };
 Someone mentioned that I sometimes write a trailing comma after the last matching arm or the last field of a `class`.
 That's intentionally designed.
 It's the same as the situation in Rust: all trailing commas are optional.
-(Oh, except one case that I will mention.)
 you can even write
 
 ```rust
@@ -276,6 +275,14 @@ data A =
     d,
 ;
 ```
+
+## `mod`s
+
+(TBD)
+
+# Visibility
+
+(TBD)
 
 # Generics
 
@@ -815,36 +822,34 @@ First, I have to define a helper function for it:
 
 ```rust
 const fn replicate[_ : Nat](Type) -> ..(Type) {
-    [0](_) => dyn (),
-    [Nat::succ(n)](T) => dyn (T, replicate[n](T))
+    [0](_) => variadic (),
+    [Nat::succ(n)](T) => variadic (T, replicate[n](T))
 }
 ```
 
 Because of the ambiguity I mentioned before, a tuple type cannot be written down directly.
-Instead, we write `dyn (something)` to write down a tuple type.
-(The keyword `dyn` is overloaded again.)
-`dyn ()` is an empty tuple type; `dyn (A, B, C)` is `A, B, C`; `dyn (A, B, C, D)` is `A, B, C, D`, etc.
-A tuple type with only one element is written `dyn (A,)`.
+Instead, we write `variadic (something)` to write down a tuple type.
+`variadic ()` is an empty tuple type; `variadic (A, B, C)` is `A, B, C`; `variadic (A, B, C, D)` is `A, B, C, D`, etc.
 Now focus on the `replicate` function above.
 
 - `replicate[0](T)` is an empty tuple type.
-- `replicate[1](T)` = `dyn (T, replicate[0](T))` = `T`.
+- `replicate[1](T)` = `variadic (T, replicate[0](T))` = `T`.
   (It's not the type `T`, but the tuple type that has only one element.)
-- `replicate[2](T)` = `dyn (T, replicate[1](T))` = `dyn (T, T)` = `T, T`.
+- `replicate[2](T)` = `variadic (T, replicate[1](T))` = `variadic (T, T)` = `T, T`.
 
 So `replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
-In order to say that an argument in fact represents many arguments, we use the keyword `dyn` again.
-a `dyn` argument can only appear at the end of an argument list.
+In order to say that an argument in fact represents many arguments, we use the keyword `variadic` again.
+a `variadic` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
 ```rust
-const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 {
+const fn sum[Args : replicate(I32)](variadic _ : Args) -> I32 {
     () => 0i32,
-    (head, dyn tail) => head + sum(tail),
+    (head, variadic tail) => head + sum(tail),
 };
 ```
 
@@ -881,7 +886,7 @@ Arguments in `const` or instance modes are curryable because they have nothing t
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
 Arguments in an argument list can only be dependent on arguments in previous argument lists.
 
-The last argument in a list of arguments in pi mode can also be `dyn` so it can accept variadic arguments.
+The last argument in a list of arguments in pi mode can also be `variadic`.
 
 Existential types as an example of pi-types:
 
