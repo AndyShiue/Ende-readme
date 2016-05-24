@@ -883,7 +883,7 @@ This could be used for duck typing or row polymorphism, e.g.
 `const` still isn't flexible enough in some situation.
 See the following 2 examples for instance:
 
-1. The `curry` function:
+1. **The `curry` function**:
    Having variadic arguments, we should be able to define a function that curries the arguments of another function.
    That is, if the function `func` has type `(I32, U32, F32) -> Bool`, `curry(func)` should have type `(I32)(U32)(F32) -> Bool`.
 
@@ -920,7 +920,7 @@ See the following 2 examples for instance:
    But we want it to be a `const fn`!
    Moreover, if the input `func` is a `const fn`, we want the output function to be also a `const fn`.
 
-2. Lazy evaluation:
+2. **Lazy evaluation**:
 
 (TBD)
 
