@@ -735,11 +735,14 @@ The solution is to use a recursively defined data type: `Nat`
 data Nat = zero, succ(Nat);
 ```
 
+`Nat` is special that it has a literal form.
+Literal of type `Nat` has a suffix `nat`.
+
 And here's the `const fn factorial`:
 
 ```rust
 const fn factorial(m : Nat) -> Nat {
-    (Nat::zero) => Nat::succ(Nat::zero),
+    (0nat) => 1nat,
     (Nat::succ(n)) = m * factorial(n),
 };
 ```
@@ -751,9 +754,9 @@ In fact, **any** constants which is typeable can be passed to a function in `con
 So I can write something like:
 
 ```rust
-const fn factorial[_ : Nat] -> Nat {
-    [0] => 1,
-    [Nat::succ(n)] = Nat::succ(n) * factorial(n),
+const fn factorial[m : Nat] -> Nat {
+    [0nat] => 1nat,
+    [Nat::succ(n)] = m * factorial(n),
 };
 ```
 
@@ -789,7 +792,7 @@ We can define a type with GADT by dropping the equal sign (`=`) after the name o
 
 ```rust
 data Array[_ : Nat, T] {
-    nil : Array[Nat::zero, T],
+    nil : Array[0nat, T],
     fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T],
 };
 ```
@@ -817,7 +820,7 @@ First, I have to define a helper function for it:
 
 ```rust
 const fn replicate[_ : Nat](Type) -> ..(Type) {
-    [0](_) => variadic (),
+    [0nat](_) => variadic (),
     [Nat::succ(n)](T) => variadic (T, replicate[n](T))
 }
 ```
@@ -827,10 +830,10 @@ Instead, we write `variadic (something)` to write down a tuple type.
 `variadic ()` is an empty tuple type; `variadic (A, B, C)` is `A, B, C`; `variadic (A, B, C, D)` is `A, B, C, D`, etc.
 Now focus on the `replicate` function above.
 
-- `replicate[0](T)` is an empty tuple type.
-- `replicate[1](T)` = `variadic (T, replicate[0](T))` = `T`.
+- `replicate[0nat](T)` is an empty tuple type.
+- `replicate[1nat](T)` = `variadic (T, replicate[0nat](T))` = `T`.
   (It's not the type `T`, but the tuple type that has only one element.)
-- `replicate[2](T)` = `variadic (T, replicate[1](T))` = `variadic (T, T)` = `T, T`.
+- `replicate[2nat](T)` = `variadic (T, replicate[1nat](T))` = `variadic (T, T)` = `T, T`.
 
 So `replicate[n](T)` is `T` repeated for `n` times.
 
