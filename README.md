@@ -117,18 +117,16 @@ unlike `while`, `if` can return something that isn't trivial.
 So we can write code like:
 
 ```rust
-let number = if count == 0i32 { 42u32 } else { 666u32 };
+let number = if count == 0i32 then 42u32 else 666u32;
 ```
 
 Of course, `if` can also be used in an old-style, C-like fashion.
 
 ```rust
 let mut number;
-if count == 0i32 {
-    number = 42u32;
-} else {
-    number = 666u32;
-};
+if count == 0i32
+then number = 42u32;
+else number = 666u32;
 ```
 
 # Functions
@@ -152,8 +150,9 @@ The trailing semicolon (`;`) is also required similar to the one of `while`.
 
 ```rust
 fn factorial(n : U32) -> U32 = {
-    if n == 0 { 0u32 }
-    else { n * factorial(n - 1) }
+    if n == 0
+    then 0u32
+    else n * factorial(n - 1)
 };
 ```
 
@@ -165,8 +164,9 @@ Lambdas are written similar to a function but without the name.
 
 ```rust
 let factorial = fn(n : U32) -> U32 = {
-    if n == 0 { 0u32 }
-    else { n * factorial(n - 1) }
+    if n == 0
+    then 0u32
+    else n * factorial(n - 1)
 };
 ```
 
@@ -608,9 +608,9 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    The value of a `while` loop is not a constant.
    The value of a `if` construct is a constant if and only if at least one of the conditions below are met.
 
-   1. The term immediately after `if` is a constant and evaluates to `true`, and the first branch of the `if` represents a constant.
+   1. The term immediately after `if` is a constant and evaluates to `true`, and the term after `then` represents a constant.
    
-   2. The term immediately after `if` is a constant and evaluates to `false`, and the second branch of the `if` represents a constant.
+   2. The term immediately after `if` is a constant and evaluates to `false`, and the term after `else` represents a constant.
 
 5. **Functions**:
    Functions that aren't inside a `record` are always constants, but there's a difference between `const fn`s and normal functions.
