@@ -789,7 +789,7 @@ We can define a type with GADT by dropping the equal sign (`=`) after the name o
 
 ```rust
 data Array[_ : Nat, T] {
-    nil : Array[0, T],
+    nil : Array[Nat::zero, T],
     fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T],
 };
 ```
