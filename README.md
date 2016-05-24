@@ -1026,5 +1026,5 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
    I'm thinking that it should be able to postulate extra axioms which shouldn't be done in `Type` because they break the totality of `const fn`s at runtime.
 4. Is it possible to be generic over hierarchies?
 5. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
-   If it's possible, I shouldn't use special syntax on dynamic types but something like `OrderedDynamic[Hierarchy]`.
+   If it's possible, I shouldn't use special syntax on variadic types but something like `OrderedVariadic[Hierarchy]`.
    Is the ambiguity between an universe and a hierarchy okay?
