@@ -157,6 +157,10 @@ fn factorial(n : U32) -> U32 = {
 };
 ```
 
+## lambdas
+
+(TBD)
+
 # User-Defined Data Types
 
 Data types can be defined with the keyword `data`.
@@ -868,8 +872,11 @@ See the following 2 examples for instance:
    let me show you how to define such function.
 
    ```rust
-   -- TBD. This is much harder than I initially thought ...
-   
+   -- Don't ask what `???` is for now.
+   -- Just pretend it's magic; I'll debunk it later.
+   -- The type system still isn't strong enough to actually write it down.
+
+   -- If you can't read this function, just skip it.
    -- We can also pattern match the tuple types instead of the values of the tuple types.
    const fn curriedFuncType(Type, variadic _ : ..(Type)) -> ??? {
        (Ret) => Ret,
@@ -878,9 +885,24 @@ See the following 2 examples for instance:
    
    const fn curry[Args : ..(Type), Ret](func : (variadic Args) -> Ret)
        -> curriedFuncType(Ret, Args) {
-       ???
+       fn() = ret => ret,
+       fn(head, variadic tail) = ret =>
+           fn(head) = curry(fn(tail) = ret),
    }
    ```
+
+   What's problematic about it?
+   The problem is:
+
+   > If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
+
+   If the `func` is a constant but **is not** a `const fn`, because the above `curry` function is a `const fn`, `curry(func)` **is** also a `const fn`.
+   Now there's a contradiction.
+   So the compiler should not accept the definition of `curry`.
+   But we want it to be a `const fn`!
+   if the input `func` is a `const fn`, we want the output function also a `const fn`.
+
+(TBD)
 
 # Dependent Types
 
