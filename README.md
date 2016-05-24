@@ -862,7 +862,7 @@ This could be used for duck typing or row polymorphism, e.g.
 
 # Phase Polymorphism
 
-`const fn`s still isn't flexible enough in some situation.
+`const` still isn't flexible enough in some situation.
 See the following 2 examples for instance:
 
 1. The `curry` function:
