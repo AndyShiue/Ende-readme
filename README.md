@@ -124,9 +124,11 @@ Of course, `if` can also be used in an old-style, C-like fashion.
 
 ```rust
 let mut number;
-if count == 0i32
-then number = 42u32;
-else number = 666u32;
+if count == 0i32 then {
+    number = 42u32;
+} else {
+    number = 666u32;
+}
 ```
 
 # Functions
