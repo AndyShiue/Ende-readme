@@ -159,7 +159,18 @@ fn factorial(n : U32) -> U32 = {
 
 ## lambdas
 
-(TBD)
+Lambdas are unnamed function literals.
+Like normal functions, lambdas must specify their return types.
+Lambdas are written similar to a function but without the name.
+
+```rust
+let factorial = fn(n : U32) -> U32 = {
+    if n == 0 { 0u32 }
+    else { n * factorial(n - 1) }
+};
+```
+
+Lambdas can possibly be closures, which are lambdas that capture variables outside the body of the lambda.
 
 # User-Defined Data Types
 
@@ -569,6 +580,10 @@ record Add[L, R] = add[Output] {
 
 If you want to access the output type specified by an instance of a trait, simply write `inst.Output`.
 
+## Visibility of `impl`s
+
+(TBD)
+
 # `const`
 
 You may found that I wrote *`const` mode* instead of *const mode* throughout the article.
@@ -623,6 +638,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    `const fn`s are also checked to be *positive*, meaning they don't recurse forever.
    A constant that evaluates to a `const fn` is also a `const fn`.
    If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
+   There are also `const fn` lambdas.
 
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
@@ -876,19 +892,18 @@ See the following 2 examples for instance:
    -- Just pretend it's magic; I'll debunk it later.
    -- The type system still isn't strong enough to actually write it down.
 
-   -- If you can't read this function, just skip it.
-   -- We can also pattern match the tuple types instead of the values of the tuple types.
+   -- We can also pattern match the tuple types instead of the values of the tuple types.)
    const fn curriedFuncType(Type, variadic _ : ..(Type)) -> ??? {
        (Ret) => Ret,
        (Ret, Head, variadic Tail) => (Head) -> curriedFuncType(Ret, Tail),
    }
-   
+
    const fn curry[Args : ..(Type), Ret](func : (variadic Args) -> Ret)
        -> curriedFuncType(Ret, Args) {
-       fn() = ret => ret,
-       fn(head, variadic tail) = ret =>
-           -- TODO: The return type and the types of the parameters of a lambda should be explicity specified.
-           fn(head) = curry(fn(tail) = ret),
+       (fn() -> Ret = ret) =>
+           ret,
+       [tuple (Head, variadic Tail)](fn(head : Head, variadic tail : Tail) -> Ret = ret) =>
+           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(variadic tail : Tail) -> Ret = ret),
    }
    ```
 
@@ -901,7 +916,9 @@ See the following 2 examples for instance:
    Now there's a contradiction.
    So the compiler should not accept the definition of `curry`.
    But we want it to be a `const fn`!
-   if the input `func` is a `const fn`, we want the output function also a `const fn`.
+   Moreover, if the input `func` is a `const fn`, we want the output function to be also a `const fn`.
+
+2. Lazy evaluation:
 
 (TBD)
 
@@ -943,9 +960,9 @@ record Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 
 ## `with`
 
-Dependent functions might return terms of different types depending on the arguments in pi mode.
-But all arms of a `match` must return terms of the same type.
-To solve it, I introduce **dependent pattern matching** through `with` clauses.
+The value of one argument of a dependent function might depend on another argument in pi mode.
+We need to be able to match several arguments together.
+Introduce **dependent pattern matching**, through `with` clauses.
 If you write the function without the equal sign before the curly braces, you can do pattern matching at the top level.
 Top-level pattern matching can include arms with `with` clauses.
 Here's an example:
@@ -954,7 +971,7 @@ Here's an example:
 
 # Universes
 
-What's the type of `Type`?
+What's the type of `Type` and type constructors?
 In Ende, `Type` is actually not a single type, but a series of types.
 You can think that `Type` has a hidden natural number parameter.
 The `Type` that all of us are familiar about is `Type[0]`, but the type of `Type[0]` is `Type[1]`, the type of which is `Type[2]`, and going on and on.
@@ -1076,3 +1093,12 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 5. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
    If it's possible, I shouldn't use special syntax on variadic types but something like `OrderedVariadic[Hierarchy]`.
    Is the ambiguity between an universe and a hierarchy okay?
+
+# TODOs
+
+1. Foreign function interface.
+2. `use` items to import other items.
+3. Annotations.
+4. Mixfix operators?
+5. Equality types. I don't know how to do it.
+6. Provisional definitions.
