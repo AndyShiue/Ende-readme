@@ -128,7 +128,7 @@ if count == 0i32 then {
     number = 42u32;
 } else {
     number = 666u32;
-}
+};
 ```
 
 # Functions
