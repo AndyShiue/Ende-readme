@@ -915,8 +915,7 @@ See the following 2 examples for instance:
    > If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
 
    If the `func` is a constant but **is not** a `const fn`, because the above `curry` function is a `const fn`, `curry(func)` **is** also a `const fn`.
-   Now there's a contradiction.
-   So the compiler should not accept the definition of `curry`.
+   Now there's a contradiction, so the compiler should not accept the definition of `curry`.
    But we want it to be a `const fn`!
    Moreover, if the input `func` is a `const fn`, we want the output function to be also a `const fn`.
 
