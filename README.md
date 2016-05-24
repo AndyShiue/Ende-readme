@@ -23,16 +23,16 @@ They include:
 
 1. all functions
 2. all structs
-3. all class constructors (in the sense of Java jargon)
-4. all interfaces
-5. all implementations of interfaces
-6. all extensions between interfaces
+3. all class constructors
+4. all traits
+5. all implementations of traits
+6. all extensions between traits
 7. the vast majority of types
 
 As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
 
 The syntax is very similar to Rust's.
-If you are familiar with Rust, you might start reading from [this section](#more-general-class).
+If you are familiar with Rust, you might start reading from [this section](#more-general-record).
 Just be aware of the top-level pattern matching syntax and that generic parameters are written inside square brackets (`[]`) instead of angle brackets (`<>`).
 Users of Scala might also find the similarities between Scala and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
@@ -232,19 +232,19 @@ fn unwrapOr42(OptionI32) -> I32 {
 };
 ```
 
-There's another way to define a data type, using `class`.
-`class`es in Ende are like `struct`s in Rust.
-`class`es can be seen as `data` with only one variant.
+There's another way to define a data type, using `record`.
+`record`s in Ende are like `struct`s in Rust.
+`record`s can be seen as `data` with only one variant.
 The name of the variant isn't namespaced, though.
 
 ```rust
-class Point = point {
+record Point = point {
     x : I32,
     y : I32,
 };
 ```
 
-Members of an instance of a `class` can either be accessed by its name after a dot (`.`) or by pattern matching.
+Members of an instance of a `record` can either be accessed by its name after a dot (`.`) or by pattern matching.
 
 ```rust
 fn getX1(p : Point) -> I32 = p.x;
@@ -253,13 +253,13 @@ fn getX2(Point) -> I32 {
 };
 ```
 
-To pattern match or to construct an instance of a `class`, we write a fat arrow (`=>`) after each name of the fields instead of a colon (`:`) used when a `class` is defined:
+To pattern match or to construct an instance of a `record`, we write a fat arrow (`=>`) after each name of the fields instead of a colon (`:`) used when a `record` is defined:
 
 ```rust
 let p = point { x => 0i32, y => 0i32 };
 ```
 
-Someone mentioned that I sometimes write a trailing comma after the last matching arm or the last field of a `class`.
+Someone mentioned that I sometimes write a trailing comma after the last matching arm or the last field of a `record`.
 That's intentionally designed.
 It's the same as the situation in Rust: all trailing commas are optional.
 you can even write
@@ -336,10 +336,10 @@ data Option[T] = some(T), none;
 
 # Named Mode
 
-Compare this `class` in Ende
+Compare this `record` in Ende
 
 ```rust
-class Example = example {
+record Example = example {
     example : Unit,
 };
 ```
@@ -363,28 +363,28 @@ The named normal mode is similar to the normal mode, except that the parameters 
 The above `example` now has type `{example : Unit} -> Example`.
 To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
 
-# More General `class`
+# More General `record`
 
-Why are Rust `struct`s called `class`es in Ende?
-Because they can not only act as Rust `struct`s but also Haskell `class`es.
-Here, I'm going to write a `Monoid` interface.
-Of course, it's just another `class`.
+`record`s in Ende can not only act as Rust `struct`s but also Rust `trait`s/ Java `interface`s/Haskell `class`es.
+I'll call them traits in the rest of the article if they are used like a Rust `trait`.
+Here, I'm going to write a `Monoid` trait.
+Of course, it's just another `record`.
 
 ```rust
-class Monoid[T] = monoid {
+record Monoid[T] = monoid {
     unit : T,
     fn append(self : T, T) -> T,
 };
 ```
 
-To implement a class, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
+To implement a trait, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 There are 3 kinds of `impl`s in Ende.
 
 ## `impl` objects
 
 `impl` objects are the first kind of `impl`.
 The `i32Monoid` below is an `impl` object.
-An `impl` object must be an instance of a `class`.
+An `impl` object must be an instance of a `record`.
 
 ```rust
 impl i32Monoid : Monoid[I32] = monoid {
@@ -402,9 +402,9 @@ let sum1 = append(1i32, 2i32);
 let sum2 = 1i32.append(2i32);
 ```
 
-In order to write a function that is generic over types implementing a `class`, the third mode is introduced.
+In order to write a function that is generic over types implementing a `record`, the third mode is introduced.
 It's called **instance mode**, and is delimited by `[()]`.
-Arguments passed in instance mode must be instances of `class`es.
+Arguments passed in instance mode must be instances of `record`s.
 `[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
 Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
@@ -426,17 +426,17 @@ let sum = concat[(i32Monoid)](i32Vec);
 ## `impl` functions
 
 `impl` functions are literally, `impl`s that are functions.
-An `impl` function must return an instance of a `class`.
+An `impl` function must return an instance of a `record`.
 `impl`s need to be functions mainly because of 2 reasons:
 
 1. It's generic over an argument in the `const` mode.
 2. It's generic over an argument in the instance mode.
 
 I'm going to provide a `impl` function generic over both modes.
-First, define a `Group` `class`.
+First, define a `Group` `record`.
 
 ```rust
-class Group[T] = group {
+record Group[T] = group {
     unit : T,
     fn append(self : T, T) -> T,
     fn inverse(self : T) -> T,
@@ -460,13 +460,13 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 
 ## `special impl`
 
-What we don't have yet is the ability to define one `class` to be a super`class` of another `class`. In other words, asserting if you implement a `class`, another `class` must be implemented.
+What we don't have yet is the ability to define one `record` to be a supertrait of another `record`. In other words, asserting if you implement a trait, another trait must be implemented.
 You may ask, isn't the above `impl` functions enough?
 Not really.
-Imagine you want to define an `Abelian` `class`, the code you need to add would be:
+Imagine you want to define an `Abelian` trait, the code you need to add would be:
 
 ```rust
-class Abelian[T] = abelian {
+record Abelian[T] = abelian {
     unit : T,
     fn append(self : T, T) -> T,
     fn inverse(self : T) -> T,
@@ -482,12 +482,12 @@ impl abelianToGroup[T][(Abelian[T])] -> Group[T] = {
 ```
 
 That's a lot of boilerplate!
-The code is very similar to implementing `Monoid`s for `Group`s; we have to write this kind of code again and again while creating an inheritance tree of `class`es.
+The code is very similar to implementing `Monoid`s for `Group`s; we have to write this kind of code again and again while creating an inheritance tree of `record`s.
 That is not tolerable.
 Imagine if we can write code like this:
 
 ```rust
--- The type `Abelian` carries no additional data, but it extends the `class` `Group`.
+-- The type `Abelian` carries no additional data, but it extends the trait `Group`.
 data Abelian[T] = abelian;
 impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension; -- The extension happens here.
 ```
@@ -502,7 +502,7 @@ I'll try to explain it.
 First, I'll provide the hacky part of the source code:
 
 ```rust
-class Extends[A, B] = extension;
+record Extends[A, B] = extension;
 
 -- Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
@@ -518,7 +518,7 @@ To know why it's needed, we need to go deeper to know how an `impl` is found.
 ### Searching for `impl`s
 
 First, we search for `impl` objects.
-We add an `impl` object in scope to the current **`impl` context** if the `class` it implements is also in scope.
+We add an `impl` object in scope to the current **`impl` context** if the trait it implements is also in scope.
 
 Second, we add the `impl` functions to the `impl` context.
 There is a necessary limitation of normal `impl` functions:
@@ -533,37 +533,37 @@ Without the limitation, the `impl` searching process could stuck at some weird r
 
 And `special impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
-In fact the only one I can think of is `class` inheritance.
+In fact the only one I can think of is trait inheritance.
 The `impl`s of the return types of the `special impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 ## Associated Types
 
-Fields of an instance of a `class` can also be dependent on.
+Fields of an instance of a `record` can also be dependent on.
 They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
 They are *output parameters*.
 For example, imagine if there is a way to overload operators.
-There should be an interface for each operator.
+There should be an trait for each operator.
 To achieve maximal flexibility, I want to make types of the right-hand-side, the left-hand-side, and the returned terms possibly different.
 It means it has to be generic over these 3 types.
-So maybe the interface could be like:
+So maybe the trait could be like:
 
 ```rust
-class Add[L, R, Output] = add {
+record Add[L, R, Output] = add {
     fn add(self : L, R) -> Output,
 };
 ```
 
-However, the interface is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
+However, the trait is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
 This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
-The correct interface should be:
+The correct trait should be:
 
 ```rust
-class Add[L, R] = add[Output] {
+record Add[L, R] = add[Output] {
     fn add(self : L, R) -> Output,
 };
 ```
 
-If you want to access the output type specified by an instance of a `class`, simply write `inst.Output`.
+If you want to access the output type specified by an instance of a trait, simply write `inst.Output`.
 
 # `const`
 
@@ -594,7 +594,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    2. The term immediately after `if` is a constant and evaluates to `false`, and the second branch of the `if` represents a constant.
 
 5. **Functions**:
-   Functions that aren't inside a `class` are always constants, but there's a difference between `const fn`s and normal functions.
+   Functions that aren't inside a `record` are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
    The operations you can do in a `const fn` are more limited.
@@ -662,14 +662,14 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    const _ = Dynamic::dynamic4(0i32);
    ```
 
-8. **`class`es**:
-   An instance of a `class` is a constant if all of its fields are constants by default.
+8. **`record`s**:
+   An instance of a `record` is a constant if all of its fields are constants by default.
    In comparison to `data`, the problem of constness is even more serious, though.
-   When you write a `class`, I assume you want not only that the fields are constants, but also the function members are `const fn`s, and that's the default.
-   Here is such an example, the `Monoid` class we've talked about.
+   When you write a `record`, I assume you want not only that the fields are constants, but also the function members are `const fn`s, and that's the default.
+   Here is such an example, the `Monoid` trait we've talked about.
 
    ```rust
-   class Monoid[T] = monoid {
+   record Monoid[T] = monoid {
        unit : T,
        fn append(self : T, T) -> T,
    };
@@ -682,12 +682,12 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    const _ = 0i32.append(0i32); -- It works.
    ```
 
-   But sometimes you want to use `class`es as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
-   `dyn class` is used to define such `class`es.
-   You can also write `dyn` in front of a function member in a non-`dyn` `class` to indicate it's not a `const` function.
+   But sometimes you want to use `record`s as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
+   `dyn record` is used to define such classes.
+   You can also write `dyn` in front of a function member in a non-`dyn` `record` to indicate it's not a `const` function.
    
    ```rust
-   dyn class Counter = counter {
+   dyn record Counter = counter {
        inner : I32,
        fn increment(self : Counter) -> Unit;
    };
@@ -705,7 +705,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    If you want a single function field to be dynamic, write `dyn` **after** the keyword `fn`.
    
    ```rust
-   dyn class Wierd = duh {
+   dyn record Wierd = duh {
        fn dyn wierd : () -> Unit,
    };
    
@@ -718,8 +718,8 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    wierd.weird = doNothing; -- It works.
    ```
    
-   An instance of a non-`dyn` `class` is a constant if all of its fields are constants.
-   An instance of a `dyn class` is never a constant.
+   An instance of a non-`dyn` `record` is a constant if all of its fields are constants.
+   An instance of a `dyn record` is never a constant.
 
 ## A `const` Version `factorial`
 
@@ -768,10 +768,10 @@ In Ende, we can also be generic over type constructors, which are `const fn`s at
 That is, to pass higher-kinded types around.
 Normal types have kind `Type`.
 However, `Option` is a type constructor and is of kind `[Type] -> Type`, which means it is a function from a type at compile time to another type.
-Here's the `Functor` `class`.
+Here's the `Functor` trait.
 
 ```rust
-class Functor[F : [Type] -> Type] = functor {
+record Functor[F : [Type] -> Type] = functor {
     fn map[From, To](self : F[From], (From) -> To) -> F[To],
 };
 ```
@@ -820,27 +820,27 @@ First, I have to define a helper function for it:
 
 ```rust
 const fn replicate[_ : Nat](Type) -> ..(Type) {
-    [0nat](_) => variadic (),
-    [Nat::succ(n)](T) => variadic (T, replicate[n](T))
+    [0nat](_) => tuple (),
+    [Nat::succ(n)](T) => tuple (T, replicate[n](T))
 }
 ```
 
 Because of the ambiguity I mentioned before, a tuple type cannot be written down directly.
-Instead, we write `variadic (something)` to write down a tuple type.
-`variadic ()` is an empty tuple type; `variadic (A, B, C)` is `A, B, C`; `variadic (A, B, C, D)` is `A, B, C, D`, etc.
+Instead, we write `tuple (something)` to write down a tuple type.
+`tuple ()` is an empty tuple type; `tuple (A, B, C)` is `A, B, C`; `tuple (A, B, C, D)` is `A, B, C, D`, etc.
 Now focus on the `replicate` function above.
 
 - `replicate[0nat](T)` is an empty tuple type.
-- `replicate[1nat](T)` = `variadic (T, replicate[0nat](T))` = `T`.
+- `replicate[1nat](T)` = `tuple (T, replicate[0nat](T))` = `T`.
   (It's not the type `T`, but the tuple type that has only one element.)
-- `replicate[2nat](T)` = `variadic (T, replicate[1nat](T))` = `variadic (T, T)` = `T, T`.
+- `replicate[2nat](T)` = `tuple (T, replicate[1nat](T))` = `tuple (T, T)` = `T, T`.
 
 So `replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
-In order to say that an argument in fact represents many arguments, we use the keyword `variadic` again.
+In order to say that an argument in fact represents many arguments, we use the keyword `variadic`.
 a `variadic` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
@@ -856,9 +856,32 @@ This could be used for duck typing or row polymorphism, e.g.
 
 (TBD)
 
-# Constness Polymorphism
+# Phase Polymorphism
 
-(TBD)
+`const fn`s still isn't flexible enough in some situation.
+See the following 2 examples for instance:
+
+1. The `curry` function:
+   Having variadic arguments, we should be able to define a function that curries the arguments of another function.
+   That is, if the function `func` has type `(I32, U32, F32) -> Bool`, `curry(func)` should have type `(I32)(U32)(F32) -> Bool`.
+
+   let me show you how to define such function.
+
+   ```rust
+   -- TBD. This is much harder than I initially thought ...
+   
+   -- We can also pattern match the tuple types instead of the values of the tuple types.
+   const fn curriedFuncType(Type, variadic _ : ..(Type)) -> ??? {
+       (Ret) => Ret,
+       (Ret, Head, variadic Tail) => (Head) -> curriedFuncType(Ret, Tail),
+   }
+   
+   const fn curry[Args : ..(Type), Ret](func : (variadic Args) -> Ret)
+       -> {
+       () => 
+       ()
+   }
+   ```
 
 # Dependent Types
 
@@ -893,7 +916,7 @@ The last argument in a list of arguments in pi mode can also be `variadic`.
 Existential types as an example of pi-types:
 
 ```rust
-class Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
+record Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
 ```
 
 ## `with`
@@ -1005,7 +1028,7 @@ Normally data types live in `Type`, but we can also define data types that live 
 
 ```rust
 data WhatTheHeck : AnotherWorld = whatever;
-class YouAreCrazy : AnotherWorld = youAreCrazy {};
+record YouAreCrazy : AnotherWorld = youAreCrazy {};
 ```
 
 Now types of function types are:
