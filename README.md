@@ -66,10 +66,10 @@ Terms include:
    2. **Floats**:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
-2. Applications of binary operators:
-   There will only be binary operators instead of unary or trinary ones, also because that's enough of illustrative purposes.
-   In actual implementations, operators of any fixity could be introduced.
-   There could even be user-defined mixfix operators, but that's way beyond the scope of this article.
+2. Applications of operators:
+   When one talks about operators, we usually think of infix operators.
+   But in actual implementations, operators of any fixity could be introduced.
+   There could possibly even be user-defined mixfix operators.
    
    Examples would be `1 + 1`, `42 * 666`, `1 == 2`, etc.
    Fixity of operators should follow the common sense.
