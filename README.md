@@ -877,9 +877,8 @@ See the following 2 examples for instance:
    }
    
    const fn curry[Args : ..(Type), Ret](func : (variadic Args) -> Ret)
-       -> {
-       () => 
-       ()
+       -> curriedFuncType(Ret, Args) {
+       ???
    }
    ```
 
