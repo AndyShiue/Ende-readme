@@ -870,7 +870,7 @@ See the following 2 examples for instance:
    That is, if the function `func` has type `(I32, U32, F32) -> Bool`, `curry(func)` should have type `(I32)(U32)(F32) -> Bool`.
 
    let me show you how to define such function.
-
+   
    ```rust
    -- Don't ask what `???` is for now.
    -- Just pretend it's magic; I'll debunk it later.
@@ -887,6 +887,7 @@ See the following 2 examples for instance:
        -> curriedFuncType(Ret, Args) {
        fn() = ret => ret,
        fn(head, variadic tail) = ret =>
+           -- TODO: The return type and the types of the parameters of a lambda should be explicity specified.
            fn(head) = curry(fn(tail) = ret),
    }
    ```
