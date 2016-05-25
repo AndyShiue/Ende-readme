@@ -870,7 +870,7 @@ See the following 2 examples for instance:
    }
 
    const fn curry[Args : ..(Type), Ret](func : (dyn Args) -> Ret)
-       -> curriedFuncType(Ret, Args) {
+       -> curriedFuncType(Ret, dyn Args) {
        (fn() -> Ret = ret) =>
            ret,
        [tuple (Head, dyn Tail)](fn(head : Head, dyn tail : Tail) -> Ret = ret) =>
