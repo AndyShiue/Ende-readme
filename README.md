@@ -880,6 +880,8 @@ This could be used for duck typing or row polymorphism, e.g.
 
 # Phase Polymorphism
 
+## The Problem
+
 `const` still isn't flexible enough in some situation.
 See the following 2 examples for instance:
 
@@ -920,6 +922,24 @@ See the following 2 examples for instance:
    Moreover, if the input `func` is a `const fn`, we want the output function to be also a `const fn`.
 
 2. **Lazy evaluation**:
+   If mixfix operators are implemented, maybe `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
+
+   ```rust
+   const fn if_then_else[T](_1_ : Bool, lazy _2_ : T, lazy _3_ : T) -> T {
+       match _1_ {
+           Bool::true => _2_,
+           Bool::false => _3_,
+       }
+   }
+   ```
+   
+   However, this is not quite right, either.
+   Because if `_1_` evaluates to `true`, the constness of `_3_` doesn't matter to the constness of the whole function.
+
+## The Solution
+
+The solution is to give the user finer control of the `const` system.
+Instead of writing `const var` or `dyn var`, we can write `phase ph var` to specify its phase further.
 
 (TBD)
 
