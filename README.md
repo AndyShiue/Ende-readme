@@ -16,7 +16,7 @@ The former includes more conservative languages like Java or Go.
 The latter are basically those dependently-typed languages.
 The lack of compile-time constructs make higher abstraction at compile time impossible, but dependent types make the phase of which the term is evaluated unpredictable.
 The idea of modes is basically genericity over phases.
-In complement to modes, you can specify stuff that only works at runtime or works at both runtime and compile time using the `const` system of Ende.
+In complement to modes, you can specify stuff that only works at either runtime or compile time using the `const` system of Ende.
 
 The presence of modes makes almost everything in Ende first-class, which means they can be passed as arguments and returned.
 They include:
