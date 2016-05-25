@@ -892,10 +892,10 @@ See the following 2 examples for instance:
    If mixfix operators are implemented, maybe `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
 
    ```rust
-   const fn if_then_else[T](_1_ : Bool, lazy _2_ : T, lazy _3_ : T) -> T {
-       match _1_ {
-           Bool::true => _2_,
-           Bool::false => _3_,
+   const fn if_then_else[T](_0_ : Bool, lazy _1_ : T, lazy _2_ : T) -> T {
+       match _0_ {
+           Bool::true => _1_,
+           Bool::false => _2_,
        }
    }
    ```
