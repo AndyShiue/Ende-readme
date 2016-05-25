@@ -829,14 +829,14 @@ So `replicate[n](T)` is `T` repeated for `n` times.
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
-In order to say that an argument in fact represents many arguments, we use the keyword `variadic`.
-a `variadic` argument can only appear at the end of an argument list.
+In order to say that an argument in fact represents many arguments, we overload the keyword `dyn`.
+a `dyn` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
 ```rust
-const fn sum[Args : replicate(I32)](variadic _ : Args) -> I32 {
+const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 {
     () => 0i32,
-    (head, variadic tail) => head + sum(tail),
+    (head, dyn tail) => head + sum(tail),
 };
 ```
 
@@ -864,17 +864,17 @@ See the following 2 examples for instance:
    -- The type system still isn't strong enough to actually write it down.
 
    -- We can also pattern match the tuple types instead of the values of the tuple types.)
-   const fn curriedFuncType(Type, variadic _ : ..(Type)) -> ??? {
+   const fn curriedFuncType(Type, dyn _ : ..(Type)) -> ??? {
        (Ret) => Ret,
-       (Ret, Head, variadic Tail) => (Head) -> curriedFuncType(Ret, Tail),
+       (Ret, Head, dyn Tail) => (Head) -> curriedFuncType(Ret, Tail),
    }
 
-   const fn curry[Args : ..(Type), Ret](func : (variadic Args) -> Ret)
+   const fn curry[Args : ..(Type), Ret](func : (dyn Args) -> Ret)
        -> curriedFuncType(Ret, Args) {
        (fn() -> Ret = ret) =>
            ret,
-       [tuple (Head, variadic Tail)](fn(head : Head, variadic tail : Tail) -> Ret = ret) =>
-           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(variadic tail : Tail) -> Ret = ret),
+       [tuple (Head, dyn Tail)](fn(head : Head, dyn tail : Tail) -> Ret = ret) =>
+           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(dyn tail : Tail) -> Ret = ret),
    }
    ```
 
@@ -938,7 +938,7 @@ Arguments in `const` or instance modes are curryable because they have nothing t
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
 Arguments in an argument list can only be dependent on arguments in previous argument lists.
 
-The last argument in a list of arguments in pi mode can also be `variadic`.
+The last argument in a list of arguments in pi mode can also be `dyn`.
 
 Existential types as an example of pi-types:
 
