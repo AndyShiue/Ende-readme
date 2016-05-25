@@ -614,11 +614,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    2. The term immediately after `if` is a constant and evaluates to `false`, and the term after `else` represents a constant.
 
-5. **`data`**:
-   In `data`, all variants are constants.
-   In addition, all variants with parameters in normal `data` are `const fn`s.
-
-6. **Functions**:
+5. **Functions**:
    Functions that aren't inside a `record` are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
@@ -646,10 +642,14 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
    There are also `const fn` lambdas.
 
-7. **`impl`s**:
+6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments.
    `impl` objects are always constants; `impl` functions and `special impl`s are always constants and `const fn`s.
+
+7. **`data`**:
+   In `data`, all variants are constants.
+   In addition, all variants with parameters in normal `data` are `const fn`s.
 
 8. **`record`s**:
    An instance of a `record` is a constant if all of its fields are constants by default.
