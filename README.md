@@ -649,7 +649,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
 7. **`data`**:
    In `data`, all variants are constants.
-   In addition, all variants with parameters in normal `data` are `const fn`s.
+   In addition, all variants with parameters in `data` are `const fn`s.
 
 8. **`record`s**:
    An instance of a `record` is a constant if all of its fields are constants by default.
