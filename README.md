@@ -901,7 +901,7 @@ See the following 2 examples for instance:
    ```
    
    However, this is not quite right, either.
-   Because if `_1_` evaluates to `true`, the constness of `_3_` doesn't matter to the constness of the whole function.
+   Because if `_0_` evaluates to `true`, the constness of `_2_` doesn't matter to the constness of the whole function.
 
 ## The Solution
 
