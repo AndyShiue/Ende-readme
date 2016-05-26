@@ -206,7 +206,7 @@ instead of
 ```rust
 fn isSummer(season : Season) -> Bool = {
     match season {
-        case Season::summer => Bool::true,
+        Season::summer => Bool::true,
         _ => Bool::false,
     }
 };
