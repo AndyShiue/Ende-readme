@@ -524,12 +524,12 @@ record Extends[A, B] = extension;
 -- Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
-special impl superClass[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+special impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
 
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
 In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
-Why is the keyword `special` before the `impl superClass` required then?
+Why is the keyword `special` before the `impl superTrait` required then?
 To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
@@ -785,8 +785,6 @@ data Array[_ : Nat, T] {
     fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T],
 };
 ```
-
-You can mix `dyn data` and GADTs; variants in GADTs can also be made `dyn`.
 
 # Variadic Arguments
 
@@ -1087,6 +1085,5 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 1. Foreign function interface.
 2. `use` items to import other items.
 3. Annotations.
-4. Mixfix operators?
-5. Equality types. I don't know how to do it.
-6. Provisional definitions.
+4. Equality types. I don't know how to do it.
+5. Provisional definitions.
