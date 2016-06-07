@@ -27,7 +27,8 @@ They include:
 4. all traits
 5. all implementations of traits
 6. all extensions between traits
-7. the vast majority of types
+7. all modules
+8. the vast majority of types
 
 As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
 
@@ -166,13 +167,23 @@ Lambdas are written similar to a function but without the name.
 
 ```rust
 let factorial = fn(n : U32) -> U32 = {
-    if n == 0
+    if n == 0u32
     then 0u32
     else n * factorial(n - 1)
 };
 ```
 
-Lambdas can possibly be closures, which are lambdas that capture variables outside the body of the lambda.
+# Lang Items
+
+In Rust and also in Ende, there's a concept of *lang items*.
+Lang items are items that are treated specially, having something to do with the compiler.
+I won't introduce a keyword for lang items but instead use *annotations* to mark them.
+Annotations are written before the annotated item, start with an at sign (`@`) and is followed by a colon (`:`).
+
+```rust
+@lang("Whatever"):
+data Whatever;
+```
 
 # User-Defined Data Types
 
@@ -182,7 +193,9 @@ I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
 ```rust
+@lang("Unit"):
 data Unit = unit;
+@lang("Bool"):
 data Bool = true, false;
 data Season = spring, summer, autumn, winter;
 ```
@@ -292,7 +305,39 @@ data A =
 
 ## `mod`s
 
-(TBD)
+`mod`s are containers of items, and `mod`s themselves are also items, so `mod`s can be nested.
+We use the keyword `mod` to declare a module.
+
+```rust
+mod module {
+    fn unit() -> Unit = Unit::unit;
+    data Three = one, two, three;
+    mod inner {
+        record Circle {
+            radius: I32,
+        };
+    };
+};
+```
+
+A `mod` can be declared without curly braces (`{}`).
+
+```rust
+mod somewhereElse;
+```
+
+If the compiler sees such `mod`, the compiler will look for `./somewhereElse.ed` and `./somewhereElse/mod.rs` to read its content.
+If neither are presented, the compiler emits an error.
+
+`mod`s are also first-class value of type `Mod`:
+
+```
+@lang("Mod"):
+special const data Mod;
+```
+
+Here, `special const` means the instance of `Mod` can only exist at compile time.
+I'll show how to manipulate `data` at compile time later. 
 
 # Visibility
 
@@ -565,6 +610,7 @@ It means it has to be generic over these 3 types.
 So maybe the trait could be like:
 
 ```rust
+@lang("Add"):
 record Add[L, R, Output] = add {
     fn add(self : L, R) -> Output,
 };
@@ -575,6 +621,7 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct trait should be:
 
 ```rust
+@lang("Add"):
 record Add[L, R] = add[Output] {
     fn add(self : L, R) -> Output,
 };
