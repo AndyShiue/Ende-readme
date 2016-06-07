@@ -134,7 +134,10 @@ if count == 0i32 then {
 
 # Functions
 
-Functions are the simplest concept that has the ability to encapsulate information in functional programming languages; functions are terms.
+Functions are the simplest concept that has the ability to encapsulate information in functional programming languages; function calls are terms.
+The declaration of a function is an *item*.
+Items are basically some construct that can appear at the top level of the source code.
+
 Every application needs to have an entry, traditionally called `main`.
 In Ende, `main` is a function of type `() -> Unit`.
 That is, a function that accepts no inputs and returns nothing.
@@ -187,8 +190,9 @@ data Whatever;
 
 # User-Defined Data Types
 
-Data types can be defined with the keyword `data`.
-They can be seen as `enum`s in Rust.
+Data types are items.
+They can be defined with the keyword `data`.
+They can be seen as `enum`s in Rust and are more powerful than that of C/Java.
 I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
@@ -355,7 +359,7 @@ use module::inner::_;
 
 ```
 @lang("Mod"):
-special const data Mod;
+pub special const data Mod;
 ```
 
 Here, `special const` means the instance of `Mod` can only exist at compile time.
@@ -629,7 +633,7 @@ So maybe the trait could be like:
 
 ```rust
 @lang("Add"):
-record Add[L, R, Output] = add {
+pub record Add[L, R, Output] = add {
     fn add(self : L, R) -> Output,
 };
 ```
@@ -640,7 +644,7 @@ The correct trait should be:
 
 ```rust
 @lang("Add"):
-record Add[L, R] = add[Output] {
+pub record Add[L, R] = add[Output] {
     fn add(self : L, R) -> Output,
 };
 ```
@@ -763,7 +767,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        fn dyn wierd : () -> Unit,
    };
    
-   fn doNothing() -> Unit = {};
+   fn doNothing() -> Unit = Unit::unit;
    
    let wierd = duh {
        wierd => main,
@@ -774,6 +778,10 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    An instance of a non-`dyn` `record` is a constant if all of its fields are constants.
    An instance of a `dyn record` is never a constant.
+
+## `special const`
+
+(TBD)
 
 ## A `const` Version `factorial`
 
@@ -786,6 +794,7 @@ The problem with `U32` is that it's is not defined recursively, so it would be h
 The solution is to use a recursively defined data type: `Nat`
 
 ```rust
+@lang("Nat"):
 data Nat = zero, succ(Nat);
 ```
 
