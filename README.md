@@ -357,7 +357,7 @@ use module::inner::_;
 
 `mod`s are also first-class value of type `Mod`:
 
-```
+```rust
 @lang("Mod"):
 pub special const data Mod;
 ```
