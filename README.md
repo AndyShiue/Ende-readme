@@ -302,19 +302,22 @@ data A =
     d,
 ;
 ```
+# Visibility
 
-## `mod`s
+(TBD)
+
+# `mod`s
 
 `mod`s are containers of items, and `mod`s themselves are also items, so `mod`s can be nested.
 We use the keyword `mod` to declare a module.
 
 ```rust
-mod module {
+pub mod module {
     fn unit() -> Unit = Unit::unit;
     data Three = one, two, three;
-    mod inner {
-        record Circle {
-            radius: I32,
+    pub mod inner {
+        pub record Circle = circle {
+            radius : U32,
         };
     };
 };
@@ -329,6 +332,25 @@ mod somewhereElse;
 If the compiler sees such `mod`, the compiler will look for `./somewhereElse.ed` and `./somewhereElse/mod.rs` to read its content.
 If neither are presented, the compiler emits an error.
 
+There are two ways to access an item in a `mod`.
+one is to write its fully qualified name, e.g. `module::inner::Circle`.
+the other way is to use `use` statements to import the items.
+
+```rust
+use module::inner::Circle;
+use module::inner::circle;
+
+fn getCircle() -> Circle = circle {
+    radius : 1u32,
+};
+```
+
+Underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 2 `use` statements, you can write
+
+```rust
+use module::inner::_;
+```
+
 `mod`s are also first-class value of type `Mod`:
 
 ```
@@ -337,11 +359,7 @@ special const data Mod;
 ```
 
 Here, `special const` means the instance of `Mod` can only exist at compile time.
-I'll show how to manipulate `data` at compile time later. 
-
-# Visibility
-
-(TBD)
+I'll show how to manipulate `data` at compile time later.
 
 # Generics
 
