@@ -1143,7 +1143,7 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 # Open Problems
 
-1. ~~Do `dyn impl`s make sense?~~ **YES THEY DO.** They are needed to implement `Coerce`
+1. ~~Do `dyn impl`s make sense?~~ **YES THEY DO.** They are needed to implement `Coerce`.
    They are partial functions operating at runtime.
    They are probably needed if we want to make the object-oriented perspective of the language better.
    But do we actually need OO?
