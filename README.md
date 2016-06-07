@@ -199,7 +199,6 @@ Let's show how to define a C/Java-like `enum` in Ende:
 ```rust
 @lang("Unit"):
 data Unit = unit;
-@lang("Bool"):
 data Bool = true, false;
 data Season = spring, summer, autumn, winter;
 ```
@@ -1096,6 +1095,7 @@ and
 ..{A} <: ..{B}
 ```
 
+i.e. variadic types are covariant.
 Now we have at least 3 different hierarchies of universes, one is
 
 ```rust
