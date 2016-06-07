@@ -778,6 +778,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    
    An instance of a non-`dyn` `record` is a constant if all of its fields are constants.
    An instance of a `dyn record` is never a constant.
+   A `dyn record` cannot have field in any mode other than named/unnamed normal mode.
 
 ## `special const`
 
@@ -1156,6 +1157,6 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 # TODOs
 
-1. Foreign function interface
+1. Foreign function interface.
 2. Equality types. I don't know how to do it.
 3. Provisional definitions.
