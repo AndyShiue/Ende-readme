@@ -722,6 +722,8 @@ let first : First = ...;
 
 # Memory management
 
+(TBD)
+
 # `const`
 
 You may found that I wrote *`const` mode* instead of *const mode* throughout the article.
