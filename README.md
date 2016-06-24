@@ -1,3 +1,45 @@
+!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Ende](#ende)
+- [Overview](#overview)
+- [Comments](#comments)
+- [Terms and Statements](#terms-and-statements)
+- [Functions](#functions)
+	- [lambdas](#lambdas)
+- [Lang Items](#lang-items)
+- [User-Defined Data Types](#user-defined-data-types)
+- [Visibility](#visibility)
+- [`mod`s](#mods)
+- [Generics](#generics)
+- [Named Mode](#named-mode)
+- [More General `record`](#more-general-record)
+	- [`impl` objects](#impl-objects)
+	- [`impl` functions](#impl-functions)
+	- [`fondamental impl`](#fondamental-impl)
+		- [The Hack](#the-hack)
+		- [Searching for `impl`s](#searching-for-impls)
+	- [Associated Types](#associated-types)
+	- [`auto impl`](#auto-impl)
+	- [Visibility of `impl`s](#visibility-of-impls)
+- [Memory management](#memory-management)
+- [`const`](#const)
+	- [`const(fondamental)`](#constfondamental)
+	- [A `const` Version `factorial`](#a-const-version-factorial)
+- [More Powerful Generics](#more-powerful-generics)
+- [GADTs](#gadts)
+- [Variadic Arguments](#variadic-arguments)
+- [Phase Polymorphism](#phase-polymorphism)
+	- [The Problem](#the-problem)
+	- [The Solution](#the-solution)
+- [Dependent Types](#dependent-types)
+	- [`with`](#with)
+- [Universes](#universes)
+	- [Hierarchies](#hierarchies)
+- [Open Problems](#open-problems)
+- [TODOs](#todos)
+
+<!-- /TOC -->
+
 # Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
@@ -63,7 +105,7 @@ Terms include:
       A literal of type `I32` would be written as `42i32`.
       `42` is its actual value, and `i32` means it's a 32-bit signed integer.
       Similarly, `666u64` would be a 64-bit unsigned integer.
-   
+
    2. **Floats**:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
@@ -71,7 +113,7 @@ Terms include:
    When one talks about operators, we usually think of infix operators.
    But in actual implementations, operators of any fixity could be introduced.
    There could possibly even be user-defined mixfix operators.
-   
+
    Examples would be `1 + 1`, `42 * 666`, `1 == 2`, etc.
    Fixity of operators should follow the common sense.
    Parentheses (`()`) are used to disambiguate if the fixity isn't clear.
@@ -106,7 +148,7 @@ Statements include:
       forever();
    };
    ```
-   
+
    Notice unlike in Rust, the semicolon after the whole loop is required.
    In fact, `while` loop is just another kind of term returning value of type `Unit`.
    `Unit` is a type that carries no data.
@@ -358,10 +400,10 @@ use module::inner::_;
 
 ```rust
 @lang("Mod"):
-pub special const data Mod;
+pub const(fondamental) data Mod;
 ```
 
-Here, `special const` means the instance of `Mod` can only exist at compile time.
+Here, `const(fondamental)` means the instance of `Mod` can only exist at compile time.
 I'll show how to manipulate `data` at compile time later.
 
 # Generics
@@ -541,7 +583,7 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 
 `groupToMonoid` is indeed an `impl` function.
 
-## `special impl`
+## `fondamental impl`
 
 What we don't have yet is the ability to define one `record` to be a supertrait of another `record`. In other words, asserting if you implement a trait, another trait must be implemented.
 You may ask, isn't the above `impl` functions enough?
@@ -590,12 +632,12 @@ record Extends[A, B] = extension;
 -- Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
-special impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+fondamental impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
 
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
 In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
-Why is the keyword `special` before the `impl superTrait` required then?
+Why is the keyword `fondamental` before the `impl superTrait` required then?
 To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
@@ -614,10 +656,10 @@ a normal `impl` function can only have a return type that is not a variable, so 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
 Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
 
-And `special impl`s surpass that limitation.
+And `fondamental impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is trait inheritance.
-The `impl`s of the return types of the `special impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+The `impl`s of the return types of the `fondamental impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 ## Associated Types
 
@@ -650,9 +692,36 @@ pub record Add[L, R] = add[Output] {
 
 If you want to access the output type specified by an instance of a trait, simply write `inst.Output`.
 
+## `auto impl`
+
+`auto impl`s are `impl`s with a `self` parameter in normal mode.
+The keyword `auto` indicates they are `impl`s that will be automatically inserted.
+For example, if one wants to overload string literals, they could provide an `auto impl` from `String` to whatever type they want.
+For now, let's assume that type is called `StrLike`.
+The Ende source code would be something like:
+
+```rust
+auto impl strLike(self : String) -> StrLike = ...;
+```
+
+`auto impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` everywhere.
+`auto impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
+
+```rust
+auto impl firstToSecond(self : First) -> Second = ...;
+auto impl secondToThird(self : Second) -> Third = ...;
+
+fn manipulateThird(third : Third) -> Third = third;
+
+let first : First = ...;
+-- manipulateThird(first); -- `first` cannot be transformed to value of type `Third`.
+```
+
 ## Visibility of `impl`s
 
 (TBD)
+
+# Memory management
 
 # `const`
 
@@ -679,7 +748,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    The value of a `if` construct is a constant if and only if at least one of the conditions below are met.
 
    1. The term immediately after `if` is a constant and evaluates to `true`, and the term after `then` represents a constant.
-   
+
    2. The term immediately after `if` is a constant and evaluates to `false`, and the term after `else` represents a constant.
 
 5. **Functions**:
@@ -690,7 +759,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    You can only:
 
    1. declare a variable with `const`.
-   
+
    2. declare a variable with `let`:
       The right-hand-side after the equal sign (`=`) must be a constant.
       Note that declaring a variable with `const` and `let` are also different in a `const fn`.
@@ -713,7 +782,12 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments.
-   `impl` objects are always constants; `impl` functions and `special impl`s are always constants and `const fn`s.
+   `impl`s are always constants; all `impl`s mentioned before are also `const fn`s.
+   Nevertheless, there exist `impl`s that aren't `const fn`s.
+   They are `dyn auto impl`.
+   `dyn auto impl`s are `auto impl`s that operate at runtime.
+   `dyn auto impl`s exist because sometimes we can never get the value of the self parameter at compile time, e.g. dereferencing a smart pointer into its underlying type.
+   `dyn auto impl`s aren't guarantee to be total.
 
 7. **`data`**:
    In `data`, all variants are constants.
@@ -730,25 +804,25 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        unit : T,
        fn append(self : T, T) -> T,
    };
-   
+
    impl i32Monoid : Monoid[I32] = monoid {
        unit => 0i32,
        fn append(self : I32, another : I32) -> I32 = self + another,
    };
-   
+
    const _ = 0i32.append(0i32); -- It works.
    ```
 
    But sometimes you want to use `record`s as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
    `dyn record` is used to define such classes.
    You can also write `dyn` in front of a function member in a non-`dyn` `record` to indicate it's not a `const` function.
-   
+
    ```rust
    dyn record Counter = counter {
        inner : I32,
        fn increment(self : Counter) -> Unit;
    };
-   
+
    fn newCounter() -> Counter = counter {
        inner => 0i32,
        fn increment(self : Counter) -> Unit = {
@@ -756,30 +830,30 @@ Now, let's go through all kinds of terms introduced and see if they are constant
        },
    };
    ```
-   
+
    Notice that `newCounter.increment` **is** a constant although it's not a `const fn`.
-   
+
    If you want a single function field to be dynamic, write `dyn` **after** the keyword `fn`.
-   
+
    ```rust
    dyn record Wierd = duh {
        fn dyn wierd : () -> Unit,
    };
-   
+
    fn doNothing() -> Unit = Unit::unit;
-   
+
    let wierd = duh {
        wierd => main,
    };
-   
+
    wierd.weird = doNothing; -- It works.
    ```
-   
+
    An instance of a non-`dyn` `record` is a constant if all of its fields are constants.
    An instance of a `dyn record` is never a constant.
    A `dyn record` cannot have field in any mode other than named/unnamed normal mode.
 
-## `special const`
+## `const(fondamental)`
 
 (TBD)
 
@@ -929,7 +1003,7 @@ See the following 2 examples for instance:
    That is, if the function `func` has type `(I32, U32, F32) -> Bool`, `curry(func)` should have type `(I32)(U32)(F32) -> Bool`.
 
    let me show you how to define such function.
-   
+
    ```rust
    -- Don't ask what `???` is for now.
    -- Just pretend it's magic; I'll debunk it later.
@@ -971,7 +1045,7 @@ See the following 2 examples for instance:
        }
    }
    ```
-   
+
    However, this is not quite right, either.
    Because if `_0_` evaluates to `true`, the constness of `_2_` doesn't matter to the constness of the whole function.
 
@@ -1143,15 +1217,11 @@ Function types from a hierarchy to another hierarchy such as the above `replicat
 
 # Open Problems
 
-1. ~~Do `dyn impl`s make sense?~~ **YES THEY DO.** They are needed to implement `Coerce`.
-   They are partial functions operating at runtime.
-   They are probably needed if we want to make the object-oriented perspective of the language better.
-   But do we actually need OO?
-2. Can function types from a hierarchy to another hierarchy have a type?
-3. What is the use of hierarchies other than `Type`?
+1. Can function types from a hierarchy to another hierarchy have a type?
+2. What is the use of hierarchies other than `Type`?
    I'm thinking that it should be able to postulate extra axioms which shouldn't be done in `Type` because they break the totality of `const fn`s at runtime.
-4. Is it possible to be generic over hierarchies?
-5. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
+3. Is it possible to be generic over hierarchies?
+4. Is it possible to define new *hierarchy constructors* other than `..()` and `..{}`?
    If it's possible, I shouldn't use special syntax on variadic types but something like `OrderedVariadic[Hierarchy]`.
    Is the ambiguity between an universe and a hierarchy okay?
 
