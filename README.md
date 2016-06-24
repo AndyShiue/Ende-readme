@@ -1,4 +1,4 @@
-# Ende
+<# Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
 This language has a strong type system, its functions are call-by-value, and its syntax is whitespace-insensitive because I prefer it.
@@ -20,7 +20,7 @@ It's very welcomed for anyone to write an implementation for it.
 - [More General `record`](#more-general-record)
 	- [`impl` objects](#impl-objects)
 	- [`impl` functions](#impl-functions)
-	- [`fondamental impl`](#fondamental-impl)
+	- [`fundamental impl`](#fundamental-impl)
 		- [The Hack](#the-hack)
 		- [Searching for `impl`s](#searching-for-impls)
 	- [Associated Types](#associated-types)
@@ -28,7 +28,7 @@ It's very welcomed for anyone to write an implementation for it.
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [Memory management](#memory-management)
 - [`const`](#const)
-	- [`const(fondamental)`](#constfondamental)
+	- [`const(fundamental)`](#constfundamental)
 	- [A `const` Version `factorial`](#a-const-version-factorial)
 - [More Powerful Generics](#more-powerful-generics)
 - [GADTs](#gadts)
@@ -399,10 +399,10 @@ use module::inner::_;
 
 ```rust
 @lang("Mod"):
-pub const(fondamental) data Mod;
+pub const(fundamental) data Mod;
 ```
 
-Here, `const(fondamental)` means the instance of `Mod` can only exist at compile time.
+Here, `const(fundamental)` means the instance of `Mod` can only exist at compile time.
 I'll show how to manipulate `data` at compile time later.
 
 # Generics
@@ -582,7 +582,7 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
 
 `groupToMonoid` is indeed an `impl` function.
 
-## `fondamental impl`
+## `fundamental impl`
 
 What we don't have yet is the ability to define one `record` to be a supertrait of another `record`. In other words, asserting if you implement a trait, another trait must be implemented.
 You may ask, isn't the above `impl` functions enough?
@@ -631,12 +631,12 @@ record Extends[A, B] = extension;
 -- Ignore the `const` keyword before `fn` for now.
 const fn implicitly[T][(inst : T)] -> T = inst;
 
-fondamental impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+fundamental impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
 ```
 
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
 In the revised version of example of `Abelian`,  because both `impl`s of `Abelian[T]` and `Extends[Abelian[T], Group[T]]` are in scope, `impl` of `Group[T]` is also made in scope.
-Why is the keyword `fondamental` before the `impl superTrait` required then?
+Why is the keyword `fundamental` before the `impl superTrait` required then?
 To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
@@ -655,10 +655,10 @@ a normal `impl` function can only have a return type that is not a variable, so 
 The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
 Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
 
-And `fondamental impl`s surpass that limitation.
+And `fundamental impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
 In fact the only one I can think of is trait inheritance.
-The `impl`s of the return types of the `fondamental impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
+The `impl`s of the return types of the `fundamental impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 ## Associated Types
 
@@ -854,7 +854,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    An instance of a `dyn record` is never a constant.
    A `dyn record` cannot have field in any mode other than named/unnamed normal mode.
 
-## `const(fondamental)`
+## `const(fundamental)`
 
 (TBD)
 
