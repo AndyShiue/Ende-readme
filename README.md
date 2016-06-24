@@ -373,7 +373,7 @@ A `mod` can be declared without curly braces (`{}`).
 mod somewhereElse;
 ```
 
-If the compiler sees such `mod`, the compiler will look for `./somewhereElse.ed` and `./somewhereElse/mod.rs` to read its content.
+If the compiler sees such `mod`, the compiler will look for `./somewhereElse.ende` and `./somewhereElse/mod.ende` to read its content.
 If neither are presented, the compiler emits an error.
 
 There are two ways to access an item in a `mod`.
