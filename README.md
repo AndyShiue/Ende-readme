@@ -28,6 +28,7 @@ It's very welcomed for anyone to write an implementation for it.
 	- [`auto impl`](#auto-impl)
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [Memory Management](#memory-management)
+	- [Heap Allocation](#heap-allocation)
 - [`const`](#const)
 	- [`const(fundamental)`](#constfundamental)
 	- [A `const` Version `factorial`](#a-const-version-factorial)
