@@ -1,4 +1,4 @@
-<# Ende
+# Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
 This language has a strong type system, its functions are call-by-value, and its syntax is whitespace-insensitive because I prefer it.
