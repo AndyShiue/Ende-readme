@@ -791,7 +791,7 @@ Similar for a record.
 
 ```Rust
 record I32Wrapper = wrap {
-	inner: I32,
+	  inner : I32,
 };
 
 impl copyableI32Wrapper : Copy[I32Wrapper] = copy;
