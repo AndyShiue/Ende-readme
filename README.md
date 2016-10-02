@@ -791,7 +791,7 @@ Similar for a record.
 
 ```Rust
 record I32Wrapper = wrap {
-	  inner : I32,
+    inner : I32,
 };
 
 impl copyableI32Wrapper : Copy[I32Wrapper] = copy;
@@ -893,7 +893,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    But sometimes you want to use `record`s as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
    classy `record`s are used to define such classes.
-	 To define classy `record`s, you write `dyn` after the equal sign (`=`) after the name of the `record` and before the record constructor.
+   To define classy `record`s, you write `dyn` after the equal sign (`=`) after the name of the `record` and before the record constructor.
    You can also write `dyn` in front of a function member in a non-`dyn` `record` to indicate it's not a `const` function.
 
    ```rust
