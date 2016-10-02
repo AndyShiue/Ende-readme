@@ -29,6 +29,8 @@ It's very welcomed for anyone to write an implementation for it.
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [Memory Management](#memory-management)
 	- [Heap Allocation](#heap-allocation)
+	- [Moving](#moving)
+	- [Reference Types](#reference-types)
 - [`const`](#const)
 	- [`const(fundamental)`](#constfundamental)
 	- [A `const` Version `factorial`](#a-const-version-factorial)
@@ -760,6 +762,43 @@ One would end up need to write out RC almost everywhere.
 Although that would arguably make Ende *Rust++*, I think explicit is better than implicit and by far Rust's solution is the best one also because implementing ownership doesn't prevent Ende from implementing explicit RC/GC.
 I'll try to descibe the compiler work needed in the rest of this section.
 
+## Moving
+
+By default, values in Ende can only be used once.
+Using a value *consumes* or **move**s it.
+
+```rust
+data Movable = movable;
+
+let original = Movable::movable;
+let moved = id(original);
+-- let moveAgain = id(original); -- Cannot move a value more than once.
+```
+
+But sometimes we really want to use some *plain old data* more than once.
+It's time for the `Copy` trait to come to rescue.
+
+```Rust
+@lang("Copy"):
+record Copy[T] = copy;
+```
+
+`Copy` is a built-in trait that can be implemented by types that can be copied bitwise.
+It is implemented for all the primitive types introduced above, but I'll mention some very important types that aren't copyable very soon.
+Users can also implement `Copy` for the types they define.
+A `data` can implement `Copy` if and only if all parameters of all of its variants implemented `Copy`.
+Similar for a record.
+
+```Rust
+record I32Wrapper = wrap {
+	inner: I32,
+};
+
+impl copyableI32Wrapper : Copy[I32Wrapper] = copy;
+```
+
+## Reference Types
+
 (TBD)
 
 # `const`
@@ -829,7 +868,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    `dyn auto impl`s aren't guarantee to be total.
 
 7. **`data`**:
-   In `data`, all variants are constants.
+   In normal `data`, all variants are constants.
    In addition, all variants with parameters in `data` are `const fn`s.
 
 8. **`record`s**:
@@ -853,11 +892,12 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```
 
    But sometimes you want to use `record`s as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
-   `dyn record` is used to define such classes.
+   classy `record`s are used to define such classes.
+	 To define classy `record`s, you write `dyn` after the equal sign (`=`) after the name of the `record` and before the record constructor.
    You can also write `dyn` in front of a function member in a non-`dyn` `record` to indicate it's not a `const` function.
 
    ```rust
-   dyn record Counter = counter {
+   record Counter = dyn counter {
        inner : I32,
        fn increment(self : Counter) -> Unit;
    };
@@ -875,7 +915,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    If you want a single function field to be dynamic, write `dyn` **after** the keyword `fn`.
 
    ```rust
-   dyn record Wierd = duh {
+   record Wierd = dyn duh {
        fn dyn wierd : () -> Unit,
    };
 
@@ -888,9 +928,9 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    wierd.weird = doNothing; -- It works.
    ```
 
-   An instance of a non-`dyn` `record` is a constant if all of its fields are constants.
-   An instance of a `dyn record` is never a constant.
-   A `dyn record` cannot have field in any mode other than named/unnamed normal mode.
+   An instance of a non-classy `record` is a constant if all of its fields are constants.
+   An instance of a classy `record` is never a constant.
+   A classy `record` cannot have field in any mode other than named/unnamed normal mode.
 
 ## `const(fundamental)`
 
@@ -1241,7 +1281,7 @@ Normally data types live in `Type`, but we can also define data types that live 
 
 ```rust
 data WhatTheHeck : AnotherWorld = whatever;
-record YouAreCrazy : AnotherWorld = youAreCrazy {};
+record YouAreCrazy : AnotherWorld = youAreCrazy;
 ```
 
 Now types of function types are:
