@@ -428,7 +428,7 @@ In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are
 For now, you just have to know that arguments in `const` mode have to be supplied at compile time and can be inferred.
 Therefore, you can write `id(0i32)` instead of the more verbose `id[I32](0i32)`.
 
-I haven't mentioned function types, did I?
+I haven't mentioned function types, have I?
 Function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
 `A, B, C, ...` are the types of the arguments, and `R` is the return type.
 As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
