@@ -393,7 +393,7 @@ fn getCircle() -> Circle = circle {
 };
 ```
 
-Underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 2 `use` statements, you can write
+An underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 2 `use` statements, you can write
 
 ```rust
 use module::inner::_;
