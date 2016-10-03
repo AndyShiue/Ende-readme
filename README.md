@@ -487,7 +487,7 @@ In a system that doesn't have dependent types, an usage of `Example` can always 
 Variants in `data` have types, what is the type of `example` then?
 In order to assign a type to it, we need new modes in which parameters are named.
 Let's simply call them **named mode**.
-The named normal mode is similar to the normal mode, except that the parameters are named and unordered; and the named `const` mode corresponds to the `const` mode.
+The named normal mode is similar to the normal mode, except that the parameters are named and unordered; the named `const` mode corresponds to the `const` mode.
 The above `example` now has type `{example : Unit} -> Example`.
 To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
 
