@@ -972,7 +972,7 @@ So I can write something like:
 ```rust
 const fn factorial[m : Nat] -> Nat {
     [0nat] => 1nat,
-    [Nat::succ(n)] = m * factorial(n),
+    [Nat::succ(n)] => m * factorial(n),
 };
 ```
 
