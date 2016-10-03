@@ -899,7 +899,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```rust
    record Counter = dyn counter {
        inner : I32,
-       fn increment(self : Counter) -> Unit;
+       fn increment(self : Counter) -> Unit,
    };
 
    fn newCounter() -> Counter = counter {
