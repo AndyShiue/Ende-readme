@@ -666,7 +666,7 @@ The `impl`s of the return types of the `fundamental impl`s are recursively added
 
 ## Associated Types
 
-Fields of an instance of a `record` can also be being dependent on.
+Fields of an instance of a `record` can also be dependent.
 They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
 They are *output parameters*.
 For example, imagine if there is a way to overload operators.
