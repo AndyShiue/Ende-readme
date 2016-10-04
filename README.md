@@ -786,8 +786,8 @@ record Copy[T] = copy;
 `Copy` is a built-in trait that can be implemented by types that can be copied bitwise.
 It is implemented for all the primitive types introduced above, but I'll mention some very important types that aren't copyable very soon.
 Users can also implement `Copy` for the types they define.
-A `data` can implement `Copy` if and only if all parameters of all of its variants implemented `Copy`.
-Similar for a record.
+A `data` can implement `Copy` if and only if all parameters of all of its variants implemented `Copy` (with some exception,  which will be discussed below).
+Similar for a `record`.
 
 ```Rust
 record I32Wrapper = wrap {
