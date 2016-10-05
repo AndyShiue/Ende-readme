@@ -217,7 +217,7 @@ Lambdas are written similar to a function but without the name.
 let abs = fn(n : I32) -> I32 = {
     if n >= 0i32
     then n
-    else -n
+    else 0i32 - n
 };
 ```
 
