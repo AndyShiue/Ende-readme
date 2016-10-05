@@ -214,10 +214,10 @@ Like normal functions, lambdas must specify their return types.
 Lambdas are written similar to a function but without the name.
 
 ```rust
-let factorial = fn(n : U32) -> U32 = {
-    if n == 0u32
-    then 0u32
-    else n * factorial(n - 1)
+let abs = fn(n : I32) -> I32 = {
+    if n >= 0i32
+    then n
+    else -n
 };
 ```
 
