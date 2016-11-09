@@ -830,6 +830,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    2. The term immediately after `if` is a constant and evaluates to `false`, and the term after `else` represents a constant.
 
 5. **Functions**:
+   The types of the parameters and the return type of any functions must be constants.
    Functions that aren't inside a `record` are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
