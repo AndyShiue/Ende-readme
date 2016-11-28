@@ -1,8 +1,8 @@
 # Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
-This language has a strong type system, its functions are call-by-value, and its syntax is whitespace-insensitive because I prefer it.
-It's very welcomed for anyone to write an implementation for it.
+This language has a strong type system, its functions are call-by-value and it's whitespace-sensative because I prefer them.
+Anyone is very welcome to write an implementation for it.
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -16,10 +16,11 @@ It's very welcomed for anyone to write an implementation for it.
 - [User-Defined Data Types](#user-defined-data-types)
 - [Visibility](#visibility)
 - [`mod`s](#mods)
+- [parsing](#parsing)
 - [Generics](#generics)
 - [Named Mode](#named-mode)
 - [More General `record`](#more-general-record)
-	- [`impl` objects](#impl-objects)
+	- [simple `impl`s](#simple-impls)
 	- [`impl` functions](#impl-functions)
 	- [`fundamental impl`](#fundamental-impl)
 		- [The Hack](#the-hack)
@@ -59,9 +60,9 @@ Modes are ways to pass arguments to a function.
 In current programming languages, the boundary between phases, which mean compile time and runtime, are either not blurry enough or too blurry.
 The former includes more conservative languages like Java or Go.
 The latter are basically those dependently-typed languages.
-The lack of compile-time constructs make higher abstraction at compile time impossible, but dependent types make the phase of which the term is evaluated unpredictable.
+The lack of compile-time constructs makes higher abstraction at compile time impossible, but dependent types make the phase of which the term is evaluated unpredictable.
 The idea of modes is basically genericity over phases.
-In complement to modes, you can specify stuff that works at either runtime or compile time using the `const` system of Ende.
+In complement to modes, you can specify stuff that works only at runtime or either at runtime or compile time using the `const` system of Ende.
 
 The presence of modes makes almost everything in Ende first-class, which means they can be passed as arguments and returned.
 They include:
@@ -75,9 +76,8 @@ They include:
 7. all modules
 8. the vast majority of types
 
-As you will see, Ende achieve the unification of different concepts with carefully designed syntax and semantics.
+As you will see, Ende achieves the unification of different concepts with carefully designed syntax and semantics.
 
-The syntax is very similar to Rust's.
 If you are familiar with Rust, you might start reading from [this section](#more-general-record).
 Just be aware of the top-level pattern matching syntax and that generic parameters are written inside square brackets (`[]`) instead of angle brackets (`<>`).
 Users of Scala might also find the similarities between Scala and Ende.
@@ -101,7 +101,7 @@ Terms include:
    There are several built-in types in Ende.
    They are numbers.
    Boolean values still won't be introduced yet but will be defined as a data type.
-   Types like `Char` and `String` isn't presented because numbers suffice for illustrative purposes but should be added if there is an actual implementation of the language.
+   Types like `Char` and `String` aren't presented because numbers suffice for illustrative purposes but should be added if there is an actual implementation of the language.
 
    1. **Integers**:
       There would be several types of integers of different size, being either signed or not.
@@ -119,7 +119,7 @@ Terms include:
 
    Examples would be `1 + 1`, `42 * 666`, `1 == 2`, etc.
    Fixity of operators should follow the common sense.
-   Parentheses (`()`) are used to disambiguate if the fixity isn't clear.
+   Backticks (<code>``</code>) are used to disambiguate if the fixity isn't clear.
 
 3. Variables, which are going to be discussed immediately.
 
@@ -129,52 +129,45 @@ Ende is generally an imperative language, so there are statements including cont
 Statements include:
 
 1. **`let` binding**:
-   A `let` binding bind its right-hand-side value to a variable.
+   A `let` binding binds its right-hand-side value to a variable.
    There are 2 flavors of `let` bindings, a mutable one and an immutable one.
    `let` is by default immutable.
-   For example, `let meaningOfLife = 42i32;` binds `42i32` to a variable called `meaningOfLife`.
+   For example, `let meaningOfLife = 42i32` binds `42i32` to a variable called `meaningOfLife`.
    As you can see, variables are written in camel case in Ende.
    variables can be made mutable by adding a keyword `mut` after `let`.
-   So, `let mut count = 0i32;` binds `0i32` to a variable `count`.
+   So, `let mut count = 0i32` binds `0i32` to a variable `count`.
 
 2. **mutation**:
    The value of a mutable variable can be mutated.
-   `count = 1i32;` changes the value of `count` to `1i32`.
+   `count = 1i32` changes the value of `count` to `1i32`.
    Mutating an immutable variable generates a compile error.
 
 3. **`while` loop**:
    Normal `while` loop similar to other imperative languages.
-   The syntax is especially similar to Rust's, because I'm a fan of Rust.
 
    ```rust
-   while count == 0i32 {
-      forever();
-   };
+   while count == 0i32 =>
+       forever()
    ```
 
-   Notice unlike in Rust, the semicolon after the whole loop is required.
-   In fact, `while` loop is just another kind of term returning value of type `Unit`.
+   `while` loop is just another kind of term returning value of type `Unit`.
    `Unit` is a type that carries no data.
-   When a term is follow by a semicolon, it discards the value of the whole term.
-   But a `while` loop already has nothing to be discarded, so the semicolon just turns it into a statement.
 
 Now, introduce `if`,
 unlike `while`, `if` can return something that isn't trivial.
 So we can write code like:
 
 ```rust
-let number = if count == 0i32 then 42u32 else 666u32;
+let number = if count == 0i32 then 42u32 else 666u32
 ```
 
 Of course, `if` can also be used in an old-style, C-like fashion.
 
 ```rust
-let mut number;
-if count == 0i32 then {
-    number = 42u32;
-} else {
-    number = 666u32;
-};
+let mut number
+if count == 0i32
+then number = 42u32
+else number = 666u32
 ```
 
 # Functions
@@ -189,22 +182,18 @@ That is, a function that accepts no inputs and returns nothing.
 Now, let's write the well-known *Hello, world!* program in Ende.
 
 ```rust
-fn main() -> Unit = {
-    putStrLn("Hello, world!");
-};
+fn main() -> Unit = putStrLn("Hello, world!")
 ```
 
 Nothing special.
 The syntax is heavily inspired by Rust; the keyword `fn` is used to declare a function.
-Unlike Rust, there is a equal sign (`=`) after the type of the function so the braces (`{}`) is optional if you just want to return a single term.
-The trailing semicolon (`;`) is also required similar to the one of `while`.
+Unlike Rust, there is a equal sign (`=`) after the type of the function.
 
 ```rust
-fn factorial(n : U32) -> U32 = {
+fn factorial(n : U32) -> U32 =
     if n == 0
     then 0u32
     else n * factorial(n - 1)
-};
 ```
 
 ## lambdas
@@ -214,11 +203,11 @@ Like normal functions, lambdas must specify their return types.
 Lambdas are written similar to a function but without the name.
 
 ```rust
-let abs = fn(n : I32) -> I32 = {
-    if n >= 0i32
-    then n
-    else -n
-};
+let abs =
+    fn(n : I32) -> I32 =
+		    if n >= 0i32
+		    then n
+		    else -n
 ```
 
 # Lang Items
@@ -230,7 +219,7 @@ Annotations are written before the annotated item, start with an at sign (`@`) a
 
 ```rust
 @lang("Whatever"):
-data Whatever;
+data Whatever
 ```
 
 # User-Defined Data Types
@@ -243,9 +232,9 @@ Let's show how to define a C/Java-like `enum` in Ende:
 
 ```rust
 @lang("Unit"):
-data Unit = unit;
-data Bool = true, false;
-data Season = spring, summer, autumn, winter;
+data Unit = unit
+data Bool = true, false
+data Season = spring, summer, autumn, winter
 ```
 
 In Ende, `data` can have **variants**.
@@ -253,61 +242,56 @@ Variants are the possible values of the defined type.
 Variants are namespaced; in order to access the varient `spring`, you need to write
 
 ```rust
-let season = Season::spring;
+let season = Season::spring
 ```
 
 instead of
 
 ```rust
--- let season = spring; -- Doesn't compile.
+-- let season = spring -- Doesn't compile.
 ```
 
 `data` variants could be matched through pattern matching:
 
 ```rust
-fn isSummer(season : Season) -> Bool = {
-    match season {
-        Season::summer => Bool::true,
-        _ => Bool::false,
-    }
-};
+fn isSummer(season : Season) -> Bool =
+    match season of
+        Season::summer => Bool::true
+        _ => Bool::false
 ```
 
 `match`es are always irrefutable in Ende.
 By the way, there is an alternative `fn` syntax to do top-level pattern matching.
-We don't write the equal sign (`=`) after the return type in this case.
+We write `match'in` after the return type in this case.
 
 ```rust
-fn isSummer(Season) -> Bool {
-    (Season::summer) => Bool::true,
-    (_) => Bool::false,
-};
+fn isSummer(Season) -> Bool match'in
+    (Season::summer) => Bool::true
+    (_) => Bool::false
 ```
 
-Here, we directly match the arguments of the `fn`; now we don't need to pick a name for the argument of type `Season`; we can write `fn isSummer(Summer)` in lieu of `fn isSummer(_ : Summer)` in this case.
+Here, we directly match the arguments of the `fn`; now we don't need to pick a name for the argument of type `Season`; we can write `fn isSummer(Season)` in lieu of `fn isSummer(_ : Season)` in this case.
 I'm going to provide another example for clarity:
 
 ```rust
-fn and(Bool, Bool) -> Bool {
-    (Bool::true, b) => b,
-    (_, _) => Bool::false,
-};
+fn and(Bool, Bool) -> Bool match'in
+    (Bool::true, b) => b
+    (_, _) => Bool::false
 ```
 
 Variants may also take parameters.
 The `OptionI32` below is a type that could possibly carry an `I32`.
 
 ```rust
-data OptionI32 = some(I32), none;
+data OptionI32 = some(I32), none
 ```
 
 Parameters of Variants can also be pattern matched:
 
 ```rust
-fn unwrapOr42(OptionI32) -> I32 {
-    (OptionI32::some(i)) => i,
-    (_) => 42i32,
-};
+fn unwrapOr42(OptionI32) -> I32 match'in
+    (OptionI32::some(i)) => i
+    (_) => 42i32
 ```
 
 There's another way to define a data type, using `record`.
@@ -316,40 +300,27 @@ There's another way to define a data type, using `record`.
 The name of the variant isn't namespaced, though.
 
 ```rust
-record Point = point {
-    x : I32,
-    y : I32,
-};
+record Point =
+    point {
+    		x : I32
+    		y : I32
+		}
 ```
 
 Members of an instance of a `record` can either be accessed by its name after a dot (`.`) or by pattern matching.
 
 ```rust
-fn getX1(p : Point) -> I32 = p.x;
-fn getX2(Point) -> I32 {
-    (point {x => result, y => _}) => result,
-};
+fn getX1(p : Point) -> I32 = p.x
+fn getX2(Point) -> I32 match'in
+    (point {x => result, y => _}) => result
 ```
 
 To pattern match or to construct an instance of a `record`, we write a fat arrow (`=>`) after each name of the fields instead of a colon (`:`) used when a `record` is defined:
 
 ```rust
-let p = point { x => 0i32, y => 0i32 };
+let p = point { x => 0i32, y => 0i32 }
 ```
 
-Someone mentioned that I sometimes write a trailing comma after the last matching arm or the last field of a `record`.
-That's intentionally designed.
-It's the same as the situation in Rust: all trailing commas are optional.
-you can even write
-
-```rust
-data A =
-    a,
-    b,
-    c,
-    d,
-;
-```
 # Visibility
 
 (TBD)
@@ -360,21 +331,18 @@ data A =
 We use the keyword `mod` to declare a module.
 
 ```rust
-pub mod module {
-    fn unit() -> Unit = Unit::unit;
-    data Three = one, two, three;
-    pub mod inner {
-        pub record Circle = circle {
-            radius : U32,
-        };
-    };
-};
+pub mod module where
+    fn unit() -> Unit = Unit::unit
+    data Three = one, two, three
+    pub mod inner where
+        pub record Circle =
+				    circle { radius : U32 }
 ```
 
-A `mod` can be declared without curly braces (`{}`).
+A `mod` can be declared without `where`.
 
 ```rust
-mod somewhereElse;
+mod somewhereElse
 ```
 
 If the compiler sees such `mod`, the compiler will look for `./somewhereElse.ende` and `./somewhereElse/mod.ende` to read its content.
@@ -385,29 +353,52 @@ one is to write its fully qualified name, e.g. `module::inner::Circle`.
 the other way is to use `use` statements to import the items.
 
 ```rust
-use module::inner::Circle;
-use module::inner::circle;
+use module::inner::Circle
+use module::inner::circle
 
-fn getCircle() -> Circle = circle {
-    radius : 1u32,
-};
+fn getCircle() -> Circle = circle { radius : 1u32 }
 ```
 
 An underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 2 `use` statements, you can write
 
 ```rust
-use module::inner::_;
+use module::inner::_
 ```
 
 `mod`s are also first-class value of type `Mod`:
 
 ```rust
 @lang("Mod"):
-pub const(fundamental) data Mod;
+pub const(fundamental) data Mod
 ```
 
 Here, `const(fundamental)` means the instance of `Mod` can only exist at compile time.
 I'll show how to manipulate `data` at compile time later.
+
+# parsing
+
+How does the parsing of the syntax of the language works?
+for each construct in the language, there's a (or a list of) keywords or reserved symbols, which are called the *antecedent* of that construct.
+For an `fn`, the antecedent is a equal sign (`=`) or `match'in`; for a case in pattern matching, it's `=>`, for instance.
+After the antecedent, there is going to be a list of something, which are separated by *separators*.
+For example, there will be a code block after the equal sign of an `fn`, and the separators of a code block are semicolons (`;`), and between cases in pattern matching, the separators would be commas (`,`).
+If a separator isn't presented at the end of a line, we count the spaces in front of the first non-whitespace character of the next line.
+Let's assume there are *n* spaces.
+Now we look at the previous line and get the (n+1)th character of that line.
+If all character before that character are spaces, we look at the line before that line, and possibly before that line until we find the characters before the (n+1)th character of it aren't whitespace.
+We append the latter line to the list separating the previous and the latter line and close all lists between the 2 lines.
+Here's an example, let's try to parse the following:
+
+```rust
+pub mod module where
+    fn unit() -> Unit = Unit::unit
+    data Three = one, two, three
+```
+
+The antecedent of `mod` is `where`.
+After parsing the first line, we proceed to parse the second.
+Now we see an `fn`, the antecedent of which is the equal sign (`=`).
+When we compare the whitespace in front of the third line to the second line, we can find out that the `data` and the `fn` are in the same list, and close the list after the equal sign (`=`).
 
 # Generics
 
@@ -417,7 +408,7 @@ But let's start with a simplest generic function: `id`.
 `id` simply returns its only argument.
 
 ```rust
-fn id[T](t : T) -> T = t;
+fn id[T](t : T) -> T = t
 ```
 
 Here, I introduced another delimiter while defining the function: brackets (`[]`).
@@ -436,13 +427,13 @@ As a side note, arguments in normal mode cannot be curried in Ende similar to th
 ```rust
 -- They are different:
 
-foo(a, b);
-foo(a)(b);
+foo(a, b)
+foo(a)(b)
 
 -- But they aren't:
 
-bar[A, B];
-bar[A][B];
+bar[A, B]
+bar[A][B]
 ```
 
 This is because of the way that current machines work.
@@ -453,13 +444,13 @@ Arguments in `const` mode are curryable, though, because that performance at com
 Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
 
 ```rust
-fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x));
+fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x))
 ```
 
 And here is the definition of a generic `Option` type:
 
 ```rust
-data Option[T] = some(T), none;
+data Option[T] = some(T), none
 ```
 
 # Named Mode
@@ -467,16 +458,17 @@ data Option[T] = some(T), none;
 Compare this `record` in Ende
 
 ```rust
-record Example = example {
-    example : Unit,
-};
+record Example =
+    example {
+        example : Unit
+    }
 ```
 
 and this `struct` in Rust:
 
 ```rust
 struct Example {
-    example: (),
+    example: ()
 }
 ```
 
@@ -499,26 +491,28 @@ Here, I'm going to write a `Monoid` trait.
 Of course, it's just another `record`.
 
 ```rust
-record Monoid[T] = monoid {
-    unit : T,
-    fn append(self : T, T) -> T,
-};
+record Monoid[T] =
+    monoid {
+		    unit : T
+		    fn append(self : T, T) -> T
+		}
 ```
 
 To implement a trait, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 There are 3 kinds of `impl`s in Ende.
 
-## `impl` objects
+## simple `impl`s
 
-`impl` objects are the first kind of `impl`.
-The `i32Monoid` below is an `impl` object.
-An `impl` object must be an instance of a `record`.
+simple `impl`s are the first kind of `impl`.
+The `i32Monoid` below is a simple `impl`.
+A simple `impl` must be an instance of a `record`.
 
 ```rust
-impl i32Monoid : Monoid[I32] = monoid {
-    unit => 0i32,
-    fn append(self : I32, another : I32) -> I32 = self + another,
-};
+impl i32Monoid : Monoid[I32] =
+    monoid {
+		    unit => 0i32
+		    fn append(self : I32, another : I32) -> I32 = self + another
+		}
 ```
 
 If the `impl` object `i32Monoid` is in scope, now we can call the `append` method on `I32`:
@@ -526,29 +520,27 @@ If the `impl` object `i32Monoid` is in scope, now we can call the `append` metho
 ```rust
 -- They are equivalent because the first argument of `append` is `self`:
 
-let sum1 = append(1i32, 2i32);
-let sum2 = 1i32.append(2i32);
+let sum1 = append(1i32, 2i32)
+let sum2 = 1i32.append(2i32)
 ```
 
 In order to write a function that is generic over types implementing a `record`, the third mode is introduced.
 It's called **instance mode**, and is delimited by `[()]`.
 Arguments passed in instance mode must be instances of `record`s.
-`[(T)]` is always parsed as `[( T )]` but not `[ (T) ]` because putting a pair of parentheses (`()`) around a type variable doesn't make much sense.
-Arguments in instance mode can also be inferred , however not by looking at other arguments, but by searching for appropriate `impl`s.
+Arguments in instance mode can also be inferred, however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
 ```rust
-fn concat[T][(Monoid[T])](List[T]) -> T {
-    (List::nil) => unit,
-    (List::cons(head, tail)) => head.append(concat(tail)),
-};
+fn concat[T][(Monoid[T])](List[T]) -> T match'in
+    (List::nil) => unit
+    (List::cons(head, tail)) => head.append(concat(tail))
 ```
 
-When you write `concat(vec)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or over 2 choices, the compiler generates an error.
+When you write `concat(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
 
 ```rust
-let sum = concat[(i32Monoid)](i32Vec);
+let sum = concat[(i32Monoid)](i32Vec)
 ```
 
 ## `impl` functions
@@ -564,11 +556,12 @@ I'm going to provide a `impl` function generic over both modes.
 First, define a `Group` `record`.
 
 ```rust
-record Group[T] = group {
-    unit : T,
-    fn append(self : T, T) -> T,
-    fn inverse(self : T) -> T,
-};
+record Group[T] =
+		group {
+		    unit : T
+		    fn append(self : T, T) -> T
+		    fn inverse(self : T) -> T
+		}
 ```
 
 We know all `Group`s are `Monoid`s, so all instances of `Group[T]` should be able to be automatically converted to instances of `Monoid[T]`.
@@ -576,12 +569,11 @@ How do we automatically convert stuff?
 The answer is obviously, again, using `impl`s.
 
 ```rust
-impl groupToMonoid[T][(Group[T])] -> Monoid[T] = {
+impl groupToMonoid[T][(Group[T])] -> Monoid[T] =
     monoid {
-       unit => unit,
-       append => append,
+       unit => unit
+       append => append
     }
-};
 ```
 
 `groupToMonoid` is indeed an `impl` function.
@@ -594,19 +586,19 @@ Not really.
 Imagine you want to define an `Abelian` trait, the code you need to add would be:
 
 ```rust
-record Abelian[T] = abelian {
-    unit : T,
-    fn append(self : T, T) -> T,
-    fn inverse(self : T) -> T,
-};
+record Abelian[T] =
+		abelian {
+		    unit : T
+		    fn append(self : T, T) -> T
+		    fn inverse(self : T) -> T
+		}
 
-impl abelianToGroup[T][(Abelian[T])] -> Group[T] = {
+impl abelianToGroup[T][(Abelian[T])] -> Group[T] =
     group {
-       unit => unit,
-       append => append,
-       inverse => inverse,
+       unit => unit
+       append => append
+       inverse => inverse
     }
-};
 ```
 
 That's a lot of boilerplate!
@@ -616,8 +608,8 @@ Imagine if we can write code like this:
 
 ```rust
 -- The type `Abelian` carries no additional data, but it extends the trait `Group`.
-data Abelian[T] = abelian;
-impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension; -- The extension happens here.
+data Abelian[T] = abelian
+impl abelianExtendsGroup[T] -> Extends[Abelian[T], Group[T]] = extension -- The extension happens here.
 ```
 
 It's really concise code!
@@ -630,12 +622,12 @@ I'll try to explain it.
 First, I'll provide the hacky part of the source code:
 
 ```rust
-record Extends[A, B] = extension;
+record Extends[A, B] = extension
 
 -- Ignore the `const` keyword before `fn` for now.
-const fn implicitly[T][(inst : T)] -> T = inst;
+const fn implicitly[T][(inst : T)] -> T = inst
 
-fundamental impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B];
+fundamental impl superTrait[A, B][(A, Extends[A, B])] -> B = implicitly[B]
 ```
 
 The basic idea is that no matter what `A` and `B` are, if `impl`s of `A` and `Extends[A, B]` are in scope, `impl` of `B` is made in scope.
@@ -645,23 +637,22 @@ To know why it's needed, we need to go deeper to know how an `impl` is found.
 
 ### Searching for `impl`s
 
-First, we search for `impl` objects.
-We add an `impl` object in scope to the current **`impl` context** if the trait it implements is also in scope.
+First, we search for simple `impl`s.
+We add a simple `impl` in scope to the current **`impl` context** if the trait it implements is also in scope.
 
 Second, we add the `impl` functions to the `impl` context.
 There is a necessary limitation of normal `impl` functions:
 a normal `impl` function can only have a return type that is not a variable, so the example below does't work:
 
 ```rust
--- impl abuseOfImplicitly[T] -> T = implicitly[T]; -- Doesn't compile.
+-- impl abuseOfImplicitly[T] -> T = implicitly[T] -- Doesn't compile.
 ```
 
-The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't retern an `impl` of a type in scope.
-Without the limitation, the `impl` searching process could stuck at some weird recursive `impl`.
+The reason why some limitation is needed is because we want to make searching `impl`s more predictable, so that we can filter out the `impl` functions that doesn't return an `impl` of a type in scope.
+Without the limitation, the `impl` searching process could be stuck at some weird recursive `impl`.
 
 And `fundamental impl`s surpass that limitation.
 It has to be used more carefully, but I don't think there's a lot of uses of it.
-In fact the only one I can think of is trait inheritance.
 The `impl`s of the return types of the `fundamental impl`s are recursively added to the `impl` context no matter whether the type it implements is in scope or not.
 
 ## Associated Types
@@ -670,27 +661,29 @@ Fields of an instance of a `record` can also be dependent.
 They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
 They are *output parameters*.
 For example, imagine if there is a way to overload operators.
-There should be an trait for each operator.
+There should be a trait for each operator.
 To achieve maximal flexibility, I want to make types of the right-hand-side, the left-hand-side, and the returned terms possibly different.
 It means it has to be generic over these 3 types.
 So maybe the trait could be like:
 
 ```rust
 @lang("Add"):
-pub record Add[L, R, Output] = add {
-    fn add(self : L, R) -> Output,
-};
+pub record Add[L, R, Output] =
+    add {
+    		fn add(self : L, R) -> Output
+		}
 ```
 
-However, the trait is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `(l : L) + (r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
+However, the trait is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write <code>`l : L` + `r : R`</code>, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
 This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
 The correct trait should be:
 
 ```rust
 @lang("Add"):
-pub record Add[L, R] = add[Output] {
-    fn add(self : L, R) -> Output,
-};
+pub record Add[L, R] =
+    add[Output] {
+        fn add(self : L, R) -> Output
+		}
 ```
 
 If you want to access the output type specified by an instance of a trait, simply write `inst.Output`.
@@ -704,23 +697,23 @@ For now, let's assume that type is called `StrLike`.
 The Ende source code would be something like:
 
 ```rust
-auto impl strLike(self : String) -> StrLike = ...;
+auto impl strLike(self : String) -> StrLike = ...
 ```
 
 `auto impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` everywhere.
 `auto impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
 ```rust
-auto impl firstToSecond(self : First) -> Second = ...;
-auto impl secondToThird(self : Second) -> Third = ...;
+auto impl firstToSecond(self : First) -> Second = ...
+auto impl secondToThird(self : Second) -> Third = ...
 
-fn manipulateThird(third : Third) -> Third = third;
+fn manipulateThird(third : Third) -> Third = third
 
-let second : Second = ...;
-manipulateThird(first); -- It works.
+let second : Second = ...
+manipulateThird(first) -- It works.
 
-let first : First = ...;
--- manipulateThird(first); -- `first` cannot be transformed to value of type `Third`.
+let first : First = ...
+-- manipulateThird(first) -- `first` cannot be transformed to value of type `Third`.
 ```
 
 ## Visibility of `impl`s
@@ -768,11 +761,11 @@ By default, values in Ende can only be used once.
 Using a value *consumes* or **move**s it.
 
 ```rust
-data Movable = movable;
+data Movable = movable
 
-let original = Movable::movable;
-let moved = id(original);
--- let moveAgain = id(original); -- Cannot move a value more than once.
+let original = Movable::movable
+let moved = id(original)
+-- let moveAgain = id(original) -- Cannot move a value more than once.
 ```
 
 But sometimes we really want to use some *plain old data* more than once.
@@ -780,7 +773,7 @@ It's time for the `Copy` trait to come to rescue.
 
 ```Rust
 @lang("Copy"):
-record Copy[T] = copy;
+record Copy[T] = copy
 ```
 
 `Copy` is a built-in trait that can be implemented by types that can be copied bitwise.
@@ -790,11 +783,12 @@ A `data` can implement `Copy` if and only if all parameters of all of its varian
 Similar for a `record`.
 
 ```Rust
-record I32Wrapper = wrap {
-    inner : I32,
-};
+record I32Wrapper =
+    wrap {
+    	inner : I32
+		}
 
-impl copyableI32Wrapper : Copy[I32Wrapper] = copy;
+impl copyableI32Wrapper : Copy[I32Wrapper] = copy
 ```
 
 ## Reference Types
@@ -817,7 +811,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
 3. **Variables**:
    A variable is a constant if it's declared as `const varName`.
-   For example, in `const meaningOfLife = 42i32;`, `meaningOfLife` is a constant.
+   For example, in `const meaningOfLife = 42i32`, `meaningOfLife` is a constant.
    By contrast, in `let devil = 666i32`, devil **isn't** a constant.
    Of course, the right hand side of the `const` binding must be a constant as well.
 
@@ -848,7 +842,7 @@ Now, let's go through all kinds of terms introduced and see if they are constant
       Of course, `let mut` is forbidden in a `const fn`.
 
    3. normal statements:
-      The term before the semicolon (`;`) must be a constant, so `while` cannot be used in a `const fn`, so if you want to do something again and again, use recursion.
+      Each term in the function must be a constant, so `while` cannot be used in a `const fn`, so if you want to do something again and again, recurse.
 
    4. function calls:
       Only `const fn`s can be called.
@@ -879,17 +873,19 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    Here is such an example, the `Monoid` trait we've talked about.
 
    ```rust
-   record Monoid[T] = monoid {
-       unit : T,
-       fn append(self : T, T) -> T,
-   };
+   record Monoid[T] =
+	 		 monoid {
+		       unit : T
+		       fn append(self : T, T) -> T
+   	 	 }
 
-   impl i32Monoid : Monoid[I32] = monoid {
-       unit => 0i32,
-       fn append(self : I32, another : I32) -> I32 = self + another,
-   };
+   impl i32Monoid : Monoid[I32] =
+	 		 monoid {
+		       unit => 0i32
+		       fn append(self : I32, another : I32) -> I32 = self + another
+       }
 
-   const _ = 0i32.append(0i32); -- It works.
+   const _ = 0i32.append(0i32) -- It works.
    ```
 
    But sometimes you want to use `record`s as Java `class`es, in that case, you want all non-function fields to be mutable, and all function members to be non-`const` functions.
@@ -898,17 +894,18 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    You can also write `dyn` in front of a function member in a non-`dyn` `record` to indicate it's not a `const` function.
 
    ```rust
-   record Counter = dyn counter {
-       inner : I32,
-       fn increment(self : Counter) -> Unit,
-   };
+   record Counter =
+	 		 dyn counter {
+       		 inner : I32
+       		 fn increment(self : Counter) -> Unit
+       }
 
-   fn newCounter() -> Counter = counter {
-       inner => 0i32,
-       fn increment(self : Counter) -> Unit = {
-           self.inner += 1;
-       },
-   };
+   fn newCounter() -> Counter =
+	     counter {
+		       inner => 0i32
+		       fn increment(self : Counter) -> Unit =
+		           self.inner += 1
+       }
    ```
 
    Notice that `newCounter.increment` **is** a constant although it's not a `const fn`.
@@ -916,17 +913,19 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    If you want a single function field to be dynamic, write `dyn` **after** the keyword `fn`.
 
    ```rust
-   record Wierd = dyn duh {
-       fn dyn wierd : () -> Unit,
-   };
+   record Wierd =
+	     dyn duh {
+           fn dyn wierd : () -> Unit
+       }
 
-   fn doNothing() -> Unit = Unit::unit;
+   fn doNothing() -> Unit = Unit::unit
 
-   let mut wierd = duh {
-       wierd => main,
-   };
+   let mut wierd =
+	     duh {
+           wierd => main
+       }
 
-   wierd.weird = doNothing; -- It works.
+   wierd.weird = doNothing -- It works.
    ```
 
    An instance of a non-classy `record` is a constant if all of its fields are constants.
@@ -949,7 +948,7 @@ The solution is to use a recursively defined data type: `Nat`
 
 ```rust
 @lang("Nat"):
-data Nat = zero, succ(Nat);
+data Nat = zero, succ(Nat)
 ```
 
 `Nat` is special that it has a literal form.
@@ -958,10 +957,9 @@ Literal of type `Nat` has a suffix `nat`.
 And here's the `const fn factorial`:
 
 ```rust
-const fn factorial(m : Nat) -> Nat {
-    (0nat) => 1nat,
-    (Nat::succ(n)) => m * factorial(n),
-};
+const fn factorial(m : Nat) -> Nat match'in
+    (0nat) => 1nat
+    (Nat::succ(n)) => m * factorial(n)
 ```
 
 # More Powerful Generics
@@ -971,10 +969,9 @@ In fact, **any** constants which is typeable can be passed to a function in `con
 So I can write something like:
 
 ```rust
-const fn factorial[m : Nat] -> Nat {
-    [0nat] => 1nat,
-    [Nat::succ(n)] => m * factorial(n),
-};
+const fn factorial[m : Nat] -> Nat match'in
+    [0nat] => 1nat
+    [Nat::succ(n)] => m * factorial(n)
 ```
 
 But then we lose the ability to call `factorial` at runtime.
@@ -988,16 +985,17 @@ However, `Option` is a type constructor and is of kind `[Type] -> Type`, which m
 Here's the `Functor` trait.
 
 ```rust
-record Functor[F : [Type] -> Type] = functor {
-    fn map[From, To](self : F[From], (From) -> To) -> F[To],
-};
+record Functor[F : [Type] -> Type] =
+    functor {
+        fn map[From, To](self : F[From], (From) -> To) -> F[To]
+    }
 ```
 
 Types of arguments in `const` mode are not always inferred to be `Type`, they can be inferred to be types or kinds of higher-kinded types as well.
 For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
 
 ```rust
-fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit;
+fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit
 ```
 
 # GADTs
@@ -1008,10 +1006,9 @@ GADTs let you be specific on the return types of the variants.
 We can define a type with GADT by dropping the equal sign (`=`) after the name of the `data`.
 
 ```rust
-data Array[_ : Nat, T] {
-    nil : Array[0nat, T],
-    fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T],
-};
+data Array[_ : Nat, T] where
+    nil : Array[0nat, T]
+    fn cons[n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
 ```
 
 # Variadic Arguments
@@ -1034,21 +1031,18 @@ The function `sum` sums up all the `I32`s in the argument list no matter how man
 First, I have to define a helper function for it:
 
 ```rust
-const fn replicate[_ : Nat](Type) -> ..(Type) {
-    [0nat](_) => tuple (),
-    [Nat::succ(n)](T) => tuple (T, replicate[n](T))
-}
+const fn replicate[_ : Nat](Type) -> ..(Type) match'in
+    [0nat](_) => tuple ()
+    [Nat::succ(n)](T) => tuple (T, dyn replicate[n](T))
 ```
 
 Because of the ambiguity I mentioned before, a tuple type cannot be written down directly.
 Instead, we write `tuple (something)` to write down a tuple type.
-`tuple ()` is an empty tuple type; `tuple (A, B, C)` is `A, B, C`; `tuple (A, B, C, D)` is `A, B, C, D`, etc.
 Now focus on the `replicate` function above.
 
 - `replicate[0nat](T)` is an empty tuple type.
-- `replicate[1nat](T)` = `tuple (T, replicate[0nat](T))` = `T`.
-  (It's not the type `T`, but the tuple type that has only one element.)
-- `replicate[2nat](T)` = `tuple (T, replicate[1nat](T))` = `tuple (T, T)` = `T, T`.
+- `replicate[1nat](T)` = `tuple (T, dyn replicate[0nat](T))` = `tuple (T)`.
+- `replicate[2nat](T)` = `tuple (T, dyn replicate[1nat](T))` = `tuple (T, T)`.
 
 So `replicate[n](T)` is `T` repeated for `n` times.
 
@@ -1060,10 +1054,9 @@ a `dyn` argument can only appear at the end of an argument list.
 It would be easier to understand by providing the example than describing it in words:
 
 ```rust
-const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 {
-    () => 0i32,
-    (head, dyn tail) => head + sum(tail),
-};
+const fn sum[Args : replicate(I32)](dyn _ : Args) -> I32 match'in
+    () => 0i32
+    (head, dyn tail) => head + sum(tail)
 ```
 
 In contrast to the ordered variadic type, there is `..{Type}`, which is the **unordered variadic type**, the type of maps from identifiers to types.
@@ -1090,17 +1083,16 @@ See the following 2 examples for instance:
    -- The type system still isn't strong enough to actually write it down.
 
    -- We can also pattern match the tuple types instead of the values of the tuple types.)
-   const fn curriedFuncType(Type, dyn _ : ..(Type)) -> ??? {
-       (Ret) => Ret,
-       (Ret, Head, dyn Tail) => (Head) -> curriedFuncType(Ret, Tail),
-   }
+   const fn curriedFuncType(Type, dyn _ : ..(Type)) -> ??? match'in
+       (Ret) => Ret
+       (Ret, Head, dyn Tail) => (Head) -> curriedFuncType(Ret, dyn Tail)
 
    const fn curry[Args : ..(Type), Ret](func : (dyn Args) -> Ret)
        -> curriedFuncType(Ret, dyn Args) {
        (fn() -> Ret = ret) =>
-           ret,
+           ret
        [tuple (Head, dyn Tail)](fn(head : Head, dyn tail : Tail) -> Ret = ret) =>
-           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(dyn tail : Tail) -> Ret = ret),
+           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(dyn tail : Tail) -> Ret = ret)
    }
    ```
 
@@ -1118,12 +1110,11 @@ See the following 2 examples for instance:
    If mixfix operators are implemented, maybe `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
 
    ```rust
-   const fn if_then_else[T](_0_ : Bool, lazy _1_ : T, lazy _2_ : T) -> T {
+   const fn if_then_else[T](_0_ : Bool, lazy _1_ : T, lazy _2_ : T) -> T =
        match _0_ {
-           Bool::true => _1_,
-           Bool::false => _2_,
+           Bool::true => _1_
+           Bool::false => _2_
        }
-   }
    ```
 
    However, this is not quite right, either.
@@ -1149,7 +1140,7 @@ In order to be fully dependently-typed, another mode called **pi mode** has to b
 | curryable                 | no        | yes          | yes           | no            |
 | argument inference        | no        | yes          | proof search  | no            |
 | can be dependent on       | no        | yes          | yes           | yes           |
-| unordered                 | `{t : T}` | `{[t : T]}`  | `{[(t : T)]}` | `{([t : T])}` |
+| **unordered**             | `{t : T}` | `{[t : T]}`  | `{[(t : T)]}` | `{([t : T])}` |
 | type inference            | no        | no           | no            | no            |
 | phase (if not `const fn`) | runtime   | compile time | compile time  | runtime       |
 | curryable                 | no        | yes          | yes           | no            |
@@ -1169,7 +1160,7 @@ The last argument in a list of arguments in pi mode can also be `dyn`.
 Existential types as an example of pi-types:
 
 ```rust
-record Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]));
+record Sigma[A][B : ([A]) -> Type] = sigma([a : A])(B([a]))
 ```
 
 ## `with`
@@ -1268,7 +1259,7 @@ What comes next in my mind is to make hierarchies user-definable.
 Here is the syntax for defining a new hierarchy:
 
 ```rust
-data AnotherWorld : AnotherWorld;
+universe AnotherWorld
 ```
 
 It seems that the type of `AnotherWorld` is itself, but that would make the type system inconsistent.
@@ -1281,8 +1272,8 @@ AnotherWorld[0] : AnotherWorld[1] : AnotherWorld[2] : AnotherWorld[3] ...
 Normally data types live in `Type`, but we can also define data types that live in another hierarchy:
 
 ```rust
-data WhatTheHeck : AnotherWorld = whatever;
-record YouAreCrazy : AnotherWorld = youAreCrazy;
+data WhatTheHeck : AnotherWorld = whatever
+record YouAreCrazy : AnotherWorld = youAreCrazy
 ```
 
 Now types of function types are:
