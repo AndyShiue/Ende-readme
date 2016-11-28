@@ -1084,16 +1084,15 @@ See the following 2 examples for instance:
 
    -- We can also pattern match the tuple types instead of the values of the tuple types.)
    const fn curriedFuncType(Type, dyn _ : ..(Type)) -> ??? match'in
-       (Ret) => Ret
-       (Ret, Head, dyn Tail) => (Head) -> curriedFuncType(Ret, dyn Tail)
+        (Ret) => Ret
+        (Ret, Head, dyn Tail) => (Head) -> curriedFuncType(Ret, dyn Tail)
 
    const fn curry[Args : ..(Type), Ret](func : (dyn Args) -> Ret)
-       -> curriedFuncType(Ret, dyn Args) {
-       (fn() -> Ret = ret) =>
-           ret
-       [tuple (Head, dyn Tail)](fn(head : Head, dyn tail : Tail) -> Ret = ret) =>
-           fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(dyn tail : Tail) -> Ret = ret)
-   }
+        -> curriedFuncType(Ret, dyn Args) match'in
+        (fn() -> Ret = ret) =>
+            ret
+        [tuple (Head, dyn Tail)](fn(head : Head, dyn tail : Tail) -> Ret = ret) =>
+            fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(dyn tail : Tail) -> Ret = ret)
    ```
 
    What's problematic about it?
@@ -1111,10 +1110,10 @@ See the following 2 examples for instance:
 
    ```rust
    const fn if_then_else[T](_0_ : Bool, lazy _1_ : T, lazy _2_ : T) -> T =
-       match _0_ {
-           Bool::true => _1_
-           Bool::false => _2_
-       }
+        match _0_ {
+            Bool::true => _1_
+            Bool::false => _2_
+        }
    ```
 
    However, this is not quite right, either.
