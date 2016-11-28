@@ -571,8 +571,8 @@ The answer is obviously, again, using `impl`s.
 ```rust
 impl groupToMonoid[T][(Group[T])] -> Monoid[T] =
     monoid {
-       unit => unit
-       append => append
+        unit => unit
+        append => append
     }
 ```
 
@@ -595,9 +595,9 @@ record Abelian[T] =
 
 impl abelianToGroup[T][(Abelian[T])] -> Group[T] =
     group {
-       unit => unit
-       append => append
-       inverse => inverse
+        unit => unit
+        append => append
+        inverse => inverse
     }
 ```
 
@@ -785,7 +785,7 @@ Similar for a `record`.
 ```Rust
 record I32Wrapper =
     wrap {
-      inner : I32
+        inner : I32
     }
 
 impl copyableI32Wrapper : Copy[I32Wrapper] = copy
@@ -875,15 +875,15 @@ Now, let's go through all kinds of terms introduced and see if they are constant
    ```rust
    record Monoid[T] =
         monoid {
-           unit : T
-           fn append(self : T, T) -> T
-         }
+            unit : T
+            fn append(self : T, T) -> T
+        }
 
    impl i32Monoid : Monoid[I32] =
         monoid {
-           unit => 0i32
-           fn append(self : I32, another : I32) -> I32 = self + another
-       }
+            unit => 0i32
+            fn append(self : I32, another : I32) -> I32 = self + another
+        }
 
    const _ = 0i32.append(0i32) -- It works.
    ```
@@ -895,9 +895,9 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    ```rust
    record Counter =
-        dyn counter {
-            inner : I32
-            fn increment(self : Counter) -> Unit
+       dyn counter {
+           inner : I32
+           fn increment(self : Counter) -> Unit
        }
 
    fn newCounter() -> Counter =
@@ -914,16 +914,16 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    ```rust
    record Wierd =
-       dyn duh {
-           fn dyn wierd : () -> Unit
-       }
+        dyn duh {
+            fn dyn wierd : () -> Unit
+        }
 
    fn doNothing() -> Unit = Unit::unit
 
    let mut wierd =
-       duh {
-           wierd => main
-       }
+        duh {
+            wierd => main
+        }
 
    wierd.weird = doNothing -- It works.
    ```
