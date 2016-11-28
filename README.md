@@ -205,9 +205,9 @@ Lambdas are written similar to a function but without the name.
 ```rust
 let abs =
     fn(n : I32) -> I32 =
-		    if n >= 0i32
-		    then n
-		    else -n
+        if n >= 0i32
+        then n
+        else -n
 ```
 
 # Lang Items
@@ -302,9 +302,9 @@ The name of the variant isn't namespaced, though.
 ```rust
 record Point =
     point {
-    		x : I32
-    		y : I32
-		}
+        x : I32
+        y : I32
+    }
 ```
 
 Members of an instance of a `record` can either be accessed by its name after a dot (`.`) or by pattern matching.
@@ -336,7 +336,7 @@ pub mod module where
     data Three = one, two, three
     pub mod inner where
         pub record Circle =
-				    circle { radius : U32 }
+            circle { radius : U32 }
 ```
 
 A `mod` can be declared without `where`.
@@ -438,7 +438,7 @@ bar[A][B]
 
 This is because of the way that current machines work.
 At runtime, functions can have several arguments natively.
-If arguments in normal mode were curryable, the compiler would have to retern lambdas often or generate several partially applied copies of the original function.
+If arguments in normal mode were curryable, the compiler would have to return lambdas often or generate several partially applied copies of the original function.
 Arguments in `const` mode are curryable, though, because that performance at compile time isn't that important, and programmers are supposed to do heavy calculation at runtime.
 
 Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
@@ -493,9 +493,9 @@ Of course, it's just another `record`.
 ```rust
 record Monoid[T] =
     monoid {
-		    unit : T
-		    fn append(self : T, T) -> T
-		}
+        unit : T
+        fn append(self : T, T) -> T
+    }
 ```
 
 To implement a trait, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
@@ -510,9 +510,9 @@ A simple `impl` must be an instance of a `record`.
 ```rust
 impl i32Monoid : Monoid[I32] =
     monoid {
-		    unit => 0i32
-		    fn append(self : I32, another : I32) -> I32 = self + another
-		}
+        unit => 0i32
+        fn append(self : I32, another : I32) -> I32 = self + another
+    }
 ```
 
 If the `impl` object `i32Monoid` is in scope, now we can call the `append` method on `I32`:
@@ -557,11 +557,11 @@ First, define a `Group` `record`.
 
 ```rust
 record Group[T] =
-		group {
-		    unit : T
-		    fn append(self : T, T) -> T
-		    fn inverse(self : T) -> T
-		}
+    group {
+        unit : T
+        fn append(self : T, T) -> T
+        fn inverse(self : T) -> T
+    }
 ```
 
 We know all `Group`s are `Monoid`s, so all instances of `Group[T]` should be able to be automatically converted to instances of `Monoid[T]`.
@@ -587,11 +587,11 @@ Imagine you want to define an `Abelian` trait, the code you need to add would be
 
 ```rust
 record Abelian[T] =
-		abelian {
-		    unit : T
-		    fn append(self : T, T) -> T
-		    fn inverse(self : T) -> T
-		}
+    abelian {
+        unit : T
+        fn append(self : T, T) -> T
+        fn inverse(self : T) -> T
+    }
 
 impl abelianToGroup[T][(Abelian[T])] -> Group[T] =
     group {
@@ -670,8 +670,8 @@ So maybe the trait could be like:
 @lang("Add"):
 pub record Add[L, R, Output] =
     add {
-    		fn add(self : L, R) -> Output
-		}
+        fn add(self : L, R) -> Output
+    }
 ```
 
 However, the trait is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write <code>`l : L` + `r : R`</code>, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
@@ -683,7 +683,7 @@ The correct trait should be:
 pub record Add[L, R] =
     add[Output] {
         fn add(self : L, R) -> Output
-		}
+    }
 ```
 
 If you want to access the output type specified by an instance of a trait, simply write `inst.Output`.
@@ -785,8 +785,8 @@ Similar for a `record`.
 ```Rust
 record I32Wrapper =
     wrap {
-    	inner : I32
-		}
+      inner : I32
+    }
 
 impl copyableI32Wrapper : Copy[I32Wrapper] = copy
 ```
@@ -874,15 +874,15 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    ```rust
    record Monoid[T] =
-	 		 monoid {
-		       unit : T
-		       fn append(self : T, T) -> T
-   	 	 }
+        monoid {
+           unit : T
+           fn append(self : T, T) -> T
+         }
 
    impl i32Monoid : Monoid[I32] =
-	 		 monoid {
-		       unit => 0i32
-		       fn append(self : I32, another : I32) -> I32 = self + another
+        monoid {
+           unit => 0i32
+           fn append(self : I32, another : I32) -> I32 = self + another
        }
 
    const _ = 0i32.append(0i32) -- It works.
@@ -895,16 +895,16 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    ```rust
    record Counter =
-	 		 dyn counter {
-       		 inner : I32
-       		 fn increment(self : Counter) -> Unit
+        dyn counter {
+            inner : I32
+            fn increment(self : Counter) -> Unit
        }
 
    fn newCounter() -> Counter =
-	     counter {
-		       inner => 0i32
-		       fn increment(self : Counter) -> Unit =
-		           self.inner += 1
+       counter {
+           inner => 0i32
+           fn increment(self : Counter) -> Unit =
+               self.inner += 1
        }
    ```
 
@@ -914,14 +914,14 @@ Now, let's go through all kinds of terms introduced and see if they are constant
 
    ```rust
    record Wierd =
-	     dyn duh {
+       dyn duh {
            fn dyn wierd : () -> Unit
        }
 
    fn doNothing() -> Unit = Unit::unit
 
    let mut wierd =
-	     duh {
+       duh {
            wierd => main
        }
 
