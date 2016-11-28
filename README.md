@@ -381,7 +381,7 @@ How does the parsing of the syntax of the language works?
 for each construct in the language, there's a (or a list of) keywords or reserved symbols, which are called the *antecedent* of that construct.
 For an `fn`, the antecedent is a equal sign (`=`) or `match'in`; for a case in pattern matching, it's `=>`, for instance.
 After the antecedent, there is going to be a list of something, which are separated by *separators*.
-For example, there will be a code block after the equal sign of an `fn`, and the separators of a code block are semicolons (`;`), and between cases in pattern matching, the separators would be commas (`,`).
+For example, there will be a code block after the equal sign of an `fn`, and the separators of a code block are semicolons (`;`), and between fields of a struct, the separators would be commas (`,`).
 If a separator isn't presented at the end of a line, we count the spaces in front of the first non-whitespace character of the next line.
 Let's assume there are *n* spaces.
 Now we look at the previous line and get the (n+1)th character of that line.
