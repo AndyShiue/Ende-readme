@@ -330,7 +330,7 @@ We use the keyword `mod` to declare a module.
 ```rust
 pub mod module where
     fn unit() -> Unit = Unit::unit
-    data Three =
+    pub data Three =
         one
         two
         three
