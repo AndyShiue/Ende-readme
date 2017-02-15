@@ -1077,7 +1077,7 @@ Tuple[''Type]<0> : Tuple[''Type]<1> : Tuple[''Type]<2> : Tuple[''Type]<3> ...
 ```
 
 It sounds reasonable to say that all the universes I mentioned are so called *small* universes the type of which is `Type<ω>`.
-`Type<ω>` is special in that elements of it can inherits another one.
+`Type<ω>` is special in that elements of it can inherit another one.
 `Tuple` would become a data type from `Type<ω>` to `Type<ω>` then.
 
 ```rust
