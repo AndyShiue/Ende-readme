@@ -776,7 +776,7 @@ I'll define a `const fn factorial` in this subchapter.
 The implementation of this `factorial` is different from the `U32` version above.
 This is not to suggest Ende has overloading; they're just from different namespaces.
 
-The problem with `U32` is that it's is not defined recursively, so it would be harder for the computer to figure out if the functions using it terminate.
+The problem with `U32` is that it's not defined recursively, so it would be harder for the computer to figure out if the functions using it terminate.
 The solution is to use a recursively defined data type: `Nat`
 
 ```rust
