@@ -868,17 +868,17 @@ const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
 ```
 
 A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`.
-For instance, now focus on the `replicate` function above.
+For instance, now focus on the `Replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
 - `Replicate[1nat](T)` = `tuple (T, ..Replicate[0nat](T))` = `tuple (T)`.
 - `Replicate[2nat](T)` = `tuple (T, ..Replicate[1nat](T))` = `tuple (T, ..tuple (T))` = `tuple (T, T)`.
 
-So `replicate[n](T)` is `T` repeated for `n` times.
+So `Replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
-Now you can see how `replicate` could be useful.
+Now you can see how `Replicate` could be useful.
 We can accept a `Replicate(I32)` and spread it, leaving the time of replication inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
