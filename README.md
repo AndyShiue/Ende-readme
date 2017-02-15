@@ -388,8 +388,8 @@ The rule is that whenever we see a comma either with an indentation after a new 
 
    ```rust
    data Three = one,
-       two,
-       three,
+        two,
+        three,
    data SomeOtherData = someOtherData
    ```
 
