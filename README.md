@@ -68,11 +68,7 @@ They include:
 6. all modules
 7. the vast majority of types
 
-As you will see, Ende achieves the unification of different concepts with carefully designed syntax and semantics.
-
-If you are familiar with Rust, you might start reading from [this section](#more-general-record).
-Just be aware of the top-level pattern matching syntax and that generic parameters are written inside square brackets (`[]`) instead of angle brackets (`<>`).
-Users of Scala might also find the similarities between Scala and Ende.
+As you will see, Ende achieves the unification of different concepts with carefully designed syntax and Someone might find the similarities between your favorite programming language and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
 
 # Comments
