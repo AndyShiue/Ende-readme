@@ -1,5 +1,7 @@
 # Ende
 
+[![License: CC BY-SA 4.0](https://licensebuttons.net/l/by-sa/4.0/80x15.png)](http://creativecommons.org/licenses/by-sa/4.0/)
+
 I just want to share what I've come up with about the design of a new programming language, and here it is.
 This language has a strong type system and its functions are call-by-value.
 Anyone is very welcome to write an implementation for it.
