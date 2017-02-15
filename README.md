@@ -68,7 +68,7 @@ They include:
 4. all traits
 5. all implementations of traits
 6. all modules
-7. the vast majority of types
+7. all types
 
 As you will see, Ende achieves the unification of different concepts with carefully designed syntax and Someone might find the similarities between your favorite programming language and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
