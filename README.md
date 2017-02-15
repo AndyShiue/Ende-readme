@@ -867,7 +867,7 @@ const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
 ```
 
-A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the argmuents in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`
+A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`
 For instance, now focus on the `replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
