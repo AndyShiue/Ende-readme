@@ -70,7 +70,8 @@ They include:
 6. all modules
 7. all types
 
-As you will see, Ende achieves the unification of different concepts with carefully designed syntax and Someone might find the similarities between your favorite programming language and Ende.
+As you will see, Ende achieves the unification of different concepts with carefully designed syntax and semantica.
+Someone might find the similarities between your favorite programming language and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
 
 # Comments
