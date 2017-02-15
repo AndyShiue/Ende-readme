@@ -1,7 +1,7 @@
 # Ende
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
-This language has a strong type system, its functions are call-by-value and it's whitespace-sensative because I prefer them.
+This language has a strong type system and its functions are call-by-value.
 Anyone is very welcome to write an implementation for it.
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
