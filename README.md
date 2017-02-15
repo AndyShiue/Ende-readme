@@ -94,7 +94,7 @@ Terms include:
    They include numbers and strings.
    Boolean values still won't be introduced yet but will be defined as a data type.
 
-	 1. **Integer**s:
+   1. **Integer**s:
       There would be several types of integers of different size, being either signed or not.
       A literal of type `I32` would be written as `42i32`.
       `42` is its actual value, and `i32` means it's a 32-bit signed integer.
@@ -104,7 +104,7 @@ Terms include:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
    3. **String**s:
-	    String literals are written in a pair of double quotation marks (`""`), in which you can escape some special characters as you do in other normal languages.
+      String literals are written in a pair of double quotation marks (`""`), in which you can escape some special characters as you do in other normal languages.
 
 2. Applications of operators:
    When one talks about operators, we usually think of infix operators.
@@ -228,12 +228,12 @@ Let's show how to define a C/Java-like `enum` in Ende:
 data Unit = unit
 data Bool =
     true
-		false
+    false
 data Season =
     spring
-		summer
-		autumn
-		winter
+    summer
+    autumn
+    winter
 ```
 
 In Ende, `data` can have **variants**.
@@ -284,7 +284,7 @@ The `OptionI32` below is a type that could possibly carry an `I32`.
 ```rust
 data OptionI32 =
     some(I32)
-		none
+    none
 ```
 
 Parameters of variants can also be pattern matched:
@@ -332,9 +332,9 @@ We use the keyword `mod` to declare a module.
 pub mod module where
     fn unit() -> Unit = Unit::unit
     data Three =
-		    one
-				two
-				three
+        one
+        two
+        three
     pub mod inner where
         pub data Circle = new { "radius" -: U32 }
 ```
@@ -389,28 +389,28 @@ The rule is that whenever we see a comma either with an indentation after a new 
 1. This definition of `Three` is the same as the above ones:
 
    ```rust
-	 data Three = one,
-		   two,
-			 three,
-	 data SomeOtherData = someOtherData
-	 ```
+   data Three = one,
+       two,
+       three,
+   data SomeOtherData = someOtherData
+   ```
 
 2. This would generate a parsing error:
 
-	 ```rust
+   ```rust
    data Three =
-	 a,
-	 b,
-	 c
-	 ```
+   a,
+   b,
+   c
+   ```
 
 3. This would also generate a parsing error when the parser encounters `b`:
 
-	 ```rust
+   ```rust
    data Three = a,
-	 b,
-	 c
-	 ```
+   b,
+   c
+   ```
 
 You can write 2 commas in a row to go out of one layer of the syntax, so `data First = first,, data Second = second` in the same line is valid syntax.
 More consecutive commas can be used to go out of several layers of the syntax in a similar fashion.
@@ -728,7 +728,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    The types of the parameters and the return type of any functions must be constants.
    Functions are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
-	 The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
+   The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
    The operations you can do in a `const fn` are more limited.
    You can only:
 
@@ -751,7 +751,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    A constant that evaluates to a `const fn` is also a `const fn`.
    If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
    There are also `const fn` lambdas.
-	 The syntax for it should be obvious.
+   The syntax for it should be obvious.
 
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
