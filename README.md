@@ -169,12 +169,12 @@ The declaration of a function is an *item*.
 Items are basically some construct that can appear at the top level of the source code.
 
 Every application needs to have an entry, traditionally called `main`.
-In Ende, `main` is a function of type `() -> Unit`.
-That is, a function that accepts no inputs and returns nothing.
+In Ende, `main` is a function of type `() -> IO[Unit]`.
+That is, a function that accepts no inputs and returns something that has something to do with `IO`.
 Now, let's write the well-known *Hello, world!* program in Ende.
 
 ```rust
-fn main() -> Unit = putStrLn("Hello, world!")
+fn main() -> IO[Unit] = putStrLn("Hello, world!")
 ```
 
 Nothing special.
@@ -183,7 +183,7 @@ Unlike Rust, there is an equal sign (`=`) after the type of the function.
 
 ```rust
 fn factorial(n : U32) -> U32 =
-    if n == 0
+    if n == 0u32
     then 0u32
     else n * factorial(n - 1)
 ```
