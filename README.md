@@ -883,13 +883,13 @@ We can accept a `Replicate(I32)` and spread it, leaving the time of replication 
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```rust
-const fn sum[Args : replicate(I32)](.._ : Args) -> I32 match'in
+const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
 
-In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from identifiers to types.
-This could be used for duck typing or row polymorphism, e.g.
+In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from strings to types.
+This could be used for row polymorphism, e.g.
 
 (TBD)
 
@@ -917,11 +917,11 @@ See the following 2 examples for instance:
         (Ret, Head, ..Tail) => (Head) -> CurriedFuncType(Ret, ..Tail)
 
    const fn curry[Args : Tuple[''Type], Ret](func : (..Args) -> Ret)
-        -> curriedFuncType(Ret, ..Args) match'in
+        -> CurriedFuncType(Ret, ..Args) match'in
         (fn() -> Ret = ret) =>
             ret
         [tuple (Head, ..Tail)](fn(head : Head, ..tail : Tail) -> Ret = ret) =>
-            fn(head : Head) -> curriedFuncType(Ret, Tail) = curry(fn(..tail : Tail) -> Ret = ret)
+            fn(head : Head) -> CurriedFuncType(Ret, Tail) = curry(fn(..tail : Tail) -> Ret = ret)
    ```
 
    What's problematic about it?
@@ -991,7 +991,7 @@ Existential types as an example of pi-types:
 data Sigma[A][B : ([A]) -> Type] = new([a : A])(B([a]))
 ```
 
-(TBD: `data` from `const` mode to `pi` mode)
+(TBD: `data` from the `const` mode to the pi one)
 
 ## `with`
 
@@ -1068,6 +1068,12 @@ Type<0> : Type<1> : Type<2> : Type<3> ...
 
 ```rust
 Tuple[''Type<0>] : Tuple[''Type<1>] : Tuple[''Type<2>] : Tuple[''Type<3>] ...
+```
+
+which could also be written
+
+```rust
+Tuple[''Type]<0> : Tuple[''Type]<1> : Tuple[''Type]<2> : Tuple[''Type]<3> ...
 ```
 
 It sounds reasonable to say that all the universes I mentioned are so called *small* universes the type of which is `Type<ω>`.
