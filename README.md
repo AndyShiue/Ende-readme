@@ -384,7 +384,7 @@ Therefore, The above `Three` can also be written as:
 data Three = one, two, three
 ```
 
-The rule is that whenever we see a comma either with an indentation after a new line or not, we append a clause to the innermost possible place in the syntax tree. If there isn't some indentation after a new line in comparison to the previous line, it's parsed as a sibling clause of the previous one. Below are some examples.
+The rule is that whenever we see a comma either with an indentation after a new line after it or not, we append a clause to the innermost possible place in the syntax tree. If there isn't some indentation after a new line in comparison to the previous line, it's parsed as a sibling clause of the previous one. Below are some examples.
 
 1. This definition of `Three` is the same as the above ones:
 
