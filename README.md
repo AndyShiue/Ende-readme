@@ -854,7 +854,7 @@ They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
 for example, `tuple (Unit, Bool)` is a tuple type, and `tuple (I32, F32, U64)` is another tuple type.
 What is the kind of all tuple types then?
-It's called the **ordered variadic type**, and is written `Tuple[''Type]`
+It's called the **ordered variadic type**, and is written `Tuple[''Type]`.
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
@@ -867,7 +867,7 @@ const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
 ```
 
-A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`
+A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`.
 For instance, now focus on the `replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
