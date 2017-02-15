@@ -610,7 +610,7 @@ The code is very similar to implementing `Monoid`s for `Group`s; we have to writ
 That is not tolerable.
 Can't we just store a `Group[T]` inside an `Abelion[T]`?
 Yes, we can!
-Moreover, we want to call the methods or more generally use the fields from the supertraits without accessing the field explicitly.
+Moreover, we want to call the methods or more generally use the fields from the supertraits without accessing the fields explicitly.
 **Instance argument**s let us do all of that.
 
 In order to use this feature, the trait `Group` and `Abelian` can be rewritten as below:
