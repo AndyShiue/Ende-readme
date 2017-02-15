@@ -315,7 +315,7 @@ fn getX2(Point) -> I32 match'in
 The syntax of pattern matching a record or constructing an instance of it is the same as declaring one:
 
 ```rust
-let p = Point::new { "x" -: 0i32, "y" -: 0i32 }
+let center = Point::new { "x" -: 0i32, "y" -: 0i32 }
 ```
 
 # Visibility
