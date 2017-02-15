@@ -879,7 +879,7 @@ So `replicate[n](T)` is `T` repeated for `n` times.
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `replicate` could be useful.
-We can accept a `replicate(I32)` and spread it, leaving the time of replication inferred.
+We can accept a `Replicate(I32)` and spread it, leaving the time of replication inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```rust
