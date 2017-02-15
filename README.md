@@ -560,7 +560,7 @@ let sum = concat[(i32Monoid)](i32Vec)
 1. It's generic over an argument in the `const` mode.
 2. It's generic over an argument in the instance mode.
 
-I'm going to provide a `impl` function generic over both modes.
+I'm going to provide an `impl` function generic over both modes.
 First, define a `Group` trait.
 
 ```rust
