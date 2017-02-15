@@ -764,6 +764,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 7. **`data`**:
    In normal `data`, all variants are constants.
    In addition, all variants with parameters in `data` are `const fn`s.
+   If you get a part of constant `data` by pattern matching or field accessing, what you get would still be a constant.
 
 ## `const(only)`
 
