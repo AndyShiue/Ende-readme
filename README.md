@@ -819,7 +819,7 @@ Here's the `Functor` trait.
 
 ```rust
 data Functor[F : [Type] -> Type] = new {
-    map -: [From, To](self : F[From], (From) -> To) -> F[To]
+    "map" -: [From, To](self : F[From], (From) -> To) -> F[To]
 }
 ```
 
