@@ -502,7 +502,7 @@ To be more general, now we can also have struct variants and arbitrary functions
 records in Ende can not only act as Rust `struct`s but also Rust `trait`s or Java `interface`s or Haskell `class`es.
 I'll call them traits in the rest of the article if they are used like a Rust `trait`.
 Here, I'm going to write a `Monoid` trait.
-Of course, it's just another `record`.
+Of course, it's just another record.
 
 ```rust
 data Monoid[T] = new {
