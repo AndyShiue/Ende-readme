@@ -849,7 +849,7 @@ Usually, we don't want to make arguments in normal mode curryable.
 But sometimes we do want to supply variable length of arguments.
 There is a kind of mechanism in Ende to make genericity over arity doable.
 Because I want to make variadic arguments as flexible as possible, it could be a little bit harder to understand.
-I need to introduce a new sort of types called **tuple types**.
+I need to introduce a new kind of types called **tuple types**.
 They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
 for example, `tuple (Unit, Bool)` is a tuple type, and `tuple (I32, F32, U64)` is another tuple type.
