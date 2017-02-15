@@ -746,7 +746,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    4. function calls:
       Only `const fn`s can be called.
 
-   `const fn`s are also checked to be *total*, meaning they are pure and don't recurse forever.
+   `const fn`s are also checked to be *total*, meaning they don't recurse forever.
    A constant that evaluates to a `const fn` is also a `const fn`.
    If a `const fn` has multiple argument lists in normal mode, supplying one or more but not all lists of arguments outputs another `const fn`.
    There are also `const fn` lambdas.
