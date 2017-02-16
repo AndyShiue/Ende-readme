@@ -27,7 +27,6 @@ Anyone is very welcome to write an implementation for it.
 	- [Instance Arguments](#instance-arguments)
 	- [`impl(auto)`](#implauto)
 	- [Visibility of `impl`s](#visibility-of-impls)
-- [Memory Management](#memory-management)
 - [`const`](#const)
 	- [`const data`](#const-data)
 	- [A `const` Version of `factorial`](#a-const-version-of-factorial)
@@ -35,6 +34,7 @@ Anyone is very welcome to write an implementation for it.
 - [Do Notation](#do-notation)
 - [GADTs](#gadts)
 - [Spreading](#spreading)
+- [Memory Management](#memory-management)
 	- [Heap Allocation](#heap-allocation)
 - [Phase Polymorphism](#phase-polymorphism)
 	- [The Problem](#the-problem)
@@ -687,16 +687,6 @@ use some_module::impl
 
 Syntax for importing all `fn`/`data`/`mod` in a `mod` could be implemented likewise.
 
-# Memory Management
-
-Until now, the language is still fairly compatible with system programming.
-Functions are ... well, functions; non-capturing lambdas are function pointers.
-Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
-`data` are enums in C each with a tag indicating its variant to make them type safe but records specifically can be implemented as structs in C: I didn't say recursive types work.
-`mod`s are modules.
-Generics are monomorphized at compile time.
-`impl`s have nothing to do with runtime.
-
 # `const`
 
 You may found that I wrote *`const` mode* instead of *const mode* throughout the article.
@@ -908,6 +898,16 @@ In contrast to the ordered variadic type, there is `Row[''Type]`, which is the *
 This could be used for row polymorphism, e.g.
 
 (TBD)
+
+# Memory Management
+
+Until now, the language is still fairly compatible with system programming.
+Functions are ... well, functions; non-capturing lambdas are function pointers.
+Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
+`data` are enums in C each with a tag indicating its variant to make them type safe but records specifically can be implemented as structs in C: I didn't say recursive types work.
+`mod`s are modules.
+Generics are monomorphized at compile time.
+`impl`s have nothing to do with runtime.
 
 ## Heap Allocation
 
