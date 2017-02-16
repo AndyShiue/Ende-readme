@@ -865,9 +865,11 @@ Below are the valid commands in the do-notation in Ende:
     let plain = something
     ```
 
-2.  ```rust
-    let unwraped <- something
-    ```
+2.  
+
+```rust
+let unwraped <- something
+```
 
 3.  ```rust
     any term
