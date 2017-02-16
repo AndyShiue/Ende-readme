@@ -945,8 +945,8 @@ This could be used for row polymorphism, e.g.
 
 Until now, the language is still fairly compatible with system programming.
 Functions are ... well, functions; non-capturing lambdas are function pointers.
-Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
 `data` are enums in C each with a tag indicating its variant to make them type safe but records specifically can be implemented as structs in C: I didn't say recursive types work.
+Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
 `mod`s are modules.
 Generics are monomorphized at compile time.
 `impl`s have nothing to do with runtime.
