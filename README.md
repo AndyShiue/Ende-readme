@@ -32,6 +32,7 @@ Anyone is very welcome to write an implementation for it.
 	- [`const data`](#const-data)
 	- [A `const` Version of `factorial`](#a-const-version-of-factorial)
 - [More Powerful Generics](#more-powerful-generics)
+- [Do Notation](#do-notation)
 - [GADTs](#gadts)
 - [Spreading](#spreading)
 	- [Heap Allocation](#heap-allocation)
@@ -840,6 +841,10 @@ For example, if you want to write a function generic over functors, you don't ne
 ```rust
 fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit
 ```
+
+# Do Notation
+
+(TBD)
 
 # GADTs
 
