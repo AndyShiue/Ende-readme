@@ -861,17 +861,21 @@ This is what Idris did because this kind of flexibility is needed when we need s
 
 Below are the valid commands in the do-notation in Ende:
 
-1.  ```rust
+1.  normal binding:
+
+		```rust
     let plain = something
     ```
 
-2.  
+2.  pseudo-unwrapping:
 
-```rust
-let unwraped <- something
-```
+    ```rust
+    let unwrapped <- something
+    ```
 
-3.  ```rust
+3.  no binding:
+
+		```rust
     any term
     ```
 
