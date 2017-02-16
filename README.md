@@ -869,10 +869,9 @@ Below are the valid commands in the do-notation in Ende:
    let unwraped <- something
 	 ```
 
-2. ```rust
+3. ```rust
    any term
 	 ```
-
 
 The one-to-one correspodence between Ende's syntax and Haskell's (and the desugaring) should be straightforward.
 
