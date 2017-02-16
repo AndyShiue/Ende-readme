@@ -1166,7 +1166,7 @@ It sounds reasonable to say that all the universes I mentioned are so called *sm
 `Tuple` would become a data type from `Type<ω>` to `Type<ω>` then.
 
 ```rust
-data Tuple[U : Type<ω>] : Type<ω> = ...
+data Tuple[_ : Type<ω>] : Type<ω> = ...
 ```
 
 Now types of function types could be:
