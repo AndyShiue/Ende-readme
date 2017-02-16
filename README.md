@@ -763,8 +763,9 @@ A data type marked `const` cannot have any instance at runtime.
 How is it useful then?
 It must have something to do with the compiler!
 And `Mod` is an example.
+It's special that it could be `use`d
 
-what you can do to such `data` is only what you can do in a `const fn`, so you can write something like:
+what you can do in a `use` statement is only what you can do in a `const fn`, so you can write something like:
 
 ```rust
 use if isWindows then os::win else os::nix
@@ -1161,7 +1162,7 @@ which could also be written
 Tuple[''Type]<0> : Tuple[''Type]<1> : Tuple[''Type]<2> : Tuple[''Type]<3> ...
 ```
 
-In reality there are infinite hierarchies because Tuple[''Tuple[''Type]] and so on are also hierarchies.
+In reality there are infinite hierarchies because `Tuple[''Tuple[''Type]]` and so on are also hierarchies.
 It sounds reasonable to say that all the universes I mentioned are so called *small* universes the type of which is `Type<ω>`.
 `Type<ω>` is special in that elements of it can inherit another one.
 `Tuple` would become a data type from `Type<ω>` to `Type<ω>` then.
