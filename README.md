@@ -29,7 +29,7 @@ Anyone is very welcome to write an implementation for it.
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [Memory Management](#memory-management)
 - [`const`](#const)
-	- [`const(only)`](#constonly)
+	- [`const data`](#const-data)
 	- [A `const` Version of `factorial`](#a-const-version-of-factorial)
 - [More Powerful Generics](#more-powerful-generics)
 - [GADTs](#gadts)
@@ -389,10 +389,10 @@ use module::Three::_
 
 ```rust
 @lang("Mod"):
-pub const(only) data Mod
+pub const data Mod
 ```
 
-Here, `const(only)` means the instance of `Mod` can only exist at compile time.
+Here, `const` means the instance of `Mod` can only exist at compile time.
 I'll show how to manipulate `data` at compile time later.
 
 # Comma
@@ -766,9 +766,20 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    In addition, all variants with parameters in `data` are `const fn`s.
    If you get a part of constant `data` by pattern matching or field accessing, what you get would still be a constant.
 
-## `const(only)`
+## `const data`
 
-(TBD)
+A data type marked `const` cannot have any instance at runtime.
+How is it useful then?
+It must have something to do with the compiler!
+And `Mod` is an example.
+
+what you can do to such `data` is only what you can do in a `const fn`, so you can write something like:
+
+```rust
+use if isWindows then os::win else os::nix
+```
+
+You can write `const fn` accepting or returning them, but they are only usable at compile time.
 
 ## A `const` Version of `factorial`
 
