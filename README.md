@@ -22,19 +22,19 @@ Anyone is very welcome to write an implementation for it.
 - [Generics](#generics)
 - [Named Mode](#named-mode)
 - [More General records](#more-general-records)
-	- [simple `impl`s](#simple-impls)
-	- [`impl` functions](#impl-functions)
+	- [Simple `impl`s](#simple-impls)
+	- [`impl` Functions](#impl-functions)
 	- [Instance Arguments](#instance-arguments)
-	- [`auto impl`](#auto-impl)
+	- [`impl(auto)`](#implauto)
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [Memory Management](#memory-management)
-	- [Heap Allocation](#heap-allocation)
 - [`const`](#const)
 	- [`const(only)`](#constonly)
-	- [A `const` Version Of `factorial`](#a-const-version-of-factorial)
+	- [A `const` Version of `factorial`](#a-const-version-of-factorial)
 - [More Powerful Generics](#more-powerful-generics)
 - [GADTs](#gadts)
-- [Variadic Arguments](#variadic-arguments)
+- [Spreading](#spreading)
+	- [Heap Allocation](#heap-allocation)
 - [Phase Polymorphism](#phase-polymorphism)
 	- [The Problem](#the-problem)
 	- [The Solution](#the-solution)
@@ -303,7 +303,8 @@ data Point = new {
 }
 ```
 
-A `data` with a single variant parameters of which are named is called a record.
+A `data` with a single variant all normal parameters of which are named is called a record.
+The compiler treats records different from normal `data` in subtle ways.
 Members of an instance of a record can either be accessed by its name after a dot (`.`) or by pattern matching.
 
 ```rust
@@ -320,7 +321,25 @@ let center = Point::new { "x" -: 0i32, "y" -: 0i32 }
 
 # Visibility
 
-(TBD)
+All items, `data` variants and fields of records are by default private.
+Items and variants being private means we can't use them outside the module.
+Fields being private means we can't access it through the dot (`.`) notation or pattern matching; we can't construct an instance of that record outside either so we must rely on the `pub fn` it provides to initiate the record.
+
+You can write `pub` in front of the item to override that behavior, examples include:
+
+```rust
+pub fn zero() -> I32 = 0i32
+pub data One = one
+```
+
+If you want to make all variants or fields of a `data` `pub`, you can write `pub(in)` in front of the `data`. Normally you want this for `data` that aren't records.
+
+```rust
+pub(in) data Shape =
+    circle
+		triangle
+		square
+```
 
 # `mod`s
 
@@ -337,6 +356,8 @@ pub mod module where
     pub mod inner where
         pub data Circle = new { "radius" -: U32 }
 ```
+
+You can write `pub(in)` before `mod` to mean all items inside are public.
 
 A `mod` can be declared without `where`.
 
@@ -512,7 +533,7 @@ data Monoid[T] = new {
 
 To implement a trait, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 
-## simple `impl`s
+## Simple `impl`s
 
 The `i32Monoid` below is a simple `impl`:
 
@@ -552,7 +573,7 @@ Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `
 let sum = concat[(i32Monoid)](i32Vec)
 ```
 
-## `impl` functions
+## `impl` Functions
 
 `impl` functions are literally, `impl`s that are functions.
 `impl`s need to be functions mainly because of 2 reasons:
@@ -626,24 +647,24 @@ data Abelian[T] = new[(Group[T])]
 
 As you can see, it's simply the instance mode after the constructor.
 
-## `auto impl`
+## `impl(auto)`
 
-`auto impl`s are `impl`s with a `self` parameter in normal mode.
+Automatic `impl`s are `impl`s with a `self` parameter in normal mode.
 The keyword `auto` indicates they are `impl`s that will be automatically inserted.
-For example, if one wants to overload string literals, they could provide an `auto impl` from `String` to whatever type they want.
+For example, if one wants to overload string literals, they could provide an auto `impl` from `String` to whatever type they want.
 For now, let's assume that type is called `StrLike`.
 The Ende source code would be something like:
 
 ```rust
-auto impl strLike(self : String) -> StrLike = ...
+impl(auto) strLike(self : String) -> StrLike = ...
 ```
 
-`auto impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` anywhere.
-`auto impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
+Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` anywhere.
+Auto `impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
 ```rust
-auto impl firstToSecond(self : First) -> Second = ...
-auto impl secondToThird(self : Second) -> Third = ...
+impl(auto) firstToSecond(self : First) -> Second = ...
+impl(auto) secondToThird(self : Second) -> Third = ...
 
 fn manipulateThird(third : Third) -> Third = third
 
@@ -656,7 +677,14 @@ let first : First = ...
 
 ## Visibility of `impl`s
 
-(TBD)
+The visibility of `impl`s are the same as that of `fn`s.
+Because people usually want to import all `impl`s in a `mod`, I purpose a little syntax to do that:
+
+```rust
+use some_module::impl
+```
+
+Syntax for importing all `fn`/`data`/`mod` in a `mod` could be implemented likewise.
 
 # Memory Management
 
@@ -667,33 +695,6 @@ Surely some form of recursive type must be implemented in order to make Ende rea
 `mod`s are modules.
 Generics are monomorphized at compile time.
 `impl`s have nothing to do with runtime.
-
-## Heap Allocation
-
-Perhaps the most important topic in memory management is heap allocation.
-In order to make Ende a system programming language, users of the language must be able to manipulate raw pointers.
-But in addition to it, there are supposed to be a higher-level interface for normal programmers since manipulating raw pointers are highly unsafe thus error-prone.
-I've consider 3 different approaches in the past:
-
-1. **The Rust Approach**:
-   closest to bare metal and theoretically the most efficient but requires lots and lots of lang items.
-
-2. **The Swift Approach**:
-   Doesn't require a garbage collector (GC), but instead implicitly using reference counting everywhere.
-   Cycles between reference counted (RC) pointers could cause memory leak and users have to be very careful about it.
-   Dereferencing an unowned pointer could fail.
-
-3. **The Java Approach**:
-   GC everywhere.
-   The safest solution the easiest to use, but one sometimes needs to *stop the world*.
-   Bad for application needing low latency.
-
-I prefered the approach of using RC *explicitly* at the beginning, but found out that doesn't work quite well.
-One would end up need to write out RC almost everywhere.
-Although that would arguably make Ende *Rust++*, I think explicit is better than implicit and by far Rust's solution is the best one also because implementing ownership doesn't prevent Ende from implementing explicit RC/GC.
-I'll try to descibe the compiler work needed in the rest of this section.
-
-(TBD)
 
 # `const`
 
@@ -755,11 +756,10 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments.
-   `impl`s are always constants; all `impl`s mentioned before are also `const fn`s.
-   Nevertheless, `auto impl`s need not be `const fn`s.
-   `dyn auto impl`s are `auto impl`s that operate at runtime.
-   `dyn auto impl`s exist because sometimes we can never get the value of the self parameter at compile time, e.g. dereferencing a smart pointer into its underlying type.
-   `dyn auto impl`s aren't guarantee to be total.
+   `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.
+   Nevertheless, Auto `impl`s need not be `const fn`s.
+   auto `impl`s that operate at runtime are denoted `impl(auto, dyn)`.
+   They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a smart pointer into its underlying type.
 
 7. **`data`**:
    In normal `data`, all variants are constants.
@@ -770,7 +770,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 (TBD)
 
-## A `const` Version Of `factorial`
+## A `const` Version of `factorial`
 
 I'll define a `const fn factorial` in this subchapter.
 The implementation of this `factorial` is different from the `U32` version above.
@@ -843,7 +843,7 @@ data Array[_ : Nat, T] where
     cons : [n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
 ```
 
-# Variadic Arguments
+# Spreading
 
 Usually, we don't want to make arguments in normal mode curryable.
 But sometimes we do want to supply variable length of arguments.
@@ -890,6 +890,33 @@ const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
 
 In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from strings to types.
 This could be used for row polymorphism, e.g.
+
+(TBD)
+
+## Heap Allocation
+
+Perhaps the most important topic in memory management is heap allocation.
+In order to make Ende a system programming language, users of the language must be able to manipulate raw pointers.
+But in addition to it, there are supposed to be a higher-level interface for normal programmers since manipulating raw pointers are highly unsafe thus error-prone.
+I've consider 3 different approaches in the past:
+
+1. **The Rust Approach**:
+   closest to bare metal and theoretically the most efficient but requires lots and lots of lang items.
+
+2. **The Swift Approach**:
+   Doesn't require a garbage collector (GC), but instead implicitly using reference counting everywhere.
+   Cycles between reference counted (RC) pointers could cause memory leak and users have to be very careful about it.
+   Dereferencing an unowned pointer could fail.
+
+3. **The Java Approach**:
+   GC everywhere.
+   The safest solution the easiest to use, but one sometimes needs to *stop the world*.
+   Bad for application needing low latency.
+
+I prefered the approach of using RC *explicitly* at the beginning, but found out that doesn't work quite well.
+One would end up need to write out RC almost everywhere.
+Although that would arguably make Ende *Rust++*, I think explicit is better than implicit and by far Rust's solution is the best one also because implementing ownership doesn't prevent Ende from implementing explicit RC/GC.
+I'll try to descibe the compiler work needed in the rest of this section.
 
 (TBD)
 
