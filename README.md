@@ -25,6 +25,7 @@ Anyone is very welcome to write an implementation for it.
 	- [Simple `impl`s](#simple-impls)
 	- [`impl` Functions](#impl-functions)
 	- [Instance Arguments](#instance-arguments)
+	- [Associated Values](#associated-values)
 	- [`impl(auto)`](#implauto)
 	- [Visibility of `impl`s](#visibility-of-impls)
 - [`const`](#const)
@@ -34,11 +35,11 @@ Anyone is very welcome to write an implementation for it.
 - [Do Notation](#do-notation)
 - [GADTs](#gadts)
 - [Spreading](#spreading)
-- [Memory Management](#memory-management)
-	- [Heap Allocation](#heap-allocation)
 - [Phase Polymorphism](#phase-polymorphism)
 	- [The Problem](#the-problem)
 	- [The Solution](#the-solution)
+- [Memory Management](#memory-management)
+	- [Heap Allocation](#heap-allocation)
 - [Dependent Types](#dependent-types)
 	- [`with`](#with)
 - [Universes](#universes)
@@ -111,8 +112,10 @@ Terms include:
    But in actual implementations, operators of any fixity could be introduced.
    There could possibly even be user-defined mixfix operators.
 
-   Examples would be `1 + 1`, `42 * 666`, `1 == 2`, etc.
+   Examples would be `1u32 + 1u32`, `42u32 * 666u32`, `1u32 == 2u32`, etc.
    Fixity of operators should follow the common sense.
+	 If you need parentheses to group expressions, write `id()`, e.g. `id(2u32 + 2u32) * 2u32`.
+	 As you will see, this is not actually not special syntax, but just a call to the identity function.
 
 3. Variables, which are going to be discussed immediately.
 
@@ -189,6 +192,55 @@ fn factorial(n : U32) -> U32 =
     else n * factorial(n - 1)
 ```
 
+All operators in Ende are just normal functions with special names.
+For instance, the exponential operator `^^` could be defined as:
+
+```rust
+fn _^^_(_0_ : U32, _1_ : U32) -> U32 =
+    if _1_ == 0u32
+		then 1u32
+		else _0_ * id(_0_ ^^ id(_1_ - 1u32))
+```
+
+In the above example, the underscores in the function name `_^^_` represents where the arguments go when it's applied as an operator.
+Each argument `_n_` is a binding of the argument of the nth underscore.
+The allowed symbols in a variable name include `!`, `#`, `$`, `%`, `&`, `*`, `+`, `.`, `/`, `<`, `=`, `>`, `?`, `\`, `^`, `|`, `-`, `~`, `:`.
+Of course also you cannot redefine built-in syntax such as `=`, `->` or `:` because that would cause parsing ambiguity.
+
+(TBD: fixity)
+
+In all of the above examples, the definition of the function is just a single term.
+There are two ways to write more complicated function.
+The first is to write `where` instead of `=` after the return type of the function; we call the code inside it *inside the function body*.
+The valid constructs inside the function body are `let ... = ...` and local function definitions only visible inside the function body.
+
+```rust
+fn printBMI() -> F64 where
+    let weight = 100f64
+		let height = 200f64
+		fn calcBMI(w : F64, h : F64) -> F64 = w / h / h
+		return calcBMI(weight, height)
+```
+
+The last clause in a function body must be `return` something.
+
+Another way to write a complicated function is to use do-notation; the valid clauses of which are those I called *statement*s.
+You need them to do several `IO` operations at once.
+
+```rust
+fn greeting() -> IO[Unit] = do
+    putStr("Hello, ")
+		let name <- mut("Andy")
+		putStr(name)
+		putStrLn(".")
+		putStr("Hello, ")
+		name := "Sandy"
+		putStr(name)
+		putStrLn(".")
+```
+
+You will see do-notation can be used much more generally than writing `IO` code.
+
 ## lambdas
 
 Lambdas are unnamed function literals.
@@ -219,6 +271,7 @@ fn whatever() -> Unit = unit
 
 Data types are items.
 They can be defined with the keyword `data`.
+They can be defined in function bodies.
 They can be seen as `enum`s in Rust and are more powerful than that of C/Java.
 I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
@@ -238,7 +291,7 @@ data Season =
 
 In Ende, `data` can have **variants**.
 Variants are the possible values of the defined type.
-Variants are namespaced; in order to access the varient `spring`, you need to write
+Variants are namespaced; in order to access the variant `spring`, you need to write
 
 ```rust
 let season = Season::spring
@@ -333,7 +386,8 @@ pub fn zero() -> I32 = 0i32
 pub data One = one
 ```
 
-If you want to make all variants or fields of a `data` `pub`, you can write `pub(in)` in front of the `data`. Normally you want this for `data` that aren't records.
+If you want to make all variants or fields of a `data` `pub`, you can write `pub(in)` in front of the `data`.
+Normally you want this for `data` that aren't records.
 
 ```rust
 pub(in) data Shape =
@@ -345,6 +399,7 @@ pub(in) data Shape =
 # `mod`s
 
 `mod`s are containers of items, and `mod`s themselves are also items, so `mod`s can be nested.
+You can define `mod`s in function bodies.
 We use the keyword `mod` to declare a module.
 
 ```rust
@@ -405,7 +460,9 @@ Therefore, The above `Three` can also be written as:
 data Three = one, two, three
 ```
 
-The rule is that whenever we see a comma either with an indentation after a new line after it or not, we append a clause to the innermost possible place in the syntax tree. If there isn't some indentation after a new line in comparison to the previous line, it's parsed as a sibling clause of the previous one. Below are some examples.
+The rule is that whenever we see a comma either with an indentation after a new line after it or not, we append a clause to the innermost possible place in the syntax tree.
+If there isn't some indentation after a new line in comparison to the previous line, it's parsed as a sibling clause of the previous one.
+Below are some examples:
 
 1.  This definition of `Three` is the same as the above ones:
 
@@ -532,7 +589,9 @@ data Monoid[T] = new {
 }
 ```
 
-To implement a trait, I introduce another keyword `impl`, unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
+To implement a trait, I introduce another keyword `impl`.
+All `impl`s can be defined locally in a function body.
+Unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 
 ## Simple `impl`s
 
@@ -565,7 +624,7 @@ fn concat[T][(Monoid[T])](List[T]) -> T match'in
     (List::cons(head, tail)) => head.append(concat(tail))
 ```
 
-You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks; it's just a syntax sugar.
+You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks (except those using weird characters that would be invalid variables in the syntax); it's just a syntax sugar.
 
 When you write `concat(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
@@ -608,7 +667,8 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
 
 ## Instance Arguments
 
-What we don't have yet is the ability to define one trait to be a supertrait of another one. In other words, asserting if you implement a trait, another trait must be implemented.
+What we don't have yet is the ability to define one trait to be a supertrait of another one.
+In other words, asserting if you implement a trait, another trait must be implemented.
 You may ask, isn't the above `impl` functions enough?
 Not really.
 Imagine you want to define an `Abelian` trait, the code you need to add would be:
@@ -647,6 +707,34 @@ data Abelian[T] = new[(Group[T])]
 ```
 
 As you can see, it's simply the instance mode after the constructor.
+
+## Associated Values
+
+Fields of an instance of a record can also be dependent on the others.
+They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
+They are *output parameters*.
+For example, imagine if I want to define a trait `Add` for all types that implement the `_+_` operator.
+To achieve maximal flexibility, I want to make types of the the left-hand-side, right-hand-side, and the returned terms possibly different.
+It means it has to be generic over these 3 types.
+So maybe the trait could be like:
+
+```rust
+pub data Add[L, R, Output] = add {
+    "_+_" -: (self : L, R) -> Output
+}
+```
+
+However, the trait is problematic because we can provide both instances of `Add[L, R, A]` and `Add[L, R, B]`; if I write `id(l : L) + id(r : R)`, the compiler wouldn't be able to know if the type of the result would be `A` or `B`.
+This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
+The correct trait should be:
+
+```rust
+pub data Add[L, R] = add[Output] {
+    "_+_" -: (self : L, R) -> Output
+}
+```
+
+If you want to access the output type specified by an instance of a trait, simply do a pattern matching.
 
 ## `impl(auto)`
 
@@ -720,7 +808,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    Functions are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
-   The operations you can do in a `const fn` are more limited.
+   The operations you can do in a body of a `const fn` are more limited.
    You can only:
 
    1. declare a variable with `const`.
@@ -763,9 +851,9 @@ A data type marked `const` cannot have any instance at runtime.
 How is it useful then?
 It must have something to do with the compiler!
 And `Mod` is an example.
-It's special that it could be `use`d
+It's special that it could be `use`d.
 
-what you can do in a `use` statement is only what you can do in a `const fn`, so you can write something like:
+What you can do in a `use` statement is what you can do in a `const fn`, so you can write something like:
 
 ```rust
 use if isWindows then os::win else os::nix
@@ -775,7 +863,7 @@ You can write `const fn` accepting or returning them, but they are only usable a
 
 ## A `const` Version of `factorial`
 
-I'll define a `const fn factorial` in this subchapter.
+I'll define a `const fn factorial` in this subsection.
 The implementation of this `factorial` is different from the `U32` version above.
 This is not to suggest Ende has overloading; they're just from different namespaces.
 
@@ -916,7 +1004,8 @@ const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
 ```
 
-A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type. A spreaded tuple therefore becomes *naked* without the `tuple()`.
+A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type.
+A spreaded tuple therefore becomes *naked* without the `tuple()`.
 For instance, now focus on the `Replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
@@ -939,43 +1028,6 @@ const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
 
 In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from strings to types.
 This could be used for row polymorphism, e.g.
-
-(TBD)
-
-# Memory Management
-
-Until now, the language is still fairly compatible with system programming.
-Functions are ... well, functions; non-capturing lambdas are function pointers.
-`data` are enums in C each with a tag indicating its variant to make them type safe but records specifically can be implemented as structs in C: I didn't say recursive types work.
-Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
-`mod`s are modules.
-Generics are monomorphized at compile time.
-`impl`s have nothing to do with runtime.
-
-## Heap Allocation
-
-Perhaps the most important topic in memory management is heap allocation.
-In order to make Ende a system programming language, users of the language must be able to manipulate raw pointers.
-But in addition to it, there are supposed to be a higher-level interface for normal programmers since manipulating raw pointers are highly unsafe thus error-prone.
-I've consider 3 different approaches in the past:
-
-1. **The Rust Approach**:
-   closest to bare metal and theoretically the most efficient but requires lots and lots of lang items.
-
-2. **The Swift Approach**:
-   Doesn't require a garbage collector (GC), but instead implicitly using reference counting everywhere.
-   Cycles between reference counted (RC) pointers could cause memory leak and users have to be very careful about it.
-   Dereferencing an unowned pointer could fail.
-
-3. **The Java Approach**:
-   GC everywhere.
-   The safest solution the easiest to use, but one sometimes needs to *stop the world*.
-   Bad for application needing low latency.
-
-I prefered the approach of using RC *explicitly* at the beginning, but found out that doesn't work quite well.
-One would end up need to write out RC almost everywhere.
-Although that would arguably make Ende *Rust++*, I think explicit is better than implicit and by far Rust's solution is the best one also because implementing ownership doesn't prevent Ende from implementing explicit RC/GC.
-I'll try to descibe the compiler work needed in the rest of this section.
 
 (TBD)
 
@@ -1024,10 +1076,10 @@ See the following 2 examples for instance:
     If mixfix operators are implemented, `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
 
     ```rust
-    const fn if_then_else[T](_0_ : Bool, lazy _1_ : T, lazy _2_ : T) -> T =
+    const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
         match _0_ {
-            Bool::true => _1_
-            Bool::false => _2_
+            Bool::true => _1_.force()
+            Bool::false => _2_.force()
         }
     ```
 
@@ -1038,6 +1090,43 @@ See the following 2 examples for instance:
 
 The solution is to give the users finer control of the `const` system.
 Instead of writing `const var` or plain `var`, we can write `phase ph var` to specify its phase further.
+
+(TBD)
+
+# Memory Management
+
+Until now, the language is still fairly compatible with system programming.
+Functions are ... well, functions; non-capturing lambdas are function pointers.
+`data` are enums in C each with a tag indicating its variant to make them type safe but records specifically can be implemented as structs in C: I didn't say recursive types work.
+Surely some form of recursive type must be implemented in order to make Ende really useful, but I think it should be done with explicit pointer; I will discuss on it later.
+`mod`s are modules.
+Generics are monomorphized at compile time.
+`impl`s have nothing to do with runtime.
+
+## Heap Allocation
+
+Perhaps the most important topic in memory management is heap allocation.
+In order to make Ende a system programming language, users of the language must be able to manipulate raw pointers.
+But in addition to it, there are supposed to be a higher-level interface for normal programmers since manipulating raw pointers are highly unsafe thus error-prone.
+I've consider 3 different approaches in the past:
+
+1. **The Rust Approach**:
+   closest to bare metal and theoretically the most efficient but requires lots and lots of lang items.
+
+2. **The Swift Approach**:
+   Doesn't require a garbage collector (GC), but instead implicitly using reference counting everywhere.
+   Cycles between reference counted (RC) pointers could cause memory leak and users have to be very careful about it.
+   Dereferencing an unowned pointer could fail.
+
+3. **The Java Approach**:
+   GC everywhere.
+   The safest solution the easiest to use, but one sometimes needs to *stop the world*.
+   Bad for application needing low latency.
+
+I prefered the approach of using RC *explicitly* at the beginning, but found out that doesn't work quite well.
+One would end up need to write out RC almost everywhere.
+Although that would arguably make Ende *Rust++*, I think explicit is better than implicit and by far Rust's solution is the best one also because implementing ownership doesn't prevent Ende from implementing explicit RC/GC.
+I'll try to descibe the compiler work needed in the rest of this section.
 
 (TBD)
 
