@@ -404,7 +404,7 @@ We use the keyword `mod` to declare a module.
 
 ```rust
 pub mod module where
-    fn unit() -> Unit = Unit::unit
+    fn getUnit() -> Unit = Unit::unit
     pub data Three =
         one
         two
@@ -501,7 +501,7 @@ But let's start with a simplest generic function: `id`.
 `id` simply returns its only argument.
 
 ```rust
-fn id[T](t : T) -> T = t
+pub fn id[T](t : T) -> T = t
 ```
 
 Here, I introduced another delimiter while defining the function: brackets (`[]`).
@@ -542,7 +542,7 @@ fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x))
 And here is the definition of a generic `Option` type:
 
 ```rust
-data Option[T] = some(T), none
+pub(in) data Option[T] = some(T), none
 ```
 
 # Named Mode
@@ -583,7 +583,7 @@ Here, I'm going to write a `Monoid` trait.
 Of course, it's just another record.
 
 ```rust
-data Monoid[T] = new {
+pub(in) data Monoid[T] = new {
     "unit" -: T
     "append" -: (self : T, T) -> T
 }
@@ -598,7 +598,7 @@ Unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always
 The `i32Monoid` below is a simple `impl`:
 
 ```rust
-impl i32Monoid : Monoid[I32] = Monoid::new {
+pub impl i32Monoid : Monoid[I32] = Monoid::new {
     "unit" -: 0i32
     "append" -: fn(self : I32, another : I32) -> I32 = self + another
 }
@@ -645,7 +645,7 @@ I'm going to provide an `impl` function generic over both modes.
 First, define a `Group` trait.
 
 ```rust
-data Group[T] = new {
+pub(in) data Group[T] = new {
     "unit" -: T
     "append" -: (self : T, T) -> T
     "inverse" -: (self : T) -> T
@@ -657,7 +657,7 @@ How do we automatically convert stuff?
 The answer is obviously, again, using `impl`s.
 
 ```rust
-impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
+pub impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
     "unit" -: unit
     "append" -: append
 }
@@ -698,7 +698,7 @@ Moreover, we want to call the methods or more generally use the fields from the 
 In order to use this feature, the trait `Group` and `Abelian` can be rewritten as below:
 
 ```rust
-data Group[T] = new[(Monoid[T])] {
+pub(in) data Group[T] = new[(Monoid[T])] {
     "inverse" -: (self : T) -> T
 }
 data Abelian[T] = new[(Group[T])]
@@ -719,7 +719,7 @@ It means it has to be generic over these 3 types.
 So maybe the trait could be like:
 
 ```rust
-pub data Add[L, R, Output] = add {
+pub(in) data Add[L, R, Output] = add {
     "_+_" -: (self : L, R) -> Output
 }
 ```
@@ -729,7 +729,7 @@ This suggests that the `Output` type should not be an input parameter but rather
 The correct trait should be:
 
 ```rust
-pub data Add[L, R] = add[Output] {
+pub(in) data Add[L, R] = add[Output] {
     "_+_" -: (self : L, R) -> Output
 }
 ```
@@ -745,7 +745,7 @@ For now, let's assume that type is called `StrLike`.
 The Ende source code would be something like:
 
 ```rust
-impl(auto) strLike(self : String) -> StrLike = ...
+pub impl(auto) strLike(self : String) -> StrLike = ...
 ```
 
 Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` anywhere.
@@ -872,7 +872,7 @@ The solution is to use a recursively defined data type: `Nat`
 
 ```rust
 @lang("Nat"):
-data Nat = zero, succ(Nat)
+pub(in) data Nat = zero, succ(Nat)
 ```
 
 `Nat` is special that it has a literal form.
@@ -909,7 +909,7 @@ However, `Option` is a type constructor and is of kind `[Type] -> Type`, which m
 Here's the `Functor` trait.
 
 ```rust
-data Functor[F : [Type] -> Type] = new {
+pub(in) data Functor[F : [Type] -> Type] = new {
     "map" -: [From, To](self : F[From], (From) -> To) -> F[To]
 }
 ```
@@ -918,7 +918,7 @@ Types of arguments in `const` mode are not always inferred to be `Type`, they ca
 For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
 
 ```rust
-fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Unit
+fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> IO[Unit]
 ```
 
 # Do Notation
@@ -928,7 +928,7 @@ We've seen `Functor`s, and traditional Haskell tutorial would probably go direct
 The definition of applicative would be:
 
 ```rust
-data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
+pub(in) data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
     "pure" -: [A](self : A) -> F[A]
     "ap" -: [From, To](self : F[(From) -> To], F[From]) -> F[To]
 }
@@ -937,7 +937,7 @@ data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
 And monad would be:
 
 ```rust
-data Monad[F : [Type] -> Type] = new[(Applicative[F])] {
+pub(in) data Monad[F : [Type] -> Type] = new[(Applicative[F])] {
     "bind" -: [From, To](self : F[From], (From) -> F[To]) -> F[To]
 }
 ```
@@ -975,7 +975,7 @@ GADTs let you define inductive families, that is, to be specific on the return t
 We can define a GADT by writing `where` instead of an equal sign (`=`) after the name of the `data`.
 
 ```rust
-data Array[_ : Nat, T] where
+pub(in) data Array[_ : Nat, T] where
     nil : Array[0nat, T]
     cons : [n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
 ```
@@ -999,7 +999,7 @@ The function `sum` sums up all the `I32`s in the argument list no matter how man
 First, I have to define a helper function for it:
 
 ```rust
-const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
+pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [0nat](_) => tuple ()
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
 ```
@@ -1054,7 +1054,7 @@ See the following 2 examples for instance:
         (Ret) => Ret
         (Ret, Head, ..Tail) => (Head) -> CurriedFuncType(Ret, ..Tail)
 
-    const fn curry[Args : Tuple[''Type], Ret](func : (..Args) -> Ret)
+    pub const fn curry[Args : Tuple[''Type], Ret](func : (..Args) -> Ret)
         -> CurriedFuncType(Ret, ..Args) match'in
         (fn() -> Ret = ret) =>
             ret
@@ -1076,7 +1076,7 @@ See the following 2 examples for instance:
     If mixfix operators are implemented, `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
 
     ```rust
-    const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
+    pub const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
         match _0_ {
             Bool::true => _1_.force()
             Bool::false => _2_.force()
@@ -1163,7 +1163,7 @@ The last argument in a list of arguments in pi mode can also be spreaded.
 Existential types as an example of pi-types:
 
 ```rust
-data Sigma[A][B : ([A]) -> Type] = new([a : A])(B([a]))
+pub(in) data Sigma[A][B : ([A]) -> Type] = new([a : A])(B([a]))
 ```
 
 (TBD: `data` from the `const` mode to the pi one)
