@@ -800,7 +800,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 4. **Control structures**:
    The value of a `while` loop is not a constant (actually because it's not a `const fn`).
-   The value of a `if` construct is a constant if and only if at least one of the conditions below are met.
+   The value of a `if` construct is a constant if and only if one of the conditions below are met.
 
    1. The term immediately after `if` is a constant and evaluates to `true`, and the term after `then` represents a constant.
 
