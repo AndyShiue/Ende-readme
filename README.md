@@ -114,8 +114,8 @@ Terms include:
 
    Examples would be `1u32 + 1u32`, `42u32 * 666u32`, `1u32 == 2u32`, etc.
    Fixity of operators should follow the common sense.
-	 If you need parentheses to group expressions, write `id()`, e.g. `id(2u32 + 2u32) * 2u32`.
-	 As you will see, this is not actually not special syntax, but just a call to the identity function.
+   If you need parentheses to group expressions, write `id()`, e.g. `id(2u32 + 2u32) * 2u32`.
+   As you will see, this is not actually not special syntax, but just a call to the identity function.
 
 3. Variables, which are going to be discussed immediately.
 
@@ -198,8 +198,8 @@ For instance, the exponential operator `^^` could be defined as:
 ```rust
 fn _^^_(_0_ : U32, _1_ : U32) -> U32 =
     if _1_ == 0u32
-		then 1u32
-		else _0_ * id(_0_ ^^ id(_1_ - 1u32))
+    then 1u32
+    else _0_ * id(_0_ ^^ id(_1_ - 1u32))
 ```
 
 In the above example, the underscores in the function name `_^^_` represents where the arguments go when it's applied as an operator.
@@ -217,9 +217,9 @@ The valid constructs inside the function body are `let ... = ...` and local func
 ```rust
 fn getBMI() -> F64 where
     let weight = 100f64
-		let height = 200f64
-		fn calcBMI(w : F64, h : F64) -> F64 = w / h / h
-		return calcBMI(weight, height)
+    let height = 200f64
+    fn calcBMI(w : F64, h : F64) -> F64 = w / h / h
+    return calcBMI(weight, height)
 ```
 
 The last clause in a function body must be `return` something.
@@ -230,13 +230,13 @@ You need them to do several `IO` operations at once.
 ```rust
 fn greeting() -> IO[Unit] = do
     putStr("Hello, ")
-		let name <- mut("Andy")
-		putStr(name)
-		putStrLn(".")
-		putStr("Hello, ")
-		name := "Sandy"
-		putStr(name)
-		putStrLn(".")
+    let name <- mut("Andy")
+    putStr(name)
+    putStrLn(".")
+    putStr("Hello, ")
+    name := "Sandy"
+    putStr(name)
+    putStrLn(".")
 ```
 
 You will see do-notation can be used much more generally than writing `IO` code.
