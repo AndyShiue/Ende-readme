@@ -95,16 +95,16 @@ Terms include:
    They include numbers and strings.
    Boolean values still won't be introduced yet but will be defined as a data type.
 
-   1. **Integer**s:
+   1. **Integers**:
       There would be several types of integers of different size, being either signed or not.
       A literal of type `I32` would be written as `42i32`.
       `42` is its actual value, and `i32` means it's a 32-bit signed integer.
       Similarly, `666u64` would be a 64-bit unsigned integer.
 
-   2. **Float**s:
+   2. **Floats**:
       Literals of floats would be similar to ones of integers, e.g. `2.71828f32`.
 
-   3. **String**s:
+   3. **Strings**:
       String literals are written in a pair of double quotation marks (`""`), in which you can escape some special characters as you do in other normal languages.
 
 2. Applications of operators:
@@ -800,7 +800,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 4. **Control structures**:
    The value of a `while` loop is not a constant (actually because it's not a `const fn`).
-   The value of a `if` construct is a constant if and only if one of the conditions below are met.
+   The value of an `if` construct is a constant if and only if one of the conditions below are met.
 
    1. The term immediately after `if` is a constant and evaluates to `true`, and the term after `then` represents a constant.
 
@@ -811,22 +811,22 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    Functions are always constants, but there's a difference between `const fn`s and normal functions.
    `const fn`s are functions that could be run at compile time (also at runtime).
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.
-   The operations you can do in a body of a `const fn` are more limited.
+   The operations you can do in the body of a `const fn` are more limited.
    You can only:
 
-   1. declare a variable with `const`.
+   1. Declare a variable with `const`.
 
-   2. declare a variable with `let`:
+   2. Declare a variable with `let`:
       The right-hand-side after the equal sign (`=`) must be a constant.
       Note that declaring a variable with `const` and `let` are also different in a `const fn`.
       They are both constants in a `const fn`.
       But a variable declared with `const` cannot depend on the arguments in normal mode, while a variable declared with `let` can.
       The gist of the design is to make changing a non-`const` function to a `const fn` (or conversely) the most seamless.
 
-   3. normal statements:
+   3. Normal statements:
       Each term in the function must be a constant.
 
-   4. function calls:
+   4. Function calls:
       Only `const fn`s can be called.
 
    `const fn`s are also checked to be *total*, meaning they don't recurse forever.
