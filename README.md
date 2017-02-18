@@ -141,7 +141,7 @@ Statements include:
 3. **`while` loop**:
    Normal `while` loop similar to other imperative languages.
 
-   ```rust
+   ```
    while count == 0i32 then do
        forever()
    ```
@@ -153,13 +153,13 @@ Now, introduce `if`.
 Unlike `while`, `if` can return something that isn't trivial.
 So we can write code like:
 
-```rust
+```
 let number = if count == 0i32 then 42u32 else 666u32
 ```
 
 Of course, `if` can also be used in an old-style, C-like fashion.
 
-```rust
+```
 let number <- mut(0u32)
 if count == 0i32
 then number := 42u32
@@ -177,7 +177,7 @@ In Ende, `main` is a function of type `() -> IO[Unit]`.
 That is, a function that accepts no inputs and returns something that has something to do with `IO`.
 Now, let's write the well-known *Hello, world!* program in Ende.
 
-```rust
+```
 fn main() -> IO[Unit] = putStrLn("Hello, world!")
 ```
 
@@ -185,7 +185,7 @@ Nothing special.
 The syntax is heavily inspired by Rust; the keyword `fn` is used to declare a function.
 Unlike Rust, there is an equal sign (`=`) after the type of the function.
 
-```rust
+```
 fn factorial(n : U32) -> U32 =
     if n == 0u32
     then 0u32
@@ -195,7 +195,7 @@ fn factorial(n : U32) -> U32 =
 All operators in Ende are just normal functions with special names.
 For instance, the exponential operator `^^` could be defined as:
 
-```rust
+```
 fn _^^_(_0_ : U32, _1_ : U32) -> U32 =
     if _1_ == 0u32
     then 1u32
@@ -204,7 +204,7 @@ fn _^^_(_0_ : U32, _1_ : U32) -> U32 =
 
 In the above example, the underscores in the function name `_^^_` represents where the arguments go when it's applied as an operator.
 Each argument `_n_` is a binding of the argument of the nth underscore.
-The allowed symbols in a variable name include `!`, `#`, `$`, `%`, `&`, `*`, `+`, `.`, `/`, `<`, `=`, `>`, `?`, `\`, `^`, `|`, `-`, `~`, `:`.
+The allowed symbols in a variable name include `!`, `#`, `$`, `%`, `&`, `*`, `+`, `.`, `/`, `<`, `=`, `>`, `?`, `^`, `|`, `-`, `~`, `:`.
 Of course also you cannot redefine built-in syntax such as `=`, `->` or `:` because that would cause parsing ambiguity.
 
 (TBD: fixity)
@@ -214,7 +214,7 @@ There are two ways to write more complicated function.
 The first is to write `where` instead of `=` after the return type of the function; we call the code inside it *inside the function body*.
 The valid constructs inside the function body are `let ... = ...` and local function definitions only visible inside the function body.
 
-```rust
+```
 fn getBMI() -> F64 where
     let weight = 100f64
     let height = 200f64
@@ -227,7 +227,7 @@ The last clause in a function body must be `return` something.
 Another way to write a complicated function is to use do-notation; the valid clauses of which are those I called *statement*s.
 You need them to do several `IO` operations at once.
 
-```rust
+```
 fn greeting() -> IO[Unit] = do
     putStr("Hello, ")
     let name <- mut("Andy")
@@ -247,7 +247,7 @@ Lambdas are unnamed function literals.
 Like normal functions, lambdas must specify their return types.
 Lambdas are written similar to a function but without the name.
 
-```rust
+```
 let abs =
     fn(n : I32) -> I32 =
         if n >= 0i32
@@ -262,7 +262,7 @@ Lang items are items that are treated specially, having something to do with the
 I won't introduce a keyword for lang items but instead use *annotations* to mark them.
 Annotations are written before the annotated item, start with an at sign (`@`) and is followed by a colon (`:`).
 
-```rust
+```
 @lang("whatever"):
 fn whatever() -> Unit = unit
 ```
@@ -276,7 +276,7 @@ They can be seen as `enum`s in Rust and are more powerful than that of C/Java.
 I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
-```rust
+```
 @lang("Unit"):
 data Unit = unit
 data Bool =
@@ -293,19 +293,19 @@ In Ende, `data` can have **variants**.
 Variants are the possible values of the defined type.
 Variants are namespaced; in order to access the variant `spring`, you need to write
 
-```rust
+```
 let season = Season::spring
 ```
 
 instead of
 
-```rust
+```
 \\ let season = spring \\ Doesn't compile.
 ```
 
 `data` variants could be matched through pattern matching:
 
-```rust
+```
 fn isSummer(season : Season) -> Bool =
     match season of
         Season::summer => Bool::true
@@ -316,7 +316,7 @@ fn isSummer(season : Season) -> Bool =
 By the way, there is an alternative `fn` syntax to do top-level pattern matching.
 We write `match'in` after the return type in this case.
 
-```rust
+```
 fn isSummer(Season) -> Bool match'in
     (Season::summer) => Bool::true
     (_) => Bool::false
@@ -325,7 +325,7 @@ fn isSummer(Season) -> Bool match'in
 Here, we directly match the arguments of the `fn`; now we don't need to pick a name for the argument of type `Season`; we can write `fn isSummer(Season)` in lieu of `fn isSummer(_ : Season)` in this case.
 I'm going to provide another example for clarity:
 
-```rust
+```
 fn and(Bool, Bool) -> Bool match'in
     (Bool::true, b) => b
     (_, _) => Bool::false
@@ -334,7 +334,7 @@ fn and(Bool, Bool) -> Bool match'in
 Variants may also take parameters.
 The `OptionI32` below is a type that could possibly carry an `I32`.
 
-```rust
+```
 data OptionI32 =
     some(I32)
     none
@@ -342,7 +342,7 @@ data OptionI32 =
 
 Parameters of variants can also be pattern matched:
 
-```rust
+```
 fn unwrapOr42(OptionI32) -> I32 match'in
     (OptionI32::some(i)) => i
     (_) => 42i32
@@ -350,7 +350,7 @@ fn unwrapOr42(OptionI32) -> I32 match'in
 
 Parameters of variants can be named, that is, to be indexed by a string:
 
-```rust
+```
 data Point = new {
     "x" -: I32
     "y" -: I32
@@ -361,7 +361,7 @@ A `data` with a single variant all normal parameters of which are named is calle
 The compiler treats records different from normal `data` in subtle ways.
 Members of an instance of a record can either be accessed by its name after a dot (`.`) or by pattern matching.
 
-```rust
+```
 fn getX1(p : Point) -> I32 = p."x"
 fn getX2(Point) -> I32 match'in
     (Point::new {"x" -: result, "y" -: _}) => result
@@ -369,7 +369,7 @@ fn getX2(Point) -> I32 match'in
 
 The syntax of pattern matching a record or constructing an instance of it is the same as declaring one:
 
-```rust
+```
 let center = Point::new { "x" -: 0i32, "y" -: 0i32 }
 ```
 
@@ -381,7 +381,7 @@ Fields being private means we can't access it through the dot (`.`) notation or 
 
 You can write `pub` in front of the item to override that behavior, examples include:
 
-```rust
+```
 pub fn zero() -> I32 = 0i32
 pub data One = one
 ```
@@ -389,7 +389,7 @@ pub data One = one
 If you want to make all variants or fields of a `data` `pub`, you can write `pub(in)` in front of the `data`.
 Normally you want this for `data` that aren't records.
 
-```rust
+```
 pub(in) data Shape =
     circle
     triangle
@@ -402,7 +402,7 @@ pub(in) data Shape =
 You can define `mod`s in function bodies.
 We use the keyword `mod` to declare a module.
 
-```rust
+```
 pub mod module where
     fn getUnit() -> Unit = Unit::unit
     pub data Three =
@@ -417,7 +417,7 @@ You can write `pub(in)` before `mod` to mean all items inside are public.
 
 A `mod` can be declared without `where`.
 
-```rust
+```
 mod somewhereElse
 ```
 
@@ -428,7 +428,7 @@ There are two ways to access an item in a `mod`.
 one is to write its fully qualified name, e.g. `module::inner::Circle`.
 the other way is to `use` the items.
 
-```rust
+```
 use module::inner::Circle
 use module::inner::Circle::new
 
@@ -437,13 +437,13 @@ fn getCircle() -> Circle = new { "radius" -: 1u32 }
 
 An underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 3 `use`s to import `one`, `two` and `three`, you can write
 
-```rust
+```
 use module::Three::_
 ```
 
 `mod`s are also first-class value of type `Mod`:
 
-```rust
+```
 @lang("Mod"):
 pub const data Mod
 ```
@@ -456,7 +456,7 @@ I'll show how to manipulate `data` at compile time later.
 Instead of resorting to indentation, we can use commas to seperate stuff instead.
 Therefore, The above `Three` can also be written as:
 
-```rust
+```
 data Three = one, two, three
 ```
 
@@ -466,7 +466,7 @@ Below are some examples:
 
 1.  This definition of `Three` is the same as the above ones:
 
-    ```rust
+    ```
     data Three = one,
         two,
         three,
@@ -475,7 +475,7 @@ Below are some examples:
 
 2.  This would generate a parsing error:
 
-    ```rust
+    ```
     data Three =
     a,
     b,
@@ -484,7 +484,7 @@ Below are some examples:
 
 3.  This would also generate a parsing error when the parser encounters `b`:
 
-    ```rust
+    ```
     data Three = a,
     b,
     c
@@ -503,7 +503,7 @@ In practice, we want an `Option` type that is generic over all types, not just `
 But let's start with a simplest generic function: `id`.
 `id` simply returns its only argument.
 
-```rust
+```
 pub fn id[T](t : T) -> T = t
 ```
 
@@ -519,7 +519,7 @@ Function types are literally the types of functions and are written as `(A, B, C
 `A, B, C, ...` are the types of the arguments, and `R` is the return type.
 As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
 
-```rust
+```
 \\ They are different:
 
 foo(a, b)
@@ -538,13 +538,13 @@ Arguments in `const` mode are curryable, though, because that performance at com
 
 Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
 
-```rust
+```
 fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x))
 ```
 
 And here is the definition of a generic `Option` type:
 
-```rust
+```
 pub(in) data Option[T] = some(T), none
 ```
 
@@ -552,7 +552,7 @@ pub(in) data Option[T] = some(T), none
 
 Compare this record in Ende
 
-```rust
+```
 data Example = new {
     "example" -: Unit
 }
@@ -560,7 +560,7 @@ data Example = new {
 
 and this `struct` in Rust:
 
-```rust
+```
 struct Example {
     example: ()
 }
@@ -585,7 +585,7 @@ I'll call them traits in the rest of the article if they are used like a Rust `t
 Here, I'm going to write a `Monoid` trait.
 Of course, it's just another record.
 
-```rust
+```
 pub(in) data Monoid[T] = new {
     "unit" -: T
     "append" -: (self : T, T) -> T
@@ -600,7 +600,7 @@ Unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always
 
 The `i32Monoid` below is a simple `impl`:
 
-```rust
+```
 pub impl i32Monoid : Monoid[I32] = Monoid::new {
     "unit" -: 0i32
     "append" -: fn(self : I32, another : I32) -> I32 = self + another
@@ -609,7 +609,7 @@ pub impl i32Monoid : Monoid[I32] = Monoid::new {
 
 If `i32Monoid` is in scope, we can call the `append` method on `I32`:
 
-```rust
+```
 \\ They are equivalent because the first argument of the field of `"append"` is `self`:
 
 let sum1 = i32Monoid."append"(1i32, 2i32)
@@ -621,7 +621,7 @@ It's called the **instance mode**, and is delimited by `[()]`.
 Arguments in instance mode can also be inferred, however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
-```rust
+```
 fn concat[T][(Monoid[T])](List[T]) -> T match'in
     (List::nil) => unit
     (List::cons(head, tail)) => head#append(concat(tail))
@@ -632,7 +632,7 @@ You can see that when you put an argument inside the instance mode, the fields o
 When you write `concat(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
 
-```rust
+```
 let sum = concat[(i32Monoid)](i32Vec)
 ```
 
@@ -647,7 +647,7 @@ let sum = concat[(i32Monoid)](i32Vec)
 I'm going to provide an `impl` function generic over both modes.
 First, define a `Group` trait.
 
-```rust
+```
 pub(in) data Group[T] = new {
     "unit" -: T
     "append" -: (self : T, T) -> T
@@ -659,7 +659,7 @@ We know all `Group`s are `Monoid`s, so all instances of `Group[T]` should be abl
 How do we automatically convert stuff?
 The answer is obviously, again, using `impl`s.
 
-```rust
+```
 pub impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
     "unit" -: unit
     "append" -: append
@@ -676,7 +676,7 @@ You may ask, isn't the above `impl` functions enough?
 Not really.
 Imagine you want to define an `Abelian` trait, the code you need to add would be:
 
-```rust
+```
 data Abelian[T] = new {
     "unit" -: T
     "append" -: (self : T, T) -> T
@@ -700,7 +700,7 @@ Moreover, we want to call the methods or more generally use the fields from the 
 
 In order to use this feature, the trait `Group` and `Abelian` can be rewritten as below:
 
-```rust
+```
 pub(in) data Group[T] = new[(Monoid[T])] {
     "inverse" -: (self : T) -> T
 }
@@ -721,7 +721,7 @@ To achieve maximal flexibility, I want to make types of the the left-hand-side, 
 It means it has to be generic over these 3 types.
 So maybe the trait could be like:
 
-```rust
+```
 pub(in) data Add[L, R, Output] = add {
     "_+_" -: (self : L, R) -> Output
 }
@@ -731,7 +731,7 @@ However, the trait is problematic because we can provide both instances of `Add[
 This suggests that the `Output` type should not be an input parameter but rather an output one determined uniquely by `L` and `R`.
 The correct trait should be:
 
-```rust
+```
 pub(in) data Add[L, R] = add[Output] {
     "_+_" -: (self : L, R) -> Output
 }
@@ -747,14 +747,14 @@ For example, if one wants to overload string literals, they could provide an aut
 For now, let's assume that type is called `StrLike`.
 The Ende source code would be something like:
 
-```rust
+```
 pub impl(auto) strLike(self : String) -> StrLike = ...
 ```
 
 Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.
 Auto `impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
-```rust
+```
 impl(auto) firstToSecond(self : First) -> Second = ...
 impl(auto) secondToThird(self : Second) -> Third = ...
 
@@ -772,7 +772,7 @@ let first : First = ...
 The visibility of `impl`s are the same as that of `fn`s.
 Because people usually want to import all `impl`s in a `mod`, I purpose a little syntax to do that:
 
-```rust
+```
 use some_module::impl
 ```
 
@@ -858,7 +858,7 @@ It's special that it could be `use`d.
 
 What you can do in a `use` statement is what you can do in a `const fn`, so you can write something like:
 
-```rust
+```
 use if isWindows then os::win else os::nix
 ```
 
@@ -873,7 +873,7 @@ This is not to suggest Ende has overloading; they're just from different namespa
 The problem with `U32` is that it's not defined recursively, so it would be harder for the computer to figure out if the functions using it terminate.
 The solution is to use a recursively defined data type: `Nat`
 
-```rust
+```
 @lang("Nat"):
 pub(in) data Nat = zero, succ(Nat)
 ```
@@ -883,7 +883,7 @@ Literal of type `Nat` has a suffix `nat`.
 
 And here's the `const fn factorial`:
 
-```rust
+```
 const fn factorial(m : Nat) -> Nat match'in
     (0nat) => 1nat
     (Nat::succ(n)) => m * factorial(n)
@@ -895,7 +895,7 @@ Arguments in `const` mode need not be types; they can be constants as well.
 In fact, **any** constants can be passed to a function in the `const` mode.
 So I can write something like:
 
-```rust
+```
 const fn factorial[m : Nat] -> Nat match'in
     [0nat] => 1nat
     [Nat::succ(n)] => m * factorial(n)
@@ -911,7 +911,7 @@ Normal types have kind `Type`.
 However, `Option` is a type constructor and is of kind `[Type] -> Type`, which means it is a function from a type at compile time to another type.
 Here's the `Functor` trait.
 
-```rust
+```
 pub(in) data Functor[F : [Type] -> Type] = new {
     "map" -: [From, To](self : F[From], (From) -> To) -> F[To]
 }
@@ -920,7 +920,7 @@ pub(in) data Functor[F : [Type] -> Type] = new {
 Types of arguments in `const` mode are not always inferred to be `Type`, they can be inferred to be types or kinds of higher-kinded types as well.
 For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
 
-```rust
+```
 fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> IO[Unit]
 ```
 
@@ -930,7 +930,7 @@ We've seen `Functor`s, and traditional Haskell tutorial would probably go direct
 
 The definition of applicative would be:
 
-```rust
+```
 pub(in) data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
     "pure" -: [A](self : A) -> F[A]
     "_<*>_" -: [From, To](self : F[(From) -> To], F[From]) -> F[To]
@@ -939,7 +939,7 @@ pub(in) data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
 
 And monad would be:
 
-```rust
+```
 pub(in) data Monad[F : [Type] -> Type] = new[(Applicative[F])] {
     "bind" -: [From, To](self : F[From], (From) -> F[To]) -> F[To]
 }
@@ -954,17 +954,17 @@ This is what Idris did because this kind of flexibility is needed when we need s
 Below are the valid commands in the do-notation in Ende:
 
 1.  normal binding:
-    ```rust
+    ```
     let plain = something
     ```
 
 2.  pseudo-unwrapping:
-    ```rust
+    ```
     let unwrapped <- something
     ```
 
 3.  no binding:
-    ```rust
+    ```
     any term
     ```
 
@@ -977,7 +977,7 @@ GADTs are the **G**eneralized version of ADTs.
 GADTs let you define inductive families, that is, to be specific on the return types of the variants.
 We can define a GADT by writing `where` instead of an equal sign (`=`) after the name of the `data`.
 
-```rust
+```
 pub(in) data Array[_ : Nat, T] where
     nil : Array[0nat, T]
     cons : [n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
@@ -1001,7 +1001,7 @@ For clarity, let's consider a rather easy example first.
 The function `sum` sums up all the `I32`s in the argument list no matter how many arguments there are.
 First, I have to define a helper function for it:
 
-```rust
+```
 pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [0nat](_) => tuple ()
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
@@ -1023,7 +1023,7 @@ Now you can see how `Replicate` could be useful.
 We can accept a `Replicate(I32)` and spread it, leaving the time of replication inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
-```rust
+```
 const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
     () => 0i32
     (head, ..tail) => head + sum(tail)
@@ -1047,7 +1047,7 @@ See the following 2 examples for instance:
 
     let me show you how to define such function.
 
-    ```rust
+    ```
     \\ Don't ask what `???` is for now.
     \\ Just pretend it's magic; I'll debunk it later.
     \\ The type system still isn't strong enough to actually write it down.
@@ -1078,7 +1078,7 @@ See the following 2 examples for instance:
 2.  **Lazy evaluation**:
     If mixfix operators are implemented, `if_then_else` can be implemented as a function, but we now need a way to say that some of the parameters are passed in lazily:
 
-    ```rust
+    ```
     pub const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
         match _0_ {
             Bool::true => _1_#force()
@@ -1165,7 +1165,7 @@ The last argument in a list of arguments in pi mode can also be spreaded.
 
 Existential types as an example of pi-types:
 
-```rust
+```
 pub(in) data Sigma[A][B : ([A]) -> Type] = new([a : A])(B([a]))
 ```
 
@@ -1238,19 +1238,19 @@ Tuple[''A] <: Tuple[''B]
 i.e. variadic types are covariant.
 Now we have at least 2 different hierarchies of universes, one is
 
-```rust
+```
 Type<0> : Type<1> : Type<2> : Type<3> ...
 ```
 
 , another one is
 
-```rust
+```
 Tuple[''Type<0>] : Tuple[''Type<1>] : Tuple[''Type<2>] : Tuple[''Type<3>] ...
 ```
 
 which could also be written
 
-```rust
+```
 Tuple[''Type]<0> : Tuple[''Type]<1> : Tuple[''Type]<2> : Tuple[''Type]<3> ...
 ```
 
@@ -1259,7 +1259,7 @@ It sounds reasonable to say that all the universes I mentioned are so called *sm
 `Type<ω>` is special in that elements of it can inherit another one.
 `Tuple` would become a data type from `Type<ω>` to `Type<ω>` then.
 
-```rust
+```
 data Tuple[_ : Type<ω>] : Type<ω> = ...
 ```
 
