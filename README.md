@@ -1266,7 +1266,7 @@ data Tuple[_ : Type<ω>] : Type<ω> = ...
 Now types of function types could be:
 
 ```
-A : U1<m> : Type<ω>    B : U2<n> : Type<ω>
-------------------------------------------
-         A -> B : U2<max(m, n)>
+A : U1<m>    ''U1<m> : Type<ω>    B : U2<n>    ''U2<n> : Type<ω>
+----------------------------------------------------------------
+                     A -> B : U2<max(m, n)>
 ```
