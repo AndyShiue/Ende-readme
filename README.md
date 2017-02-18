@@ -215,7 +215,7 @@ The first is to write `where` instead of `=` after the return type of the functi
 The valid constructs inside the function body are `let ... = ...` and local function definitions only visible inside the function body.
 
 ```rust
-fn printBMI() -> F64 where
+fn getBMI() -> F64 where
     let weight = 100f64
 		let height = 200f64
 		fn calcBMI(w : F64, h : F64) -> F64 = w / h / h
