@@ -79,10 +79,10 @@ I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
 # Comments
 
 There are 2 kinds of comments in Ende.
-The first is line comments: they start with `--` and extend toward the end of the line.
+The first is line comments: they start with `\\` and extend toward the end of the line.
 The other one is block comments.
 They can span over multiple lines.
-They start with `{-` and end with `-}`.
+They start with `\\\` and end with `\\\`.
 
 # Terms and Statements
 
@@ -300,7 +300,7 @@ let season = Season::spring
 instead of
 
 ```rust
--- let season = spring -- Doesn't compile.
+\\ let season = spring \\ Doesn't compile.
 ```
 
 `data` variants could be matched through pattern matching:
@@ -493,6 +493,9 @@ Below are some examples:
 You can write 2 commas in a row to go out of one layer of the syntax, so `data First = first,, data Second = second` in the same line is valid syntax.
 More consecutive commas can be used to go out of several layers of the syntax in a similar fashion.
 
+Also, there's a way to escape all indentation after the next line.
+You can write `\` at the end of the line to do it as in C.
+
 # Generics
 
 We've seen an `OptionI32` type above.
@@ -517,12 +520,12 @@ Function types are literally the types of functions and are written as `(A, B, C
 As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
 
 ```rust
--- They are different:
+\\ They are different:
 
 foo(a, b)
 foo(a)(b)
 
--- But they aren't:
+\\ But they aren't:
 
 bar[A, B]
 bar[A][B]
@@ -607,10 +610,10 @@ pub impl i32Monoid : Monoid[I32] = Monoid::new {
 If `i32Monoid` is in scope, we can call the `append` method on `I32`:
 
 ```rust
--- They are equivalent because the first argument of the field of `"append"` is `self`:
+\\ They are equivalent because the first argument of the field of `"append"` is `self`:
 
 let sum1 = i32Monoid."append"(1i32, 2i32)
-let sum2 = 1i32.append(2i32)
+let sum2 = 1i32#append(2i32)
 ```
 
 In order to write a function that is generic over types implementing a record, the third mode is introduced.
@@ -621,7 +624,7 @@ Here is a function generic over types implementing `Monoid`; it sums up all the 
 ```rust
 fn concat[T][(Monoid[T])](List[T]) -> T match'in
     (List::nil) => unit
-    (List::cons(head, tail)) => head.append(concat(tail))
+    (List::cons(head, tail)) => head#append(concat(tail))
 ```
 
 You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks (except those using weird characters that would be invalid variables in the syntax); it's just a syntax sugar.
@@ -703,7 +706,7 @@ pub(in) data Group[T] = new[(Monoid[T])] {
 }
 data Abelian[T] = new[(Group[T])]
 
--- The `impl`s also have to be changed ...
+\\ The `impl`s also have to be changed ...
 ```
 
 As you can see, it's simply the instance mode after the constructor.
@@ -748,7 +751,7 @@ The Ende source code would be something like:
 pub impl(auto) strLike(self : String) -> StrLike = ...
 ```
 
-Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str.strLike()` anywhere.
+Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.
 Auto `impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
 ```rust
@@ -758,10 +761,10 @@ impl(auto) secondToThird(self : Second) -> Third = ...
 fn manipulateThird(third : Third) -> Third = third
 
 let second : Second = ...
-manipulateThird(first) -- It works.
+manipulateThird(first) \\ It works.
 
 let first : First = ...
--- manipulateThird(first) -- `first` cannot be transformed to value of type `Third`.
+\\ manipulateThird(first) \\ `first` cannot be transformed to value of type `Third`.
 ```
 
 ## Visibility of `impl`s
@@ -930,7 +933,7 @@ The definition of applicative would be:
 ```rust
 pub(in) data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
     "pure" -: [A](self : A) -> F[A]
-    "ap" -: [From, To](self : F[(From) -> To], F[From]) -> F[To]
+    "_<*>_" -: [From, To](self : F[(From) -> To], F[From]) -> F[To]
 }
 ```
 
@@ -1045,11 +1048,11 @@ See the following 2 examples for instance:
     let me show you how to define such function.
 
     ```rust
-    -- Don't ask what `???` is for now.
-    -- Just pretend it's magic; I'll debunk it later.
-    -- The type system still isn't strong enough to actually write it down.
+    \\ Don't ask what `???` is for now.
+    \\ Just pretend it's magic; I'll debunk it later.
+    \\ The type system still isn't strong enough to actually write it down.
 
-    -- We can also pattern match the tuple types instead of the values of the tuple types.)
+    \\ We can also pattern match the tuple types instead of the values of the tuple types.)
     const fn CurriedFuncType(Type, .._ : Tuple[''Type]) -> ??? match'in
         (Ret) => Ret
         (Ret, Head, ..Tail) => (Head) -> CurriedFuncType(Ret, ..Tail)
@@ -1078,8 +1081,8 @@ See the following 2 examples for instance:
     ```rust
     pub const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
         match _0_ {
-            Bool::true => _1_.force()
-            Bool::false => _2_.force()
+            Bool::true => _1_#force()
+            Bool::false => _2_#force()
         }
     ```
 
