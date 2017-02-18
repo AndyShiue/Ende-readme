@@ -425,8 +425,8 @@ If the compiler sees such `mod`, the compiler will look for `./somewhereElse.end
 If neither or both are presented, the compiler emits an error.
 
 There are two ways to access an item in a `mod`.
-one is to write its fully qualified name, e.g. `module::inner::Circle`.
-the other way is to `use` the items.
+One is to write its fully qualified name, e.g. `module::inner::Circle`.
+The other way is to `use` the items.
 
 ```
 use module::inner::Circle
@@ -508,7 +508,7 @@ pub fn id[T](t : T) -> T = t
 ```
 
 Here, I introduced another delimiter while defining the function: brackets (`[]`).
-different delimiters after the function name represent different *modes* in which the parameters are passed.
+Different delimiters after the function name represent different *modes* in which the parameters are passed.
 **Modes** are a very important feature in Ende; different modes serve as different purposes and have different characteristics.
 We say that the arguments inside the parentheses (`()`) (`t` in the above example) are arguments in the **normal mode**.
 In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are arguments in the **`const` mode**.
@@ -580,7 +580,7 @@ To be more general, now we can also have struct variants and arbitrary functions
 
 # More General records
 
-records in Ende can not only act as Rust `struct`s but also Rust `trait`s or Java `interface`s or Haskell `class`es.
+Records in Ende can not only act as Rust `struct`s but also Rust `trait`s or Java `interface`s or Haskell `class`es.
 I'll call them traits in the rest of the article if they are used like a Rust `trait`.
 Here, I'm going to write a `Monoid` trait.
 Of course, it's just another record.
@@ -840,7 +840,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    They can be returned and passed as arguments.
    `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.
    Nevertheless, Auto `impl`s need not be `const fn`s.
-   auto `impl`s that operate at runtime are denoted `impl(auto, dyn)`.
+   Auto `impl`s that operate at runtime are denoted `impl(auto, dyn)`.
    They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a smart pointer into its underlying type.
 
 7. **`data`**:
@@ -992,7 +992,7 @@ Because I want to make variadic arguments as flexible as possible, it could be a
 I need to introduce a new kind of types called **tuple types**.
 They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
-for example, `tuple (Unit, Bool)` is a tuple type, and `tuple (I32, F32, U64)` is another tuple type.
+For example, `tuple (Unit, Bool)` is a tuple type, and `tuple (I32, F32, U64)` is another tuple type.
 What is the kind of all tuple types then?
 It's called the **ordered variadic type**, and is written `Tuple[''Type]`.
 
