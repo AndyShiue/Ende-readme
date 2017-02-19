@@ -63,7 +63,7 @@ In complement to modes, you can specify stuff that works only at runtime or eith
 
 Being concrete, below are some examples that would make use of modes and the `const` system:
 
-1. If you want iterate between some fixed numbers, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively until reaching that fixed number you chose.
+1. If you want iterate between some fixed numbers, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively between the fixed numbers you chose.
    Moreover, the same interface could be also used at runtime.
 	 Therefore, if you want to range over some indices only known at runtime, the change of the code should be minimal.
 
