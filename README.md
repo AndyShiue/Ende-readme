@@ -452,7 +452,7 @@ fn getCircle() -> Circle = new { "radius" -: 1u32 }
 An underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 3 `use`s to import `one`, `two` and `three`, you can write
 
 ```
-use module::Three::_
+use module::Three::#
 ```
 
 `mod`s are also first-class value of type `Mod`:
