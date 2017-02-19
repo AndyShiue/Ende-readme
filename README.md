@@ -88,7 +88,7 @@ They include:
 As you will see, Ende achieves the unification of different concepts with carefully designed syntax and semantics.
 Someone might find the similarities between your favorite programming language and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
-Feel free to skip some of the initial paragraphs if you think they're obvious and reread them if you found that you can't parse some of the syntax later.
+Feel free to skip some of the initial paragraphs if you think they're obvious enough and reread them if later you found that you can't parse some of the syntax.
 
 # Comments
 
