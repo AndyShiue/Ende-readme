@@ -61,7 +61,7 @@ The lack of compile-time constructs makes higher abstraction at compile time imp
 The idea of modes is basically genericity over phases.
 In complement to modes, you can specify stuff that works only at runtime or either at runtime or compile time using the `const` system of Ende.
 
-Being concrete, below are some examples that would make use of modes:
+Being concrete, below are some examples that would make use of modes and the `const` system:
 
 1. If you want iterate between some fixed numberd, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively until reaching that fixed number you chose.
    Moreover, the same interface could be also used at runtime.
