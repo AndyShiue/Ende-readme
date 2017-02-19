@@ -202,7 +202,7 @@ Unlike Rust, there is an equal sign (`=`) after the type of the function.
 ```
 fn factorial(n : U32) -> U32 =
     if n == 0u32
-    then 0u32
+    then 1u32
     else n * factorial(n - 1)
 ```
 
