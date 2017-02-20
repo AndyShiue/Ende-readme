@@ -903,7 +903,7 @@ mod Magic[magicNumber : I32] where
     \\ Use the magic number.
 ```
 
-Such `mod`s are `const fn`s.
+Such `mod`s are `const fn`s the return type of which is `Mod`.
 
 ## A `const` Version of `factorial`
 
