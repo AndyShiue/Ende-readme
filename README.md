@@ -3,8 +3,8 @@
 [![License: CC BY-SA 4.0](https://licensebuttons.net/l/by-sa/4.0/80x15.png)](http://creativecommons.org/licenses/by-sa/4.0/)
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
-This language has a strong type system and its functions are call-by-value.
-Anyone is very welcome to write an implementation for it or steal some ideas.
+This language has a very strong type system and its functions are call-by-value.
+Anyone is very welcome to steal some ideas or write an implementation for it (but don't use the exact same name for the language).
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -53,7 +53,7 @@ This article was initially designed to be implemented from the beginning to the 
 As some people suggested, I provide a brief overview here.
 
 The core feature of Ende is **modes**.
-Modes are ways to pass arguments to a function.
+Modes are ways to pass arguments to functions.
 In current programming languages, the boundary between phases, which mean compile time and runtime, are either not mixed well or too blurry.
 The former includes more conservative languages like Java or Go.
 The latter are basically those dependently-typed languages.
@@ -64,17 +64,17 @@ In complement to modes, you can specify stuff that works only at runtime or eith
 Being concrete, below are some examples that would make use of modes and the `const` system:
 
 1. If you want iterate between some fixed numbers, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively between the fixed numbers you chose.
-   Moreover, the same interface could be also used at runtime.
-	 Therefore, if you want to range over some indices only known at runtime, the change of the code should be minimal.
+   Moreover, the same interface can be also used at runtime.
+	 Therefore, if you want to range over some indices only known at runtime, the change of the code would be minimal or even none.
 
 2. Have you heard of writing a multiplication table with template meta-programming in C++?
    Because of the backwards compatibility wart with C, you have to use weird template-level syntax to write those functional code.
 	 In Ende, they can be written in a clean way and as I've said, the code could be also used at runtime.
 
-3. Regular expressions, web template languages, SQL commands, etc. can be precompiled on demand, so you don't have to waste time at runtime.
+3. Regular expressions, web template languages, SQL commands, etc. can be precompiled on demand in a type-safe manner, so you don't have to waste time at runtime.
    And as you would guess, you can also do them at runtime with the same API.
 
-The presence of modes makes almost everything in Ende first-class, which means they can be passed as arguments and returned.
+The presence of modes makes almost everything in Ende first-class, which means they can be passed as arguments or returned.
 They include:
 
 1. all functions
@@ -88,7 +88,7 @@ They include:
 As you will see, Ende achieves the unification of different concepts with carefully designed syntax and semantics.
 Someone might find the similarities between your favorite programming language and Ende.
 I actually took lots of ideas from Rust, Scala, Agda, Idris, etc.
-Feel free to skip some of the initial paragraphs if you think they're obvious enough and reread them if later you found that you can't parse some of the syntax.
+Feel free to skip some of the initial paragraphs if you think they're obvious enough and reread them if later you find that you can't parse some of the syntax.
 
 # Comments
 
@@ -96,7 +96,7 @@ There are 2 kinds of comments in Ende.
 The first is line comments: they start with `\\` and extend toward the end of the line.
 The other one is block comments.
 They can span over multiple lines.
-They start with `\\#` and end with `#\\`.
+They start with `\\@` and end with `@\\`.
 
 # Terms and Statements
 
@@ -124,12 +124,11 @@ Terms include:
 2. Applications of operators:
    When one talks about operators, we usually think of infix operators.
    But in actual implementations, operators of any fixity could be introduced.
-   There could possibly even be user-defined mixfix operators.
 
    Examples would be `1u32 + 1u32`, `42u32 * 666u32`, `1u32 == 2u32`, etc.
    Fixity of operators should follow the common sense.
    If you need parentheses to group expressions, write `id()`, e.g. `id(2u32 + 2u32) * 2u32`.
-   As you will see, this is not actually not special syntax, but just a call to the identity function.
+   As you will see, this is actually not special syntax, but just a call to the identity function.
 
 3. Variables, which are going to be discussed immediately.
 
@@ -143,9 +142,9 @@ Statements include:
    There are 2 flavors of `let` bindings, which can be seen as a mutable one and an immutable one respectively currently.
    `let` is by default immutable.
    For example, `let meaningOfLife = 42i32` binds `42i32` to a variable called `meaningOfLife`.
-   As you can see, normal variables are written in camel case in Ende.
+   As you can see, variables are written in camel case in Ende.
    Mutable variables can be declared in a different syntax.
-   So, `let count <- mut(0i32)` binds `0i32` to a variable `count`.
+   So, `let count <- mut(0i32)` binds `0i32` to a variable named `count`.
 
 2. **mutation**:
    The value of a mutable variable can be mutated.
@@ -160,8 +159,7 @@ Statements include:
        forever()
    ```
 
-   A `while` loop is just another kind of term returning value of type `Unit`.
-   `Unit` is a type that carries no data.
+   The value a `while` loop returns carries no data.
 
 Now, introduce `if`.
 Unlike `while`, `if` can return something that isn't trivial.
@@ -216,10 +214,10 @@ fn _^^_(_0_ : U32, _1_ : U32) -> U32 =
     else _0_ * id(_0_ ^^ id(_1_ - 1u32))
 ```
 
-In the above example, the underscores in the function name `_^^_` represents where the arguments go when it's applied as an operator.
+In the above example, the underscores in the function name `_^^_` represent where the arguments go when it's applied as an operator.
 Each argument `_n_` is a binding of the argument of the nth underscore.
 The allowed symbols in a variable name include `!`, `#`, `$`, `%`, `&`, `*`, `+`, `.`, `/`, `<`, `=`, `>`, `?`, `^`, `|`, `-`, `~`, `:`.
-Of course also you cannot redefine built-in syntax such as `=`, `->` or `:` because that would cause parsing ambiguity.
+Of course you cannot redefine built-in syntax such as `=`, `->` or `:` because that would cause parsing ambiguity.
 
 (TBD: fixity)
 
@@ -283,15 +281,13 @@ fn whatever() -> Unit = unit
 
 # User-Defined Data Types
 
-Data types are items.
+Data types are items and can be defined in function bodies.
 They can be defined with the keyword `data`.
-They can be defined in function bodies.
 They can be seen as `enum`s in Rust and are more powerful than that of C/Java.
 I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
 ```
-@lang("Unit"):
 data Unit = unit
 data Bool =
     true
@@ -404,8 +400,8 @@ pub fn zero() -> I32 = 0i32
 pub data One = one
 ```
 
-If you want to make all variants or fields of a `data` `pub`, you can write `pub(in)` in front of the `data`.
-Normally you want this for `data` that aren't records.
+If you want to make all variants and fields of a `data` type `pub`, you can write `pub(in)` in front of the `data`.
+You usually want this for `data` that aren't records.
 
 ```
 pub(in) data Shape =
@@ -423,15 +419,13 @@ We use the keyword `mod` to declare a module.
 ```
 pub mod module where
     fn getUnit() -> Unit = Unit::unit
-    pub data Three =
+    pub(in) data Three =
         one
         two
         three
     pub mod inner where
         pub data Circle = new { "radius" -: U32 }
 ```
-
-You can write `pub(in)` before `mod` to mean all items inside are public.
 
 A `mod` can be declared without `where`.
 
@@ -456,7 +450,7 @@ fn getCircle() -> Circle = new { "radius" -: 1u32 }
 An underscore (`_`) can be used as a wildcard to import everything in a module or in a `data`, so instead of writing 3 `use`s to import `one`, `two` and `three`, you can write
 
 ```
-use module::Three::#
+use module::Three::_
 ```
 
 `mod`s are also first-class value of type `Mod`:
@@ -466,16 +460,16 @@ use module::Three::#
 pub const data Mod
 ```
 
-Here, `const` means the instance of `Mod` can only exist at compile time.
-I'll show how to manipulate `data` at compile time later.
+Here, `const` means the instances of `Mod` can only exist at compile time.
+I'll show how to manipulate `data` types at compile time later.
 
 # Comma
 
-Instead of resorting to indentation, we can use commas to seperate stuff instead.
+Instead of resorting to indentation, we can use commas to seperate stuff.
 Therefore, The above `Three` can also be written as:
 
 ```
-data Three = one, two, three
+pub(in) data Three = one, two, three
 ```
 
 The rule is that whenever we see a comma either with an indentation after a new line after it or not, we append a clause to the innermost possible place in the syntax tree.
@@ -485,7 +479,7 @@ Below are some examples:
 1.  This definition of `Three` is the same as the above ones:
 
     ```
-    data Three = one,
+    pub(in) data Three = one,
         two,
         three,
     data SomeOtherData = someOtherData
@@ -494,7 +488,7 @@ Below are some examples:
 2.  This would generate a parsing error:
 
     ```
-    data Three =
+    pub(in) data Three =
     a,
     b,
     c
@@ -503,7 +497,7 @@ Below are some examples:
 3.  This would also generate a parsing error when the parser encounters `b`:
 
     ```
-    data Three = a,
+    pub(in) data Three = a,
     b,
     c
     ```
@@ -525,8 +519,8 @@ But let's start with a simplest generic function: `id`.
 pub fn id[T](t : T) -> T = t
 ```
 
-Here, I introduced another delimiter while defining the function: brackets (`[]`).
-Different delimiters after the function name represent different *modes* in which the parameters are passed.
+Here, I introduced another sort of delimiter while defining the function: brackets (`[]`).
+Different sorts of delimiters after the function name represent different *modes* in which the parameters are passed.
 **Modes** are a very important feature in Ende; different modes serve as different purposes and have different characteristics.
 We say that the arguments inside the parentheses (`()`) (`t` in the above example) are arguments in the **normal mode**.
 In contrast, arguments inside the brackets (`[]`) (`T` in the above example) are arguments in the **`const` mode**.
@@ -535,7 +529,8 @@ For now, you just have to know that arguments in `const` mode have to be supplie
 I haven't mentioned function types, have I?
 Function types are literally the types of functions and are written as `(A, B, C, ...) -> R`.
 `A, B, C, ...` are the types of the arguments, and `R` is the return type.
-As a side note, arguments in normal mode cannot be curried in Ende similar to the ones in C++/Scala/Rust, but arguments in `const` mode can:
+As a side note, similar to the ones in C++/Scala/Rust, arguments in normal mode cannot be curried in Ende.
+However, arguments in `const` mode can:
 
 ```
 \\ They are different:
@@ -551,13 +546,13 @@ bar[A][B]
 
 This is because of the way that current machines work.
 At runtime, functions can have several arguments natively.
-If arguments in normal mode were curryable, the compiler would have to return lambdas often or generate several partially applied copies of the original function.
+If arguments in the normal mode were curryable, the compiler would have to return lambdas often or generate several partially applied copies of the original function.
 Arguments in `const` mode are curryable, though, because that performance at compile time isn't that important, and programmers are supposed to do heavy calculation at runtime.
 
 Back to generics, here is a `compose` function, which `compose`s its 2 function arguments.
 
 ```
-fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x))
+pub fn compose[A, B, C](f : (B) -> C, g: (A) -> B)(x : A) -> C = f(g(x))
 ```
 
 And here is the definition of a generic `Option` type:
@@ -589,12 +584,12 @@ It's not a keyword!
 The intention is to disambiguate between the type `Example` and the constructor of it.
 In Rust, which doesn't have dependent types, `Example` can mean both, and a usage of `Example` can always be resolved, but not in a language in which types are first-class.
 
-Parameters of variants in `data` have types, what is the type associated with `"example"` then?
+Variants in `data` have types, what is the type of `new` then?
 In order to assign a type to it, we need new modes in which parameters are named.
 Let's call them **named mode**s.
 The named normal mode is similar to the normal mode, except that the parameters are named and unordered; the named `const` mode corresponds to the `const` mode.
-The above `"example"` is now associated with the type `{"example" -: Unit} -> Example`.
-To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
+The above `new` is now of the type `{"example" -: Unit} -> Example`.
+To be more general, now we can also have struct variants and arbitrary functions accepting named parameters accepting arguments in named modes.
 
 # More General records
 
@@ -611,7 +606,7 @@ pub(in) data Monoid[T] = new {
 ```
 
 To implement a trait, I introduce another keyword `impl`.
-All `impl`s can be defined locally in a function body.
+All `impl`s are items and can be defined locally in a function body.
 Unlike the `impl`s in Rust or `instance`s in Haskell, `impl`s in Ende are always named.
 
 ## Simple `impl`s
@@ -634,9 +629,9 @@ let sum1 = i32Monoid."append"(1i32, 2i32)
 let sum2 = 1i32#append(2i32)
 ```
 
-In order to write a function that is generic over types implementing a record, the third mode is introduced.
+In order to write a function that is generic over types implementing a trait, the third mode is introduced.
 It's called the **instance mode**, and is delimited by `[()]`.
-Arguments in instance mode can also be inferred, however not by looking at other arguments, but by searching for appropriate `impl`s.
+Arguments in the instance mode can also be inferred, however not by looking at other arguments, but by searching for appropriate `impl`s.
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
 ```
@@ -645,7 +640,7 @@ fn concat[T][(Monoid[T])](List[T]) -> T match'in
     (List::cons(head, tail)) => head#append(concat(tail))
 ```
 
-You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks (except those using weird characters that would be invalid variables in the syntax); it's just a syntax sugar.
+You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks (except those using weird characters that would be invalid identifiers in the syntax); it's just a syntax sugar.
 
 When you write `concat(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
@@ -659,10 +654,10 @@ let sum = concat[(i32Monoid)](i32Vec)
 `impl` functions are literally, `impl`s that are functions.
 `impl`s need to be functions mainly because of 2 reasons:
 
-1. It's generic over an argument in the `const` mode.
-2. It's generic over an argument in the instance mode.
+1. It's generic over arguments in the `const` mode.
+2. It's generic over arguments in the instance mode.
 
-I'm going to provide an `impl` function generic over both modes.
+I'm going to provide an `impl` function generic over arguments in both modes.
 First, define a `Group` trait.
 
 ```
@@ -711,7 +706,7 @@ impl abelianToGroup[T][(Abelian[T])] -> Group[T] = Group::new {
 That's a lot of boilerplate!
 The code is very similar to implementing `Monoid`s for `Group`s; we have to write this kind of code again and again while creating an inheritance tree of traits.
 That is not tolerable.
-Can't we just store a `Group[T]` inside an `Abelion[T]`?
+Can't we just store a `Group[T]` inside an `Abelian[T]`?
 Yes, we can!
 Moreover, we want to call the methods or more generally use the fields from the supertraits without accessing the fields explicitly.
 **Instance argument**s let us do all of that.
@@ -729,9 +724,11 @@ data Abelian[T] = new[(Group[T])]
 
 As you can see, it's simply the instance mode after the constructor.
 
+Instance arguments should be searched lazily and searching of them isn't guaranteed to terminate because one could recurse on them, though.
+
 ## Associated Values
 
-Fields of an instance of a record can also be dependent on the others.
+Fields of a record can also be dependent on the others.
 They are different from normal *input parameters* in that they don't determine the `impl` chosen but the `impl`s determine them.
 They are *output parameters*.
 For example, imagine if I want to define a trait `Add` for all types that implement the `_+_` operator.
@@ -755,7 +752,9 @@ pub(in) data Add[L, R] = add[Output] {
 }
 ```
 
+The `impl` ought to specify the `Output` type.
 If you want to access the output type specified by an instance of a trait, simply do a pattern matching.
+Or you can put them inside the `const` mode to make calling it with the dot syntax possible.
 
 ## `impl(auto)`
 
@@ -769,7 +768,7 @@ The Ende source code would be something like:
 pub impl(auto) strLike(self : String) -> StrLike = ...
 ```
 
-Auto `impl`s could be inserted at any node in the term AST if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.
+Auto `impl`s could be inserted at any node in the AST of a term if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.
 Auto `impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
 ```
@@ -784,6 +783,8 @@ manipulateThird(first) \\ It works.
 let first : First = ...
 \\ manipulateThird(first) \\ `first` cannot be transformed to value of type `Third`.
 ```
+
+(TBD: impl(auto) in an instance argument)
 
 ## Visibility of `impl`s
 
@@ -817,12 +818,13 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    Of course, the right hand side of the `const` binding must be a constant as well.
 
 4. **Control structures**:
-   The value of a `while` loop is not a constant (actually because it's not a `const fn`).
-   The value of an `if` construct is a constant if and only if one of the conditions below are met.
+   See the section about do-notation below.
+   Specificly, The value of the entire `while` loop is not a constant (actually because it's not a `const fn`).
+   `if`is special that the value of an `if` construct is a constant if and only if either of the conditions below is met.
 
-   1. The term immediately after `if` is a constant and evaluates to `true`, and the term after `then` represents a constant.
+   1. The term immediately after `if` is a constant and evaluates to `Bool::true`, and the term after `then` is a constant.
 
-   2. The term immediately after `if` is a constant and evaluates to `false`, and the term after `else` represents a constant.
+   2. The term immediately after `if` is a constant and evaluates to `Bool::false`, and the term after `else` is a constant.
 
 5. **Functions**:
    The types of the parameters and the return type of any functions must be constants.
@@ -838,11 +840,11 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
       The right-hand-side after the equal sign (`=`) must be a constant.
       Note that declaring a variable with `const` and `let` are also different in a `const fn`.
       They are both constants in a `const fn`.
-      But a variable declared with `const` cannot depend on the arguments in normal mode, while a variable declared with `let` can.
+      But a variable declared with `const` cannot depend on the arguments that could possibly not be known at compiletime, while a variable declared with `let` can.
       The gist of the design is to make changing a non-`const` function to a `const fn` (or conversely) the most seamless.
 
-   3. Normal statements:
-      Each term in the function must be a constant.
+   3. Normal terms:
+      Each subterm in them must be a constant.
 
    4. Function calls:
       Only `const fn`s can be called.
@@ -855,11 +857,11 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 6. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
-   They can be returned and passed as arguments.
+   They can be returned and passed as arguments too.
    `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.
    Nevertheless, Auto `impl`s need not be `const fn`s.
-   Auto `impl`s that operate at runtime are denoted `impl(auto, dyn)`.
-   They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a smart pointer into its underlying type.
+   Auto `impl`s that operate only at runtime are denoted `impl(auto, dyn)`.
+   They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a pointer into its underlying type.
 
 7. **`data`**:
    In normal `data`, all variants are constants.
@@ -868,7 +870,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 ## `const data`
 
-A data type marked `const` cannot have any instance at runtime.
+A data type marked `const` cannot have any instances at runtime.
 How is it useful then?
 It must have something to do with the compiler!
 And `Mod` is an example.
@@ -880,13 +882,13 @@ What you can do in a `use` statement is what you can do in a `const fn`, so you 
 use if isWindows then os::win else os::nix
 ```
 
-You can write `const fn` accepting or returning them, but they are only usable at compile time.
+You can write `const fn` accepting or returning `Mod`s, but they are only usable at compile time.
 
 ## A `const` Version of `factorial`
 
 I'll define a `const fn factorial` in this subsection.
 The implementation of this `factorial` is different from the `U32` version above.
-This is not to suggest Ende has overloading; they're just from different namespaces.
+This is not to suggest Ende has overloading; they're just declared in different namespaces.
 
 The problem with `U32` is that it's not defined recursively, so it would be harder for the computer to figure out if the functions using it terminate.
 The solution is to use a recursively defined data type: `Nat`
@@ -922,7 +924,8 @@ const fn factorial[m : Nat] -> Nat match'in
 But then we lose the ability to call `factorial` at runtime.
 
 Actually, types are also first-class citizens of Ende.
-They are constants.
+That's why there could be associated types.
+`data` types *per se* are constants.
 In Ende, we can also be generic over type constructors, which are `const fn`s at the type level.
 That is, to pass higher-kinded types around.
 Normal types have kind `Type`.
@@ -939,7 +942,7 @@ Types of arguments in `const` mode are not always inferred to be `Type`, they ca
 For example, if you want to write a function generic over functors, you don't need to explicitly write down the kind of `F`:
 
 ```
-fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> IO[Unit]
+fn doSomethingAboutFunctors[F, A][(Functor[F])](F[A]) -> Whatever
 ```
 
 # Do Notation
@@ -986,14 +989,14 @@ Below are the valid commands in the do-notation in Ende:
     any term
     ```
 
-The one-to-one correspodence between Ende's syntax and Haskell's (and the desugaring) should be straightforward.
+The one-to-one correspondence between Ende's syntax and Haskell's (and the desugaring) should be straightforward.
 
 # GADTs
 
-Normal `data` are called ADTs in Haskell.
+Normal `data` types are called ADTs in Haskell.
 GADTs are the **G**eneralized version of ADTs.
 GADTs let you define inductive families, that is, to be specific on the return types of the variants.
-We can define a GADT by writing `where` instead of an equal sign (`=`) after the name of the `data`.
+We can define a GADT by writing `where` instead of an equal sign (`=`) after the parameters of the `data`.
 
 ```
 pub(in) data Array[_ : Nat, T] where
@@ -1006,7 +1009,7 @@ pub(in) data Array[_ : Nat, T] where
 Usually, we don't want to make arguments in normal mode curryable.
 But sometimes we do want to supply variable length of arguments.
 There is a kind of mechanism in Ende to make genericity over arity doable.
-Because I want to make variadic arguments as flexible as possible, it could be a little bit harder to understand.
+Because I want to make variadic arguments as flexible as possible, it might be a little bit harder to understand.
 I need to introduce a new kind of types called **tuple types**.
 They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
@@ -1025,8 +1028,8 @@ pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
     [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
 ```
 
-A special operator `..` was used; it's called the spread operator, and it's purpose is to literally spread the arguments in a tuple type.
-A spreaded tuple therefore becomes *naked* without the `tuple()`.
+A special operator `..` was used; it's called the **spread operator**, and its purpose is to literally spread the arguments in a tuple type.
+A spreaded tuple therefore becomes *naked* without the `tuple()` outside.
 For instance, now focus on the `Replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
@@ -1038,7 +1041,7 @@ So `Replicate[n](T)` is `T` repeated for `n` times.
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `Replicate` could be useful.
-We can accept a `Replicate(I32)` and spread it, leaving the time of replication inferred.
+We can accept a `Replicate(I32)` and spread it, leaving the how many times it's replicated inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```
@@ -1047,7 +1050,7 @@ const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
     (head, ..tail) => head + sum(tail)
 ```
 
-In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from strings to types.
+In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from terms representing keys to types.
 This could be used for row polymorphism, e.g.
 
 (TBD)
@@ -1056,7 +1059,7 @@ This could be used for row polymorphism, e.g.
 
 ## The Problem
 
-`const` still isn't flexible enough in some situation.
+`const` still isn't flexible enough in some situations.
 See the following 2 examples for instance:
 
 1.  **The `curry` function**:
@@ -1068,7 +1071,7 @@ See the following 2 examples for instance:
     ```
     \\ Don't ask what `???` is for now.
     \\ Just pretend it's magic; I'll debunk it later.
-    \\ The type system still isn't strong enough to actually write it down.
+    \\ The type system still isn't necessarily strong enough to actually write it down.
 
     \\ We can also pattern match the tuple types instead of the values of the tuple types.)
     const fn CurriedFuncType(Type, .._ : Tuple[''Type]) -> ??? match'in
@@ -1110,7 +1113,7 @@ See the following 2 examples for instance:
 ## The Solution
 
 The solution is to give the users finer control of the `const` system.
-Instead of writing `const var` or plain `var`, we can write `phase ph var` to specify its phase further.
+Instead of writing `const var` or plain `var`, we can write `phase(...) var` to specify its phase further.
 
 (TBD)
 
@@ -1123,6 +1126,8 @@ Surely some form of recursive type must be implemented in order to make Ende rea
 `mod`s are modules.
 Generics are monomorphized at compile time.
 `impl`s have nothing to do with runtime.
+
+(TBD: GADTs)
 
 ## Heap Allocation
 
@@ -1154,7 +1159,7 @@ I'll try to descibe the compiler work needed in the rest of this section.
 # Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
-In order to be fully dependently-typed, another mode called **pi mode** has to be introduced:
+In order to be fully dependently-typed, another mode called the **pi mode** has to be introduced:
 
 | ordered                   | normal    | `const`      | instance      | pi            |
 |:-------------------------:|:---------:|:------------:|:-------------:|:-------------:|
@@ -1173,12 +1178,11 @@ In order to be fully dependently-typed, another mode called **pi mode** has to b
 
 
 `(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` and `([T])` mean `[T : _]` and `([T : _])`, respectively.
-Types of arguments in the `const` mode and the pi one can be inferred.
-Usually arguments in normal mode or pi mode are supplied at runtime, but not arguments in `const` or instance modes.
+Types of arguments in the `const` modes and the pi ones can be inferred.
+Usually arguments in the normal mode or pi mode are supplied at runtime, but not arguments in the `const` or the instance modes.
 Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
-Arguments in an argument list can only be dependent on arguments in previous argument lists.
-
+Arguments in all argument lists can only be dependent on arguments in previous argument lists.
 The last argument in a list of arguments in pi mode can also be spreaded.
 
 Existential types as an example of pi-types:
@@ -1192,8 +1196,8 @@ pub(in) data Sigma[A][B : ([A]) -> Type] = new([a : A])(B([a]))
 ## `with`
 
 The value of one argument of a dependent function might depend on another argument in pi mode.
-We need to be able to match several arguments together.
-Introduce **dependent pattern matching**, through `with` clauses.
+We need to be able to match against several arguments together.
+Introduce **views**, through `with` clauses.
 Top-level pattern matching can include arms with `with` clauses.
 Here's an example:
 
@@ -1288,3 +1292,6 @@ A : U1<m>    ''U1<m> : Type<ω>    B : U2<n>    ''U2<n> : Type<ω>
 ----------------------------------------------------------------
                      A -> B : U2<max(m, n)>
 ```
+
+If either the argument type or the return type is `Type<ω>`, perhaps we need `Type<ω+1>`, and we wan go up until `Type<ω+ω>`.
+I don't know if what's beyond would be useful.
