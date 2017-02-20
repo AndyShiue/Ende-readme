@@ -1306,5 +1306,5 @@ A : U1<m>    ''U1<m> : Type<ω>    B : U2<n>    ''U2<n> : Type<ω>
                      A -> B : U2<max(m, n)>
 ```
 
-If either the argument type or the return type is `Type<ω>`, perhaps we need `Type<ω+1>`, and we wan go up until `Type<ω+ω>`.
+If either the argument type or the return type is `Type<ω>`, perhaps we need `Type<ω+1>`, and we can go up until `Type<ω+ω>`.
 I don't know if what's beyond would be useful.
