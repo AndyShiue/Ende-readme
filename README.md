@@ -379,13 +379,16 @@ Members of an instance of a record can either be accessed by its name after a do
 fn getX1(p : Point) -> I32 = p."x"
 fn getX2(Point) -> I32 match'in
     (Point::new { "x" -: result
-                  "y" -: _}) => result
+                  "y" -: _ }) => result
 ```
 
 The syntax of pattern matching a record or constructing an instance of it is the same as declaring one:
 
 ```
-let center = Point::new { "x" -: 0i32, "y" -: 0i32 }
+let center = Point::new {
+    "x" -: 0i32
+    "y" -: 0i32
+}
 ```
 
 # Visibility
