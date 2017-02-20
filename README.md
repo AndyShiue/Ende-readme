@@ -65,11 +65,11 @@ Being concrete, below are some examples that would make use of modes and the `co
 
 1. If you want iterate between some fixed numbers, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively between the fixed numbers you chose.
    Moreover, the same interface can be also used at runtime.
-	 Therefore, if you want to range over some indices only known at runtime, the change of the code would be minimal or even none.
+   Therefore, if you want to range over some indices only known at runtime, the change of the code would be minimal or even none.
 
 2. Have you heard of writing a multiplication table with template meta-programming in C++?
    Because of the backwards compatibility wart with C, you have to use weird template-level syntax to write those functional code.
-	 In Ende, they can be written in a clean way and as I've said, the code could be also used at runtime.
+   In Ende, they can be written in a clean way and as I've said, the code could be also used at runtime.
 
 3. Regular expressions, web template languages, SQL commands, etc. can be precompiled on demand in a type-safe manner, so you don't have to waste time at runtime.
    And as you would guess, you can also do them at runtime with the same API.
@@ -432,12 +432,12 @@ items in a `mod` could only mention previous items including itself, unless wrap
 ```
 pub mod another where
     mutual \\ This is required.
-		    data A =
-				    itself
-						theOther(B)
-				data B =
-				    itself
-						theOther(A) \\ Here it uses a previous type.
+        data A =
+            itself
+            theOther(B)
+        data B =
+            itself
+            theOther(A) \\ Here it uses a previous type.
 ```
 
 A `mod` can be declared without `where`.
