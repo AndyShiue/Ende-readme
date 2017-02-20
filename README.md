@@ -896,6 +896,14 @@ use if isWindows then os::win else os::nix
 ```
 
 You can write `const fn` accepting or returning `Mod`s, but they are only usable at compile time.
+And `mod`s can have parameters in the `const` or the instance mode:
+
+```
+mod Magic[magicNumber : I32] where
+    \\ Use the magic number.
+```
+
+Such `mod`s are `const fn`s.
 
 ## A `const` Version of `factorial`
 
