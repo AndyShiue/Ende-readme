@@ -427,6 +427,19 @@ pub mod module where
         pub data Circle = new { "radius" -: U32 }
 ```
 
+items in a `mod` could only mention previous items including itself, unless wrapped in `mutual` blocks, in which any one of them can mention any one of the others.
+
+```
+pub mod another where
+    mutual \\ This is required.
+		    data A =
+				    itself
+						theOther(B)
+				data B =
+				    itself
+						theOther(A) \\ Here it uses a previous type.
+```
+
 A `mod` can be declared without `where`.
 
 ```
