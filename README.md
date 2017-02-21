@@ -4,6 +4,7 @@
 
 I just want to share what I've come up with about the design of a new programming language, and here it is.
 This language has a very strong type system and its functions are call-by-value.
+Currently this language aims to be a functional general-purpose language, that is, to make higher abstraction possible but still retain the ability to write imperative code.
 Anyone is very welcome to steal some ideas or write an implementation for it (but don't use the exact same name for the language).
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
@@ -53,6 +54,7 @@ This article was initially designed to be implemented from the beginning to the 
 As some people suggested, I provide a brief overview here.
 
 The core feature of Ende is **modes**.
+I found some similarities between the languages I love and abstract over those concepts with modes and extend it to the maximum and much of the following content will be center on it.
 Modes are ways to pass arguments to functions.
 In current programming languages, the boundary between phases, which mean compile time and runtime, are either not mixed well or too blurry.
 The former includes more conservative languages like Java or Go.
