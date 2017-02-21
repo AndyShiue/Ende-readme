@@ -66,7 +66,7 @@ In complement to modes, you can specify stuff that works only at runtime or eith
 Being concrete, below are some examples that would make use of modes and the `const` system:
 
 1. If you want iterate between some fixed numbers, and the operation you want to do is known at compile time (which is the majority of cases), the compiler would simply instantiate operations again and again iteratively between the fixed numbers you chose.
-   Moreover, the same interface can be also used at runtime.
+   Moreover, the same interface can also be used at runtime.
    Therefore, if you want to range over some indices only known at runtime, the change of the code would be minimal or even none.
 
 2. Have you heard of writing a multiplication table with template meta-programming in C++?
@@ -773,7 +773,7 @@ data Abelian[T] = new[(Group[T])]
 
 As you can see, it's simply the instance mode after the constructor.
 
-Instance arguments should be searched lazily and searching of them isn't guaranteed to terminate because one could recurse on them, though.
+Searching of instance arguments isn't guaranteed to terminate because one could recurse on them, though.
 
 ## Associated Values
 
