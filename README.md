@@ -121,7 +121,7 @@ I've even never heard of a word to describe that feature, so I coined it.
 I believe modes are the idea that solve all of these problems above in a coherent way.
 The interaction between modes also gives rise to another novel feature that a language named PureScript supports, namely [row polymorphism](https://leanpub.com/purescript/read#leanpub-auto-record-patterns-and-row-polymorphism).
 
-To sum up, I found some similarities between the languages I love and abstract over some concepts in them with modes and extended it to the maximum I could imagine.
+To sum up, I found some similarities between the languages I love and abstracted over some concepts in them with modes and extended it to the maximum I could imagine.
 Much of the following content will be center on it.
 
 ---
