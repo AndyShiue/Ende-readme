@@ -904,18 +904,18 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    There are also `const fn` lambdas.
    The syntax for it should be obvious.
 
-6. **`impl`s**:
+6. **`data`**:
+   In normal `data`, all variants are constants.
+   In addition, all variants with parameters in `data` are `const fn`s.
+   If you get a part of constant `data` by pattern matching or field accessing, what you get would still be a constant.
+
+7. **`impl`s**:
    Did I mention `impl`s are first-class citizens of Ende?
    They can be returned and passed as arguments too.
    `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.
    Nevertheless, Auto `impl`s need not be `const fn`s.
    Auto `impl`s that operate only at runtime are denoted `impl(auto, dyn)`.
    They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a pointer into its underlying type.
-
-7. **`data`**:
-   In normal `data`, all variants are constants.
-   In addition, all variants with parameters in `data` are `const fn`s.
-   If you get a part of constant `data` by pattern matching or field accessing, what you get would still be a constant.
 
 ## `const data`
 
