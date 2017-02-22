@@ -403,9 +403,9 @@ data Point = new {
 }
 ```
 
-A `data` with a single variant all normal parameters of which are named is called a record.
+A `data` with a single variant is called a record.
 The compiler treats records different from normal `data` in subtle ways.
-Members of an instance of a record can either be accessed by its name after a dot (`.`) or by pattern matching.
+Fields (named arguments) of an instance of a record can either be accessed by its name after a dot (`.`) or by pattern matching.
 
 ```
 fn getX1(p : Point) -> I32 = p."x"
@@ -730,7 +730,7 @@ pub impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
 
 `groupToMonoid` is indeed an `impl` function.
 
-## Instance Arguments
+## Supertrait Arguments
 
 What we don't have yet is the ability to define one trait to be a supertrait of another one.
 In other words, asserting if you implement a trait, another trait must be implemented.
@@ -758,7 +758,7 @@ That is not tolerable.
 Can't we just store a `Group[T]` inside an `Abelian[T]`?
 Yes, we can!
 Moreover, we want to call the methods or more generally use the fields from the supertraits without accessing the fields explicitly.
-**Instance argument**s let us do all of that.
+**supertrait argument**s let us do all of that.
 
 In order to use this feature, the trait `Group` and `Abelian` can be rewritten as below:
 
@@ -773,7 +773,7 @@ data Abelian[T] = new[(Group[T])]
 
 As you can see, it's simply the instance mode after the constructor.
 
-Searching of instance arguments isn't guaranteed to terminate because one could recurse on them, though.
+Searching of supertrait arguments isn't guaranteed to terminate because one could recurse on them, though.
 
 ## Associated Values
 
