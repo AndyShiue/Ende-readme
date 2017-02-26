@@ -1026,7 +1026,7 @@ pub(in) data Monad[F : [Type] -> Type] = new[(Applicative[F])] {
 If you know haskell you must know this `Monad` trait is very very very important.
 They can be used to model effects such as logging, error handling, mutable state, non-determinism, etc.
 `Monad`s are so important that there's also some special syntax, namely *do-notation*, to make writing monadic code easier.
-In Ende, I also want the do-notation, but a more general one than Haskell's, in that it doesn't necessarily have to desugar to the `bind` operation of `Monad`, but **any** method named `bind`.
+In Ende, I also want the do-notation, but a more general one than Haskell's, in that it doesn't necessarily have to desugar to the `bind` operation of `Monad`, but **any** method with `@lang("bind"):`.
 This is what Idris did because this kind of flexibility is needed when we need something stronger or something that resembles a `Monad` but isn't actually one.
 
 Below are the valid commands in the do-notation in Ende:
@@ -1047,19 +1047,6 @@ Below are the valid commands in the do-notation in Ende:
     ```
 
 The one-to-one correspondence between Ende's syntax and Haskell's (and the desugaring) should be straightforward.
-
-# GADTs
-
-Normal `data` types are called ADTs in Haskell.
-GADTs are the **G**eneralized version of ADTs.
-GADTs let you define inductive families, that is, to be specific on the return types of the variants.
-We can define a GADT by writing `where` instead of an equal sign (`=`) after the parameters of the `data`.
-
-```
-pub(in) data Array[_ : Nat, T] where
-    nil : Array[0nat, T]
-    cons : [n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
-```
 
 # Spreading
 
@@ -1107,8 +1094,8 @@ const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
     (head, ..tail) => head + sum(tail)
 ```
 
-In contrast to the ordered variadic type, there is `Row[''Type]`, which is the **unordered variadic type**, the type of maps from terms representing keys to types.
-This could be used for row polymorphism, e.g.
+In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**.
+It could be used for row polymorphism, e.g.
 
 (TBD)
 
@@ -1184,21 +1171,19 @@ Surely some form of recursive type must be implemented in order to make Ende rea
 Generics are monomorphized at compile time.
 `impl`s have nothing to do with runtime.
 
-(TBD: GADTs)
-
 ## Heap Allocation
 
 Perhaps the most important topic in memory management is heap allocation.
 In order to make Ende a system programming language, users of the language must be able to manipulate raw pointers.
 But in addition to it, there are supposed to be a higher-level interface for normal programmers since manipulating raw pointers are highly unsafe thus error-prone.
-I've consider 3 different approaches in the past:
+I've considered 3 different approaches in the past:
 
 1. **The Rust Approach**:
-   closest to bare metal and theoretically the most efficient but requires lots and lots of lang items.
+   the closest to the bare metal and theoretically the most efficient but requires lots and lots of lang items.
 
 2. **The Swift Approach**:
    Doesn't require a garbage collector (GC), but instead implicitly using reference counting everywhere.
-   Cycles between reference counted (RC) pointers could cause memory leak and users have to be very careful about it.
+   Cycles between reference counted (RC) pointers could cause memory leaks and users have to be very careful about it.
    Dereferencing an unowned pointer could fail.
 
 3. **The Java Approach**:
@@ -1213,6 +1198,19 @@ I'll try to descibe the compiler work needed in the rest of this section.
 
 (TBD)
 
+# GADTs
+
+Normal `data` types are called ADTs in Haskell.
+GADTs are the **G**eneralized version of ADTs.
+GADTs let you define inductive families, that is, to be specific on the return types of the variants.
+We can define a GADT by writing `where` instead of an equal sign (`=`) after the parameters of the `data`.
+
+```
+pub(in) data Array[_ : Nat, T] where
+    nil : Array[0nat, T]
+    cons : [n : Nat](T, Array[n, T]) -> Array[Nat::succ(n), T]
+```
+
 # Dependent Types
 
 In the above examples, we've seen types depending on values at compile time, but not values at runtime.
@@ -1223,7 +1221,7 @@ In order to be fully dependently-typed, another mode called the **pi mode** has 
 | `T` means                 | `(_ : T)` | `[T : _]`    | `[(_ : T)]`   | `([T : _])`   |
 | type inference            | no        | yes          | no            | yes           |
 | phase (if not `const fn`) | runtime   | compile time | compile time  | runtime       |
-| curryable                 | no        | yes          | yes           | no            |
+| curryable                 | no        | yes          | yes           | yes           |
 | argument inference        | no        | yes          | proof search  | no            |
 | can be dependent on       | no        | yes          | yes           | yes           |
 | **unordered**             | `{t : T}` | `{[t : T]}`  | `{[(t : T)]}` | `{([t : T])}` |
@@ -1237,10 +1235,9 @@ In order to be fully dependently-typed, another mode called the **pi mode** has 
 `(T)` and `[(T)]` mean `(_ : T)` and `[(_ : T)]`, respectively, but `[T]` and `([T])` mean `[T : _]` and `([T : _])`, respectively.
 Types of arguments in the `const` modes and the pi ones can be inferred.
 Usually arguments in the normal mode or pi mode are supplied at runtime, but not arguments in the `const` or the instance modes.
-Arguments in `const` or instance modes are curryable because they have nothing to do with the runtime.
+Modes except the normal mode are curryable because it would be more convenient then.
 Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
 Arguments in all argument lists can only be dependent on arguments in previous argument lists.
-The last argument in a list of arguments in pi mode can also be spreaded.
 
 Existential types as an example of pi-types:
 
