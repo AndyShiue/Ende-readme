@@ -1090,6 +1090,8 @@ It would be easier to understand it by providing the concrete case than describi
 
 ```
 const fn sum(.._ : Replicate(I32)) -> I32 match'in
+    () => 0i32
+    (head, ..tail) => head + sum(tail)
 ```
 
 In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**, which need not be ordered when deconstructing it.
