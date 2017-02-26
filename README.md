@@ -1064,9 +1064,10 @@ It's called the **ordered variadic type**, and is written `Tuple[''Type]`.
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
 The function `sum` sums up all the `I32`s in the argument list no matter how many arguments there are.
-First, I have to define a trait and some `impl`s for it:
+First, I have to define a helper function for it:
 
 ```
+<<<<<<< HEAD
 pub(in) data Replicate[T] = new {
     "Args" -: [_ : Nat] -> Tuple[''Type]
 }
@@ -1076,35 +1077,45 @@ pub impl replicate[T] -> Replicate[T] = Replicate::new {
         [0nat] => varargs ()
         [Nat::succ(n)] => varargs (T, ..replicate[T]."Args"[n])
 }
+=======
+pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
+    [0nat](_) => varargs ()
+    [Nat::succ(n)](T) => varargs (T, ..Replicate[n](T))
+>>>>>>> parent of 8ba1f32... Fix the part about spreading.
 ```
 
 A special operator `..` was used; it's called the **spread operator**, and its purpose is to literally spread the arguments in a tuple type.
 A spreaded tuple therefore becomes *naked* without the `varargs()` outside.
-For instance, now focus on the function the key of which is called `"args"` above, let's call it `gen`.
+For instance, now focus on the `Replicate` function above.
 
-- `gen[0nat]` is an empty tuple type.
-- `gen[1nat]` = `varargs (T, ..gen[0nat])` = `varargs (T)`.
-- `gen[2nat]` = `varargs (T, ..gen[1nat])` = `varargs (T, ..varargs (T))` = `varargs (T, T)`.
+- `Replicate[0nat](T)` is an empty tuple type.
+- `Replicate[1nat](T)` = `varargs (T, ..Replicate[0nat](T))` = `varargs (T)`.
+- `Replicate[2nat](T)` = `varargs (T, ..Replicate[1nat](T))` = `varargs (T, ..varargs (T))` = `varargs (T, T)`.
 
-So `Replicate[T]` is `T` repeated for `n` times.
+So `Replicate[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
 Now you can see how `Replicate` could be useful.
-We can accept an instance of `Replicate[I32]` and spread the `args`, leaving how many times it's replicated inferred.
+We can accept a `Replicate(I32)` and spread it, leaving how many times it's replicated inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```
+<<<<<<< HEAD
 const fn sum(.._ : Replicate(I32)) -> I32 match'in
+=======
+const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
+>>>>>>> parent of 8ba1f32... Fix the part about spreading.
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
 
 In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**, which need not be ordered when deconstructing it.
 It could be used for row polymorphism.
-First, we need another version of `Replicate` and its `impl`.
+First, we need another helper function.
 
 ```
+<<<<<<< HEAD
 pub(in) data Replicate[T] = new {
     "varargs" -: [n : Nat][_ : Array[n, Str]] -> Tuple[''Type]
 }
@@ -1116,9 +1127,15 @@ pub impl replicate[T] -> Replicate[T] = Replicate::new {
         [Nat::succ(n), Array::cons(head, tail)] =>
             varargs { head -: T, ..replicate[T]."Args"[n, tail] }
 }
+=======
+\\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
+pub const fn Replicate[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] match'in
+    [0nat, Array::nil](_) => varargs {}
+    [Nat::succ(n), Array::cons(head, tail)](T) => varargs { head -: T, ..Replicate[n, tail](T) }
+>>>>>>> parent of 8ba1f32... Fix the part about spreading.
 ```
 
-Other traits similar to `Replicate` could even pattern match the names in named modes to achieve limited reflection, and we can then write functions generic over named arguments.
+Other helper functions could pattern match the names in name modes to achieve limited reflection, and after that we can write functions generic over named arguments.
 
 # Phase Polymorphism
 
