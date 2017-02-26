@@ -1095,7 +1095,7 @@ We can accept an instance of `Replicate[I32]` and spread the `args`, leaving how
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```
-const fn sum[(Replicate[I32])](.._ : Args) -> I32 match'in
+const fn sum(.._ : Replicate(I32)) -> I32 match'in
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
