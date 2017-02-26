@@ -809,12 +809,12 @@ Or you can put them inside the `const` mode to make calling it with the dot synt
 
 Automatic `impl`s are `impl`s with a `self` parameter in normal mode.
 The keyword `auto` indicates they are `impl`s that will be automatically inserted.
-For example, if one wants to overload string literals, they could provide an auto `impl` from `String` to whatever type they want.
+For example, if one wants to overload string literals, they could provide an auto `impl` from `Str` to whatever type they want.
 For now, let's assume that type is called `StrLike`.
 The Ende source code would be something like:
 
 ```
-pub impl(auto) strLike(self : String) -> StrLike = ...
+pub impl(auto) strLike(self : Str) -> StrLike = ...
 ```
 
 Auto `impl`s could be inserted at any node in the AST of a term if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.
@@ -1057,7 +1057,7 @@ Because I want to make variadic arguments as flexible as possible, it might be a
 I need to introduce a new kind of types called **tuple types**.
 They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
-For example, `tuple (Unit, Bool)` is a tuple type, and `tuple (I32, F32, U64)` is another tuple type.
+For example, `varargs (Unit, Bool)` is a tuple type, and `varargs (I32, F32, U64)` is another tuple type.
 What is the kind of all tuple types then?
 It's called the **ordered variadic type**, and is written `Tuple[''Type]`.
 
@@ -1068,17 +1068,17 @@ First, I have to define a helper function for it:
 
 ```
 pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
-    [0nat](_) => tuple ()
-    [Nat::succ(n)](T) => tuple (T, ..Replicate[n](T))
+    [0nat](_) => varargs ()
+    [Nat::succ(n)](T) => varargs (T, ..Replicate[n](T))
 ```
 
 A special operator `..` was used; it's called the **spread operator**, and its purpose is to literally spread the arguments in a tuple type.
-A spreaded tuple therefore becomes *naked* without the `tuple()` outside.
+A spreaded tuple therefore becomes *naked* without the `varargs()` outside.
 For instance, now focus on the `Replicate` function above.
 
 - `Replicate[0nat](T)` is an empty tuple type.
-- `Replicate[1nat](T)` = `tuple (T, ..Replicate[0nat](T))` = `tuple (T)`.
-- `Replicate[2nat](T)` = `tuple (T, ..Replicate[1nat](T))` = `tuple (T, ..tuple (T))` = `tuple (T, T)`.
+- `Replicate[1nat](T)` = `varargs (T, ..Replicate[0nat](T))` = `varargs (T)`.
+- `Replicate[2nat](T)` = `varargs (T, ..Replicate[1nat](T))` = `varargs (T, ..varargs (T))` = `varargs (T, T)`.
 
 So `Replicate[n](T)` is `T` repeated for `n` times.
 
@@ -1094,10 +1094,18 @@ const fn sum[Args : Replicate(I32)](.._ : Args) -> I32 match'in
     (head, ..tail) => head + sum(tail)
 ```
 
-In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**.
-It could be used for row polymorphism, e.g.
+In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**, which need not be ordered when deconstructing it.
+It could be used for row polymorphism.
+First, we need another helper function.
 
-(TBD)
+```
+\\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
+pub const fn Replicate[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] match'in
+    [0nat, Array::nil](_) => varargs {}
+    [Nat::succ(n), Array::cons(head, tail)](T) => varargs { head -: T, ..Replicate[n, tail](T) }
+```
+
+Other helper functions could pattern match the names in name modes to achieve limited reflection, and after that we can write functions generic over named arguments.
 
 # Phase Polymorphism
 
@@ -1126,7 +1134,7 @@ See the following 2 examples for instance:
         -> CurriedFuncType(Ret, ..Args) match'in
         (fn() -> Ret = ret) =>
             ret
-        [tuple (Head, ..Tail)](fn(head : Head, ..tail : Tail) -> Ret = ret) =>
+        [varargs (Head, ..Tail)](fn(head : Head, ..tail : Tail) -> Ret = ret) =>
             fn(head : Head) -> CurriedFuncType(Ret, Tail) = curry(fn(..tail : Tail) -> Ret = ret)
     ```
 
@@ -1296,10 +1304,10 @@ A term of a variadic type is a list of types the types of all of which are the s
 ```
  T1 : U    T2 : U    T3 : U    ...
 -----------------------------------
-tuple (T1, T2, T3) ... : Tuple[''U]
+varargs (T1, T2, T3) ... : Tuple[''U]
 ```
 
-Now that `Int : Type<1>`, so the type of `tuple (Int, Type<0>, Int, Type<0>, Int, Type<0> ...)` is `Tuple[''Type<1>]`.
+Now that `Int : Type<1>`, so the type of `varargs (Int, Type<0>, Int, Type<0>, Int, Type<0> ...)` is `Tuple[''Type<1>]`.
 
 ## Hierarchies
 
