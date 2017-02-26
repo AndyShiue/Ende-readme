@@ -15,7 +15,7 @@ Anyone is very welcome to steal some ideas or write an implementation for it (bu
 - [Comments](#comments)
 - [Terms and Statements](#terms-and-statements)
 - [Functions](#functions)
-	- [lambdas](#lambdas)
+  - [lambdas](#lambdas)
 - [Lang Items](#lang-items)
 - [User-Defined Data Types](#user-defined-data-types)
 - [Visibility](#visibility)
@@ -24,28 +24,28 @@ Anyone is very welcome to steal some ideas or write an implementation for it (bu
 - [Generics](#generics)
 - [Named Mode](#named-mode)
 - [More General records](#more-general-records)
-	- [Simple `impl`s](#simple-impls)
-	- [`impl` Functions](#impl-functions)
-	- [Instance Arguments](#instance-arguments)
-	- [Associated Values](#associated-values)
-	- [`impl(auto)`](#implauto)
-	- [Visibility of `impl`s](#visibility-of-impls)
+  - [Simple `impl`s](#simple-impls)
+  - [`impl` Functions](#impl-functions)
+  - [Instance Arguments](#instance-arguments)
+  - [Associated Values](#associated-values)
+  - [`impl(auto)`](#implauto)
+  - [Visibility of `impl`s](#visibility-of-impls)
 - [`const`](#const)
-	- [`const data`](#const-data)
-	- [A `const` Version of `factorial`](#a-const-version-of-factorial)
+  - [`const data`](#const-data)
+  - [A `const` Version of `factorial`](#a-const-version-of-factorial)
 - [More Powerful Generics](#more-powerful-generics)
 - [Do Notation](#do-notation)
 - [GADTs](#gadts)
 - [Spreading](#spreading)
 - [Phase Polymorphism](#phase-polymorphism)
-	- [The Problem](#the-problem)
-	- [The Solution](#the-solution)
+  - [The Problem](#the-problem)
+  - [The Solution](#the-solution)
 - [Memory Management](#memory-management)
-	- [Heap Allocation](#heap-allocation)
+  - [Heap Allocation](#heap-allocation)
 - [Dependent Types](#dependent-types)
-	- [`with`](#with)
+  - [`with`](#with)
 - [Universes](#universes)
-	- [Hierarchies](#hierarchies)
+  - [Hierarchies](#hierarchies)
 
 <!-- /TOC -->
 
@@ -1068,13 +1068,13 @@ First, I have to define a trait and some `impl`s for it:
 
 ```
 pub(in) data Replicate[T] = new {
-	  "Args" -: [_ : Nat] -> Tuple[''Type]
+    "Args" -: [_ : Nat] -> Tuple[''Type]
 }
 
 pub impl replicate[T] -> Replicate[T] = Replicate::new {
     "Args" -: fn[_ : Nat] -> Tuple[''Type] match'in
-				[0nat](_) => varargs ()
-    		[Nat::succ(n)](T) => varargs (T, ..replicate[T]."Args"[n])
+        [0nat](_) => varargs ()
+        [Nat::succ(n)](T) => varargs (T, ..replicate[T]."Args"[n])
 }
 ```
 
@@ -1106,15 +1106,15 @@ First, we need another version of `Replicate` and its `impl`.
 
 ```
 pub(in) data Replicate[T] = new {
-	  "varargs" -: [n : Nat][_ : Array[n, Str]] -> Tuple[''Type]
+    "varargs" -: [n : Nat][_ : Array[n, Str]] -> Tuple[''Type]
 }
 
 pub impl replicate[T] -> Replicate[T] = Replicate::new {
-  	\\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
+    \\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
     "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Tuple[''Type] match'in
-				[0nat, Array::nil](_) => varargs {}
-    		[Nat::succ(n), Array::cons(head, tail)](T) =>
-				    varargs { head -: T, ..replicate[T]."Args"[n, tail] }
+        [0nat, Array::nil](_) => varargs {}
+        [Nat::succ(n), Array::cons(head, tail)](T) =>
+            varargs { head -: T, ..replicate[T]."Args"[n, tail] }
 }
 ```
 
