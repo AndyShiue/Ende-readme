@@ -114,11 +114,11 @@ Even Idris, already having dependent types, also have some [erasure](http://docs
 All of that implies we still want the distinction between phases, and a powerful type system needs not sacrifice it.
 
 I'm especially fascinated by the language Agda.
-To me, it seems like the grand unified theory that describe everything in the same way, that is, to make them *first-class*.
-Entities are all abiding by the same laws, nontheless, there's still some way to distinguish between them, in the way of *modes*.
+To me, it seems like a grand unified theory that describe everything in the same way, that is, to make them *first-class*.
+Entities are all abiding the same laws, nontheless, there's still some way to distinguish between them, in the way of *modes*.
 I'm not sure if the author of Agda realized it could be extended to support all the features I mentioned above.
-I've even never heard of a word to describe that feature either, so I coined it.
-I believe modes are the idea that solves all of these problems above in a coherent way.
+I've even never heard of a word to describe that feature, so I coined it.
+I believe modes are the idea that solve all of these problems above in a coherent way.
 The interaction between modes also gives rise to another novel feature that a language named PureScript supports, namely [row polymorphism](https://leanpub.com/purescript/read#leanpub-auto-record-patterns-and-row-polymorphism).
 
 To sum up, I found some similarities between the languages I love and abstracted over some concepts in them with modes and extended it to the maximum I could imagine.
