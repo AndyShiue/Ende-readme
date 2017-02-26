@@ -1244,7 +1244,7 @@ In order to be fully dependently-typed, another mode called the **pi mode** has 
 Types of arguments in the `const` modes and the pi ones can be inferred.
 Usually arguments in the normal mode or pi mode are supplied at runtime, but not arguments in the `const` or the instance modes.
 Modes except the normal mode are curryable because it would be more convenient then.
-Arguments in normal mode cannot be inferred and cannot be dependent on obviously.
+Arguments in the normal mode cannot be inferred and cannot be dependent on obviously.
 Arguments in all argument lists can only be dependent on arguments in previous argument lists.
 
 Existential types as an example of pi-types:
