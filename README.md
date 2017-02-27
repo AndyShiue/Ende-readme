@@ -1059,7 +1059,7 @@ They are not really the same as tuples in Rust or Haskell.
 Tuple types are type-level lists.
 For example, `varargs (Unit, Bool)` is a tuple type, and `varargs (I32, F32, U64)` is another tuple type.
 What is the kind of all tuple types then?
-It's called the **ordered variadic type**, and is written `Tuple[''Type]`.
+It's called the **ordered variadic type**, and is written `Ordered[''Type]`.
 
 Now, I'm going to show you how to write a function accepting arbitrarily many arguments.
 For clarity, let's consider a rather easy example first.
@@ -1067,45 +1067,107 @@ The function `sum` sums up all the `I32`s in the argument list no matter how man
 First, I have to define a helper function for it:
 
 ```
-pub const fn Replicate[_ : Nat](Type) -> Tuple[''Type] match'in
+pub const fn FreshTuple[_ : Nat](Type) -> Ordered[''Type] match'in
     [0nat](_) => varargs ()
-    [Nat::succ(n)](T) => varargs (T, ..Replicate[n](T))
+    [Nat::succ(n)](T) => varargs (T, ..FreshTuple[n](T))
 ```
 
 A special operator `..` was used; it's called the **spread operator**, and its purpose is to literally spread the arguments in a tuple type.
 A spreaded tuple therefore becomes *naked* without the `varargs()` outside.
-For instance, now focus on the `Replicate` function above.
+For instance, now focus on the `FreshTuple` function above.
 
-- `Replicate[0nat](T)` is an empty tuple type.
-- `Replicate[1nat](T)` = `varargs (T, ..Replicate[0nat](T))` = `varargs (T)`.
-- `Replicate[2nat](T)` = `varargs (T, ..Replicate[1nat](T))` = `varargs (T, ..varargs (T))` = `varargs (T, T)`.
+- `FreshTuple[0nat](T)` is an empty tuple type.
+- `FreshTuple[1nat](T)` = `varargs (T, ..FreshTuple[0nat](T))` = `varargs (T)`.
+- `FreshTuple[2nat](T)` = `varargs (T, ..FreshTuple[1nat](T))` = `varargs (T, ..varargs (T))` = `varargs (T, T)`.
 
-So `Replicate[n](T)` is `T` repeated for `n` times.
+So `FreshTuple[n](T)` is `T` repeated for `n` times.
 
 What are the types of the arguments of the `sum` function?
 They are `I32` repeated for arbitrarily many times!
-Now you can see how `Replicate` could be useful.
-We can accept a `Replicate(I32)` and spread it, leaving how many times it's replicated inferred.
+Now you can see how `FreshTuple` could be useful.
+We can accept a `FreshTuple(I32)` and spread it, leaving how many times it's repeated inferred.
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```
-const fn sum(.._ : Replicate(I32)) -> I32 match'in
+const fn sum(.._ : FreshTuple(I32)) -> I32 match'in
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
 
 In contrast to the ordered variadic type, there is `Row[''Type]`, which is a special kind of the **unordered variadic type**, which need not be ordered when deconstructing it.
-It could be used for row polymorphism.
 First, we need another helper function.
 
 ```
 \\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
-pub const fn Replicate[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] match'in
+pub const fn FreshRow[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] match'in
     [0nat, Array::nil](_) => varargs {}
-    [Nat::succ(n), Array::cons(head, tail)](T) => varargs { head -: T, ..Replicate[n, tail](T) }
+    [Nat::succ(n), Array::cons(head, tail)](T) => varargs { head -: T, ..FreshRow[n, tail](T) }
 ```
 
-Other helper functions could pattern match the names in name modes to achieve limited reflection, and after that we can write functions generic over named arguments.
+After that we can write functions generic over named arguments.
+However, if you want to use the result of calling `FreshRow` more than once, you can't simply call them several times because the inferred arguments need not be the same.
+If you want them to be the same without writing down all the arguments in the `const` mode concretely, here's the trick:
+
+```
+pub(in) data Replicate[T] = new {
+    "Args" -: [_ : Nat] -> Tuple[''Type]
+}
+
+pub impl replicate[T] -> Replicate[T] = Replicate::new {
+    "Args" -: fn[_ : Nat] -> Tuple[''Type] match'in
+        [0nat] => varargs ()
+        [Nat::succ(n)] => varargs (T, ..replicate[T]."Args"[n])
+}
+```
+
+You define not the helper function but a trait recording the arguments.
+Here's how you could use it:
+
+```
+const fn sum[(Replicate[I32])](.._ : Args) -> I32 match'in
+    () => 0i32
+    (head, ..tail) => head + sum(tail)
+```
+
+This trick is especially important with name modes.
+The corresponding `Replicate` trait of name modes would be:
+
+```
+pub(in) data Replicate[T] = new {
+    "varargs" -: [n : Nat][_ : Array[n, Str]] -> Tuple[''Type]
+}
+
+pub impl replicate[T] -> Replicate[T] = Replicate::new {
+    \\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
+    "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Tuple[''Type] match'in
+        [0nat, Array::nil] => varargs {}
+        [Nat::succ(n), Array::cons(head, tail)] =>
+            varargs { head -: T, ..replicate[T]."Args"[n, tail] }
+}
+```
+
+Below is a structural `data` type.
+
+```
+data Structral[R : Row[''Type]] = structural { ..R }
+```
+
+You can add a field to `Structural`
+
+```
+fn addField[T][(Replicate[T])](Structural { ..Args })
+    -> Structural { “foo” => Int, ..Args } = ...
+```
+
+Or remove a field of it:
+
+```
+fn removeField[T][(Replicate[T])](Structural { “bar” => Int, ..Args })
+    -> Structural { ..Args } = ...
+```
+
+The ability to add and remove fields is called *row polymorphism*.
+You can also pattern match the fields in name modes to achieve limited reflection.
 
 # Phase Polymorphism
 
@@ -1126,11 +1188,11 @@ See the following 2 examples for instance:
     \\ The type system still isn't necessarily strong enough to actually write it down.
 
     \\ We can also pattern match the tuple types instead of the values of the tuple types.)
-    const fn CurriedFuncType(Type, .._ : Tuple[''Type]) -> ??? match'in
+    const fn CurriedFuncType(Type, .._ : Ordered[''Type]) -> ??? match'in
         (Ret) => Ret
         (Ret, Head, ..Tail) => (Head) -> CurriedFuncType(Ret, ..Tail)
 
-    pub const fn curry[Args : Tuple[''Type], Ret](func : (..Args) -> Ret)
+    pub const fn curry[Args : Ordered[''Type], Ret](func : (..Args) -> Ret)
         -> CurriedFuncType(Ret, ..Args) match'in
         (fn() -> Ret = ret) =>
             ret
@@ -1282,7 +1344,7 @@ A : Type<m>    B : Type<n>
 
 Imagine if we want to accept a potentially infinite list of arguments types of which are `Int, Type<0>, Int, Type<0>, Int, Type<0> ...`.
 How do we write a helper function to generate the tuple type?
-The variadic type of the return type of the function cannot be `Tuple[''Type<0>]` because the type of `Type<0>` cannot be `Type<0>`.
+The variadic type of the return type of the function cannot be `Ordered[''Type<0>]` because the type of `Type<0>` cannot be `Type<0>`.
 The answer is to make universes cumulative:
 
 ```
@@ -1302,21 +1364,21 @@ T : Type<m>    Type<m> <: Type<n>
 A term of a variadic type is a list of types the types of all of which are the same:
 
 ```
- T1 : U    T2 : U    T3 : U    ...
------------------------------------
-varargs (T1, T2, T3) ... : Tuple[''U]
+   T1 : U    T2 : U    T3 : U    ...
+---------------------------------------
+varargs (T1, T2, T3) ... : Ordered[''U]
 ```
 
-Now that `Int : Type<1>`, so the type of `varargs (Int, Type<0>, Int, Type<0>, Int, Type<0> ...)` is `Tuple[''Type<1>]`.
+Now that `Int : Type<1>`, so the type of `varargs (Int, Type<0>, Int, Type<0>, Int, Type<0> ...)` is `Ordered[''Type<1>]`.
 
 ## Hierarchies
 
 We can see that
 
 ```
-         A <: B
-------------------------
-Tuple[''A] <: Tuple[''B]
+           A <: B
+----------------------------
+Ordered[''A] <: Ordered[''B]
 ```
 
 i.e. variadic types are covariant.
@@ -1329,22 +1391,22 @@ Type<0> : Type<1> : Type<2> : Type<3> ...
 , another one is
 
 ```
-Tuple[''Type<0>] : Tuple[''Type<1>] : Tuple[''Type<2>] : Tuple[''Type<3>] ...
+Ordered[''Type<0>] : Ordered[''Type<1>] : Ordered[''Type<2>] : Ordered[''Type<3>] ...
 ```
 
 which could also be written
 
 ```
-Tuple[''Type]<0> : Tuple[''Type]<1> : Tuple[''Type]<2> : Tuple[''Type]<3> ...
+Ordered[''Type]<0> : Ordered[''Type]<1> : Ordered[''Type]<2> : Ordered[''Type]<3> ...
 ```
 
-In reality there are infinite hierarchies because `Tuple[''Tuple[''Type]]` and so on are also hierarchies.
+In reality there are infinite hierarchies because `Ordered[''Ordered[''Type]]` and so on are also hierarchies.
 It sounds reasonable to say that all the universes I mentioned are so called *small* universes the type of which is `Type<ω>`.
 `Type<ω>` is special in that elements of it can inherit another one.
-`Tuple` would become a data type from `Type<ω>` to `Type<ω>` then.
+`Ordered` would become a data type from `Type<ω>` to `Type<ω>` then.
 
 ```
-data Tuple[_ : Type<ω>] : Type<ω> = ...
+data Ordered[_ : Type<ω>] : Type<ω> = ...
 ```
 
 Now types of function types could be:
