@@ -2,8 +2,14 @@
     "plugins": ["autocover"],
     "pluginsConfig": {
         "autocover": {
-            "title": "Ends the Programming Language",
-            "author": "Andy Shiue"
+            "title": "Ende the Programming Language",
+            "author": "Andy Shiue",
+            "font": {
+                "color": "#FFFFFF"
+            },
+            "background": {
+                "color": "#000000"
+            }
         }
     }
 }
