@@ -2,8 +2,8 @@
 
 # Part 0
 
-- [Overview](part1/overview.md)
-- [Initiatives](part1/initiatives.md)
+- [Overview](part0/overview.md)
+- [Initiatives](part0/initiatives.md)
 
 # Part I
 
