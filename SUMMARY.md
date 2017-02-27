@@ -1,9 +1,12 @@
 # Table of Contents
 
-# Part I
+# Part 0
 
 - [Overview](part1/overview.md)
 - [Initiatives](part1/initiatives.md)
+
+# Part I
+
 - [Comments](part1/comments.md)
 - [Terms and Statements](part1/terms.md)
 - [Functions](part1/functions.md)
