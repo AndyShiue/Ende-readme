@@ -17,7 +17,7 @@
   - [`impl` Functions](part1/records.md#impl-functions)
   - [Instance Arguments](part1/records.md#instance-arguments)
   - [Associated Values](part1/records.md#associated-values)
-  - [`impl(part1/auto)`](part1/records.md#implauto)
+  - [`impl(auto)`](part1/records.md#implauto)
   - [Visibility of `impl`s](part1/records.md#visibility-of-impls)
 - [`const`](part1/const.md)
   - [`const data`](part1/const.md#const-data)
