@@ -360,10 +360,10 @@ fn isSummer(season : Season) -> Bool =
 
 `match`es are always irrefutable in Ende.
 By the way, there is an alternative `fn` syntax to do top-level pattern matching.
-We write `match'in` after the return type in this case.
+We write `match` in the last clause in the function body in this case.
 
 ```
-fn isSummer(Season) -> Bool match'in
+fn isSummer(Season) -> Bool where match
     (Season::summer) => Bool::true
     (_) => Bool::false
 ```
@@ -372,7 +372,7 @@ Here, we directly match the arguments of the `fn`; now we don't need to pick a n
 I'm going to provide another example for clarity:
 
 ```
-fn and(Bool, Bool) -> Bool match'in
+fn and(Bool, Bool) -> Bool where match
     (Bool::true, b) => b
     (_, _) => Bool::false
 ```
@@ -389,7 +389,7 @@ data OptionI32 =
 Parameters of variants can also be pattern matched:
 
 ```
-fn unwrapOr42(OptionI32) -> I32 match'in
+fn unwrapOr42(OptionI32) -> I32 where match
     (OptionI32::some(i)) => i
     (_) => 42i32
 ```
@@ -409,7 +409,7 @@ Fields (named arguments) of an instance of a record can either be accessed by it
 
 ```
 fn getX1(p : Point) -> I32 = p."x"
-fn getX2(Point) -> I32 match'in
+fn getX2(Point) -> I32 where match
     (Point::new { "x" -: result
                   "y" -: _ }) => result
 ```
@@ -684,7 +684,7 @@ Arguments in the instance mode can also be inferred, however not by looking at o
 Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
 
 ```
-fn concat[T][(Monoid[T])](List[T]) -> T match'in
+fn concat[T][(Monoid[T])](List[T]) -> T where match
     (List::nil) => unit
     (List::cons(head, tail)) => head#append(concat(tail))
 ```
@@ -961,7 +961,7 @@ Literal of type `Nat` has a suffix `nat`.
 And here's the `const fn factorial`:
 
 ```
-const fn factorial(m : Nat) -> Nat match'in
+const fn factorial(m : Nat) -> Nat where match
     (0nat) => 1nat
     (Nat::succ(n)) => m * factorial(n)
 ```
@@ -973,7 +973,7 @@ In fact, **any** constants can be passed to a function in the `const` mode.
 So I can write something like:
 
 ```
-const fn factorial[m : Nat] -> Nat match'in
+const fn factorial[m : Nat] -> Nat where match
     [0nat] => 1nat
     [Nat::succ(n)] => m * factorial(n)
 ```
@@ -1067,7 +1067,7 @@ The function `sum` sums up all the `I32`s in the argument list no matter how man
 First, I have to define a helper function for it:
 
 ```
-pub const fn FreshTuple[_ : Nat](Type) -> Ordered[''Type] match'in
+pub const fn FreshTuple[_ : Nat](Type) -> Ordered[''Type] where match
     [0nat](_) => varargs ()
     [Nat::succ(n)](T) => varargs (T, ..FreshTuple[n](T))
 ```
@@ -1089,7 +1089,7 @@ We can accept a `FreshTuple(I32)` and spread it, leaving how many times it's rep
 It would be easier to understand it by providing the concrete case than describing it in words:
 
 ```
-const fn sum(.._ : FreshTuple(I32)) -> I32 match'in
+const fn sum(.._ : FreshTuple(I32)) -> I32 where match
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
@@ -1099,7 +1099,7 @@ First, we need another helper function.
 
 ```
 \\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
-pub const fn FreshRow[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] match'in
+pub const fn FreshRow[n : Nat][_ : Array[n, Str]](Type) -> Row[''Type] where match
     [0nat, Array::nil](_) => varargs {}
     [Nat::succ(n), Array::cons(head, tail)](T) => varargs { head -: T, ..FreshRow[n, tail](T) }
 ```
@@ -1114,7 +1114,7 @@ pub(in) data Replicate[T] = new {
 }
 
 pub impl replicate[T] -> Replicate[T] = Replicate::new {
-    "Args" -: fn[_ : Nat] -> Tuple[''Type] match'in
+    "Args" -: fn[_ : Nat] -> Tuple[''Type] where match
         [0nat] => varargs ()
         [Nat::succ(n)] => varargs (T, ..replicate[T]."Args"[n])
 }
@@ -1124,7 +1124,7 @@ You define not the helper function but a trait recording the arguments.
 Here's how you could use it:
 
 ```
-const fn sum[(Replicate[I32])](.._ : Args) -> I32 match'in
+const fn sum[(Replicate[I32])](.._ : Args) -> I32 where match
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
@@ -1134,11 +1134,11 @@ The corresponding `Replicate` trait of name modes would be:
 
 ```
 pub(in) data Replicate[T] = new {
-    "varargs" -: [n : Nat][_ : Array[n, Str]] -> Tuple[''Type]
+    "varargs" -: [n : Nat][_ : Array[n, Str]] -> Row[''Type]
 }
 
 pub impl replicate[T] -> Replicate[T] = Replicate::new {
-    "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Tuple[''Type] match'in
+    "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Row[''Type] where match
         [0nat, Array::nil] => varargs {}
         [Nat::succ(n), Array::cons(head, tail)] =>
             varargs { head -: T, ..replicate[T]."Args"[n, tail] }
@@ -1187,12 +1187,12 @@ See the following 2 examples for instance:
     \\ The type system still isn't necessarily strong enough to actually write it down.
 
     \\ We can also pattern match the tuple types instead of the values of the tuple types.)
-    const fn CurriedFuncType(Type, .._ : Ordered[''Type]) -> ??? match'in
+    const fn CurriedFuncType(Type, .._ : Ordered[''Type]) -> ??? where match
         (Ret) => Ret
         (Ret, Head, ..Tail) => (Head) -> CurriedFuncType(Ret, ..Tail)
 
     pub const fn curry[Args : Ordered[''Type], Ret](func : (..Args) -> Ret)
-        -> CurriedFuncType(Ret, ..Args) match'in
+        -> CurriedFuncType(Ret, ..Args) where match
         (fn() -> Ret = ret) =>
             ret
         [varargs (Head, ..Tail)](fn(head : Head, ..tail : Tail) -> Ret = ret) =>
