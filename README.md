@@ -1124,7 +1124,7 @@ You define not the helper function but a trait recording the arguments.
 Here's how you could use it:
 
 ```
-const fn sum[(Replicate[I32, _])](.._ : Args) -> I32 where match
+const fn sum[n : Nat][(Replicate[I32, n])](.._ : Args) -> I32 where match
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
@@ -1155,14 +1155,15 @@ data Structral[R : Row[''Type]] = structural { ..R }
 You can add a field to `Structural`:
 
 ```
-fn addField[T][(Replicate[T, _, _])](Structural { ..Args })
+fn addField[T, n : Nat, arr : Array[n, Str]][(Replicate[T, n, arr])](Structural { ..Args })
     -> Structural { “foo” => Int, ..Args } = ...
 ```
 
 Or remove a field of it:
 
 ```
-fn removeField[T][(Replicate[T, _, _])](Structural { “bar” => Int, ..Args })
+fn removeField[T, n : Nat, arr : Array[n, Str]][(Replicate[T, n, arr])]
+              (Structural { “bar” => Int, ..Args })
     -> Structural { ..Args } = ...
 ```
 
