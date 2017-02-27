@@ -1138,7 +1138,6 @@ pub(in) data Replicate[T] = new {
 }
 
 pub impl replicate[T] -> Replicate[T] = Replicate::new {
-    \\ `Array[n, T]` is the type of arrays length of which is `n` and elements of which are of type `T`.
     "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Tuple[''Type] match'in
         [0nat, Array::nil] => varargs {}
         [Nat::succ(n), Array::cons(head, tail)] =>
