@@ -1,12 +1,12 @@
 # Summary
 
-## Part 0
+## Part 0 - Foreword
 
 * [Introduction](README.md)
 * [Overview](part0/overview.md)
 * [Initiatives](part0/initiatives.md)
 
-## Part I
+## Part I - Basics
 
 * [Comments](part1/comments.md)
 * [Terms and Statements](part1/terms.md)
@@ -19,7 +19,7 @@
 * [Comma](part1/comma.md)
 * [Generics](part1/generics.md)
 
-## Part II
+## Part II - Featured
 
 * [Named Modes](part2/named-modes.md)
 * [More General records](part2/records.md)
@@ -33,7 +33,7 @@
   * [const data](part2/const.md#const-data)
   * [A const Version of factorial](part2/const.md#a-const-version-of-factorial)
 
-## Part III
+## Part III - Advanced
 
 * [More Powerful Generics](part3/more-generics.md)
 * [Do Notation](part3/do-notation.md)
@@ -48,6 +48,4 @@
   * [with](part3/dependent-types.md#with)
 * [Universes](part3/universes.md)
   * [Hierarchies](part3/universes.md#hierarchies)
-
-
 
