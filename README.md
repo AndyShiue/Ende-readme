@@ -1155,14 +1155,14 @@ data Structral[R : Row[''Type]] = structural { ..R }
 You can add a field to `Structural`:
 
 ```
-fn addField[T, n : Nat, arr : Array[n, Str]][(Replicate[T, n, arr])](Structural { ..Args })
+fn addField[T, n : Nat][arr : Array[n, Str]][(Replicate[T, n, arr])](Structural { ..Args })
     -> Structural { “foo” => Int, ..Args } = ...
 ```
 
 Or remove a field of it:
 
 ```
-fn removeField[T, n : Nat, arr : Array[n, Str]][(Replicate[T, n, arr])]
+fn removeField[T, n : Nat][arr : Array[n, Str]][(Replicate[T, n, arr])]
               (Structural { “bar” => Int, ..Args })
     -> Structural { ..Args } = ...
 ```
