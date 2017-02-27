@@ -1152,7 +1152,7 @@ Below is a structural `data` type.
 data Structral[R : Row[''Type]] = structural { ..R }
 ```
 
-You can add a field to `Structural`：：
+You can add a field to `Structural`:
 
 ```
 fn addField[T][(Replicate[T, _, _])](Structural { ..Args })
