@@ -1109,14 +1109,14 @@ However, if you want to use the result of calling `FreshRow` more than once, you
 If you want them to be the same without writing down all the arguments in the `const` mode concretely, here's the trick:
 
 ```
-pub(in) data Replicate[T] = new {
-    "Args" -: [_ : Nat] -> Tuple[''Type]
+pub(in) data Replicate[T, n : Nat] = new {
+    "Args" -: Tuple[''Type]
 }
 
-pub impl replicate[T] -> Replicate[T] = Replicate::new {
-    "Args" -: fn[_ : Nat] -> Tuple[''Type] where match
-        [0nat] => varargs ()
-        [Nat::succ(n)] => varargs (T, ..replicate[T]."Args"[n])
+pub impl replicate[T, n : Nat] -> Replicate[T, n] = Replicate::new {
+    "Args" -: match n
+        0nat => varargs {}
+        Nat::succ(n) => varargs (T, ..replicate[T, n]."Args")
 }
 ```
 
@@ -1124,7 +1124,7 @@ You define not the helper function but a trait recording the arguments.
 Here's how you could use it:
 
 ```
-const fn sum[(Replicate[I32])](.._ : Args) -> I32 where match
+const fn sum[(Replicate[I32, _])](.._ : Args) -> I32 where match
     () => 0i32
     (head, ..tail) => head + sum(tail)
 ```
@@ -1133,15 +1133,16 @@ This trick is especially important with name modes.
 The corresponding `Replicate` trait of name modes would be:
 
 ```
-pub(in) data Replicate[T] = new {
-    "varargs" -: [n : Nat][_ : Array[n, Str]] -> Row[''Type]
+pub(in) data Replicate[T, n : Nat][_ : Array[n, Str]] = new {
+    "Args" -: Row[''Type]
 }
 
-pub impl replicate[T] -> Replicate[T] = Replicate::new {
-    "Args" -: fn[n : Nat][_ : Array[n, Str]] -> Row[''Type] where match
-        [0nat, Array::nil] => varargs {}
-        [Nat::succ(n), Array::cons(head, tail)] =>
-            varargs { head -: T, ..replicate[T]."Args"[n, tail] }
+pub impl replicate[T, n : Nat, arr : Array[n, Str]] -> Replicate[T, n, arr] = Replicate::new {
+    "Args" -: match n
+        0nat => varargs {}
+        Nat::succ(n) => match arr
+            Array::cons(head, tail) =>
+                varargs { head -: T, ..replicate[T, n, tail]."Args" }
 }
 ```
 
@@ -1154,14 +1155,14 @@ data Structral[R : Row[''Type]] = structural { ..R }
 You can add a field to `Structural`：：
 
 ```
-fn addField[T][(Replicate[T])](Structural { ..Args })
+fn addField[T][(Replicate[T, _, _])](Structural { ..Args })
     -> Structural { “foo” => Int, ..Args } = ...
 ```
 
 Or remove a field of it:
 
 ```
-fn removeField[T][(Replicate[T])](Structural { “bar” => Int, ..Args })
+fn removeField[T][(Replicate[T, _, _])](Structural { “bar” => Int, ..Args })
     -> Structural { ..Args } = ...
 ```
 
