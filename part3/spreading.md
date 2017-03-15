@@ -110,13 +110,13 @@ You can add a field to `Structural`:
 
 ```
 fn addField[T][(Replicate[T])](Structural { ..Args })
-    -> Structural { “foo” => Int, ..Args } = ...
+    -> Structural { “foo” => Int; ..Args } = ...
 ```
 
 Or remove a field of it:
 
 ```
-fn removeField[T][(Replicate[T])](Structural { “bar” => Int, ..Args })
+fn removeField[T][(Replicate[T])](Structural { “bar” => Int; ..Args })
     -> Structural { ..Args } = ...
 ```
 
