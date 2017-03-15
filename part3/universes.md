@@ -77,7 +77,7 @@ It sounds reasonable to say that all the universes I mentioned are so called _sm
 `Ordered` would become a constructor from `Universe` to `Universe` then.
 
 ```
-#lang("Ordered"): #pub:
+#lang("Ordered"): @allPub:
 universe Ordered[''U : Universe] =
     nil
     cons(U, Ordered[''U])
@@ -99,7 +99,7 @@ I don't know if what's beyond would be useful.
 Row types are defined in terms of the unordered universe constructor, the definition of which is the same as `Ordered` but the compiler handles spreading of them differently:
 
 ```
-#lang("Unordered"): #pub:
+#lang("Unordered"): @allPub:
 universe Unordered[''U : Universe] =
     nil
     cons(U, Unordered[''U])
