@@ -62,8 +62,8 @@ use module::Three::_
 `mod`s are also first-class value of type `Mod`:
 
 ```
-#lang("Mod"):
-pub const data Mod
+#lang("Mod"): #pub:
+const data Mod
 ```
 
 Here, `const` means the instances of `Mod` can only exist at compile time.  

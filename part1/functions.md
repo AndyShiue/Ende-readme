@@ -50,13 +50,13 @@ The valid constructs inside the function body are `let ... = ...` and local func
 fn getBMI() -> F64 where
     let weight = 100f64
     let height = 200f64
-    fn calcBMI(w : F64, h : F64) -> F64 = w / h / h
-    return calcBMI(weight, height)
+    fn calcBMI(w : F64; h : F64) -> F64 = w / h / h
+    return calcBMI(weight; height)
 ```
 
 The last clause in a function body must be `return` something.
 
-Another way to write a complicated function is to use do-notation; the valid clauses of which are those I called \_statement\_s.  
+Another way to write a complicated function is to use do-notation; the valid clauses of which are those I called statements.  
 You need them to do several `IO` operations at once.
 
 ```
