@@ -108,7 +108,8 @@ universe KeyValue[Label; ''U : Universe] =
     _-:_(_0_ : Label; _1_ : U)
 
 #pub:
-fn Row[U : Universe] -> Universe = ''Unordered[''KeyValue[Str; U]]
+fn Row[U : Universe] -> Unordered[''KeyValue[Str; U]] =
+    Unordered[''KeyValue[Str; U]]
 ```
 
 
