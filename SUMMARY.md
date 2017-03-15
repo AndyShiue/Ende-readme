@@ -48,6 +48,7 @@
   * [with](part3/dependent-types.md#with)
 * [Universes](part3/universes.md)
   * [Hierarchies](part3/universes.md#hierarchies)
+  * [Unordered](part3/universes.md#unordered)
 
 
 
