@@ -8,7 +8,7 @@ The definition of applicative would be:
 @allPub:
 data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
     "pure" -: [A](self : A) -> F[A]
-    "_<*>_" -: [From; To](self : F[(From) -> To]; F[From]) -> F[To]
+    "_<*>_" -: [From; To](_0_ self : F[(From) -> To]; _1_ : F[From]) -> F[To]
 }
 ```
 
@@ -17,7 +17,7 @@ And monad would be:
 ```
 @allPub:
 data Monad[F : [Type] -> Type] = new[(Applicative[F])] {
-    "bind" -: [From, To](self : F[From], (From) -> F[To]) -> F[To]
+    "bind" -: [From; To](self : F[From]; (From) -> F[To]) -> F[To]
 }
 ```
 

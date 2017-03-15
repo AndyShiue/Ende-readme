@@ -66,7 +66,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
    They can be returned and passed as arguments too.  
    `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.  
    Nevertheless, Auto `impl`s need not be `const fn`s.  
-   Auto `impl`s that operate only at runtime are annotated `#dyn:`.  
+   Auto `impl`s that operate only at runtime are moreover annotated `#dyn:`.  
    They exist because sometimes we can never get the value of the `self` parameter at compile time, e.g. dereferencing a pointer into its underlying type.
 
 ## `const data`

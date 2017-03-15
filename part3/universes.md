@@ -37,10 +37,10 @@ A term of a variadic type is a list of types the types of all of which are the s
 ```
    T1 : U    T2 : U    T3 : U    ...
 ---------------------------------------
-varargs (T1, T2, T3) ... : Ordered[''U]
+varargs (T1; T2; T3) ... : Ordered[''U]
 ```
 
-Now that `Int : Type<1>`, so the type of `varargs (Int, Type<0>, Int, Type<0>, Int, Type<0> ...)` is `Ordered[''Type<1>]`.
+Now that `Int : Type<1>`, so the type of `varargs (Int; Type<0>; Int; Type<0>; Int; Type<0> ...)` is `Ordered[''Type<1>]`.
 
 ## Hierarchies
 
@@ -74,10 +74,13 @@ Ordered[''Type]<0> : Ordered[''Type]<1> : Ordered[''Type]<2> : Ordered[''Type]<3
 In reality there are infinite hierarchies because `Ordered[''Ordered[''Type]]` and so on are also hierarchies.  
 It sounds reasonable to say that all the universes I mentioned are so called _small_ universes the type of which is `Universe`.  
 `Universe` is special in that elements of it can inherit another one.  
-`Ordered` would become a data type from `Universe` to `Universe` then.
+`Ordered` would become a constructor from `Universe` to `Universe` then.
 
 ```
-data Ordered[_ : Universe] : Universe = ...
+#lang("Ordered"): #pub:
+universe Ordered[''U : Universe] : Universe =
+    nil
+    cons(U, Ordered[''U])
 ```
 
 Now types of function types could be:
@@ -90,4 +93,22 @@ A : U1<m>    ''U1<m> : Universe    B : U2<n>    ''U2<n> : Universe
 
 If either the argument type or the return type is `Universe<0>`, perhaps we need `Universe<1>`, and we can go up until `Universe<ω>`.  
 I don't know if what's beyond would be useful.
+
+## `Unordered`
+
+Row types are defined in terms of the unordered universe constructor, the definition of which is the same as `Ordered` but the compiler handles spreading of them differently:
+
+```
+#lang("Unordered"): #pub:
+universe Unordered[''U : Universe] : Universe =
+    nil
+    cons(U, Unordered[''U])
+
+universe KeyValue[Label; ''U : Universe] =
+    _-:_(_0_ : Label; _1_ : U)
+
+fn Row[U : Universe] -> Universe = Unordered[''KeyValue[Str; U]]
+```
+
+
 
