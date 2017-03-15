@@ -9,7 +9,7 @@ Of course, it's just another record.
 @allPub:
 data Monoid[T] = new {
     "unit" -: T
-    "append" -: (self : T; T) -> T
+    "append" -: (T; T) -> T
 }
 ```
 
@@ -25,16 +25,18 @@ The `i32Monoid` below is a simple `impl`:
 #pub:
 impl i32Monoid : Monoid[I32] = Monoid::new {
     "unit" -: 0i32
-    "append" -: fn(self : I32; another : I32) -> I32 = self + another
+    "append" -: fn(left : I32; right : I32) -> I32 = left + right
 }
 ```
 
 If `i32Monoid` is in scope, we can call the `append` method on `I32`:
 
-    \\ They are equivalent because the first argument of the field of `"append"` is `self`:
+```
+\\ They are equivalent:
 
-    let sum1 = i32Monoid."append"(1i32, 2i32)
-    let sum2 = 1i32#append(2i32)
+let sum1 = i32Monoid."append"(1i32, 2i32)
+let sum2 = 1i32#append(2i32)
+```
 
 In order to write a function that is generic over types implementing a trait, the third mode is introduced.  
 It's called the **instance mode**, and is delimited by `[()]`.  
@@ -71,8 +73,8 @@ First, define a `Group` trait.
 @allPub:
 data Group[T] = new {
     "unit" -: T
-    "append" -: (self : T; T) -> T
-    "inverse" -: (self : T) -> T
+    "append" -: (T; T) -> T
+    "inverse" -: (T) -> T
 }
 ```
 
@@ -101,8 +103,8 @@ Imagine you want to define an `Abelian` trait, the code you need to add would be
 ```
 data Abelian[T] = new {
     "unit" -: T
-    "append" -: (self : T; T) -> T
-    "inverse" -: (self : T) -> T
+    "append" -: (T; T) -> T
+    "inverse" -: (T) -> T
 }
 
 impl abelianToGroup[T][(Abelian[T])] -> Group[T] = Group::new {
@@ -124,7 +126,7 @@ In order to use this feature, the trait `Group` and `Abelian` can be rewritten a
 
     @allPub:
     data Group[T] = new[(Monoid[T])] {
-        "inverse" -: (self : T) -> T
+        "inverse" -: (T) -> T
     }
     @allPub:
     data Abelian[T] = new[(Group[T])]
@@ -148,7 +150,7 @@ So maybe the trait could be like:
 ```
 @allPub:
 data Add[L; R; Output] = add {
-    "_+_" -: (self : L; R) -> Output
+    "_+_" -: (L; R) -> Output
 }
 ```
 
@@ -159,7 +161,7 @@ The correct trait should be:
 ```
 @allPub:
 data Add[L, R] = add[Output] {
-    "_+_" -: (self : L; R) -> Output
+    "_+_" -: (L; R) -> Output
 }
 ```
 
@@ -169,7 +171,7 @@ Or you can put them inside the `const` mode to make calling it with the dot synt
 
 ## Auto `impl`s
 
-Automatic `impl`s are `impl`s with a `self` parameter in normal mode.  
+Automatic `impl`s are `impl`s with a parameter in the normal mode.  
 The annotation `#auto:` indicates they are `impl`s that will be automatically inserted.  
 For example, if one wants to overload string literals, they could provide an auto `impl` from `Str` to whatever type they want.  
 For now, let's assume that type is called `StrLike`.  
@@ -177,16 +179,16 @@ The Ende source code would be something like:
 
 ```
 #pub: #auto:
-impl strLike(self : Str) -> StrLike = ...
+impl strLike(Str) -> StrLike = ...
 ```
 
 Auto `impl`s could be inserted at any node in the AST of a term if the expected type doesn't match the actual type, so if a term `str` occurs in the source code, it could possibly be transformed to `str#strLike()` anywhere.  
 Auto `impl`s wouldn't be inserted more than once at a particular node, however, which means the following code doesn't type check.
 
     #auto:
-    firstToSecond(self : First) -> Second = ...
+    firstToSecond(First) -> Second = ...
     #auto:
-    secondToThird(self : Second) -> Third = ...
+    secondToThird(Second) -> Third = ...
 
     fn manipulateThird(third : Third) -> Third = third
 

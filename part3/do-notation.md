@@ -8,7 +8,7 @@ The definition of applicative would be:
 @allPub:
 data Applicative[F : [Type] -> Type] = new[(Functor[F])] {
     "pure" -: [A](self : A) -> F[A]
-    "_<*>_" -: [From; To](_0_ self : F[(From) -> To]; _1_ : F[From]) -> F[To]
+    "_<*>_" -: [From; To](_0_ : F[(From) -> To]; _1_ : F[From]) -> F[To]
 }
 ```
 
