@@ -27,7 +27,7 @@
   * [impl Functions](part2/records.md#impl-functions)
   * [Instance Arguments](part2/records.md#instance-arguments)
   * [Associated Values](part2/records.md#associated-values)
-  * [impl\(auto\)](part2/records.md#implauto)
+  * [Auto impls](part2/records.md#implauto)
   * [Visibility of impls](part2/records.md#visibility-of-impls)
 * [const](part2/const.md)
   * [const data](part2/const.md#const-data)
@@ -49,6 +49,4 @@
 * [Universes](part3/universes.md)
   * [Hierarchies](part3/universes.md#hierarchies)
   * [Unordered](part3/universes.md#unordered)
-
-
 
