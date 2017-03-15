@@ -78,7 +78,7 @@ It sounds reasonable to say that all the universes I mentioned are so called _sm
 
 ```
 #lang("Ordered"): #pub:
-universe Ordered[''U : Universe] : Universe =
+universe Ordered[''U : Universe] =
     nil
     cons(U, Ordered[''U])
 ```
@@ -100,7 +100,7 @@ Row types are defined in terms of the unordered universe constructor, the defini
 
 ```
 #lang("Unordered"): #pub:
-universe Unordered[''U : Universe] : Universe =
+universe Unordered[''U : Universe] =
     nil
     cons(U, Unordered[''U])
 
