@@ -1,10 +1,10 @@
 # Universes
 
-What's the type of `Type` and type constructors?
-In Ende, `Type` is actually not a single type, but a series of types.
-You can think that `Type` has a hidden parameter that is a natural number.
-The `Type` that all of us are familiar about is `Type<0>`, but the type of `Type<0>` is `Type<1>`, the type of which is `Type<2>`, and going on and on.
-What about the types of function types?
+What's the type of `Type` and type constructors?  
+In Ende, `Type` is actually not a single type, but a series of types.  
+You can think that `Type` has a hidden parameter that is a natural number.  
+The `Type` that all of us are familiar about is `Type<0>`, but the type of `Type<0>` is `Type<1>`, the type of which is `Type<2>`, and going on and on.  
+What about the types of function types?  
 The answer is:
 
 ```
@@ -13,9 +13,9 @@ A : Type<m>    B : Type<n>
  A -> B : Type<max(m, n)>
 ```
 
-Imagine if we want to accept a potentially infinite list of arguments types of which are `Int, Type<0>, Int, Type<0>, Int, Type<0> ...`.
-How do we write a helper function to generate the tuple type?
-The variadic type of the return type of the function cannot be `Ordered[''Type<0>]` because the type of `Type<0>` cannot be `Type<0>`.
+Imagine if we want to accept a potentially infinite list of arguments types of which are `Int, Type<0>, Int, Type<0>, Int, Type<0> ...`.  
+How do we write a helper function to generate the tuple type?  
+The variadic type of the return type of the function cannot be `Ordered[''Type<0>]` because the type of `Type<0>` cannot be `Type<0>`.  
 The answer is to make universes cumulative:
 
 ```
@@ -52,7 +52,7 @@ We can see that
 Ordered[''A] <: Ordered[''B]
 ```
 
-i.e. variadic types are covariant.
+i.e. variadic types are covariant.  
 Now we have at least 2 different hierarchies of universes, one is
 
 ```
@@ -71,22 +71,23 @@ which could also be written
 Ordered[''Type]<0> : Ordered[''Type]<1> : Ordered[''Type]<2> : Ordered[''Type]<3> ...
 ```
 
-In reality there are infinite hierarchies because `Ordered[''Ordered[''Type]]` and so on are also hierarchies.
-It sounds reasonable to say that all the universes I mentioned are so called *small* universes the type of which is `Type<ω>`.
-`Type<ω>` is special in that elements of it can inherit another one.
-`Ordered` would become a data type from `Type<ω>` to `Type<ω>` then.
+In reality there are infinite hierarchies because `Ordered[''Ordered[''Type]]` and so on are also hierarchies.  
+It sounds reasonable to say that all the universes I mentioned are so called _small_ universes the type of which is `Universe`.  
+`Universe` is special in that elements of it can inherit another one.  
+`Ordered` would become a data type from `Universe` to `Universe` then.
 
 ```
-data Ordered[_ : Type<ω>] : Type<ω> = ...
+data Ordered[_ : Universe] : Universe = ...
 ```
 
 Now types of function types could be:
 
 ```
-A : U1<m>    ''U1<m> : Type<ω>    B : U2<n>    ''U2<n> : Type<ω>
-----------------------------------------------------------------
-                     A -> B : U2<max(m, n)>
+A : U1<m>    ''U1<m> : Universe    B : U2<n>    ''U2<n> : Universe
+------------------------------------------------------------------
+                      A -> B : U2<max(m, n)>
 ```
 
-If either the argument type or the return type is `Type<ω>`, perhaps we need `Type<ω+1>`, and we can go up until `Type<ω+ω>`.
+If either the argument type or the return type is `Universe<0>`, perhaps we need `Universe<1>`, and we can go up until `Universe<ω>`.  
 I don't know if what's beyond would be useful.
+

@@ -16,7 +16,7 @@
 * [User-Defined Data Types](part1/data-types.md)
 * [Visibility](part1/visibility.md)
 * [mods](part1/mods.md)
-* [Comma](part1/comma.md)
+* [Semicolon](part1/comma.md)
 * [Generics](part1/generics.md)
 
 ## Part II - Featured
@@ -48,4 +48,6 @@
   * [with](part3/dependent-types.md#with)
 * [Universes](part3/universes.md)
   * [Hierarchies](part3/universes.md#hierarchies)
+
+
 
