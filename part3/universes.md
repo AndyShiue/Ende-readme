@@ -91,7 +91,7 @@ A : U1<m>    ''U1<m> : Universe    B : U2<n>    ''U2<n> : Universe
                       A -> B : U2<max(m, n)>
 ```
 
-If either the argument type or the return type is `Universe<0>`, perhaps we need `Universe<1>`, and we can go up until `Universe<ω>`.  
+If either the argument type or the return type is `Universe<0>`, perhaps we need `Universe<1>`, and we can go up until infinity.  
 I don't know if what's beyond would be useful.
 
 ## `Unordered`
@@ -108,7 +108,7 @@ universe KeyValue[Label; ''U : Universe] =
     _-:_(_0_ : Label; _1_ : U)
 
 #pub:
-fn Row[U : Universe] -> Universe = Unordered[''KeyValue[Str; U]]
+fn Row[U : Universe] -> Universe = ''Unordered[''KeyValue[Str; U]]
 ```
 
 
