@@ -2,7 +2,7 @@
 
 Functions are the simplest concept that has the ability to encapsulate information in functional programming languages; function calls are terms.  
 The declaration of a function is an _item_.  
-Items are basically some construct that can appear at the top level of the source code.
+Items are basically some constructs that can appear at the top level of the source code.
 
 Every application needs to have an entry, traditionally called `main`.  
 In Ende, `main` is a function of type `() -> IO[Unit]`.  

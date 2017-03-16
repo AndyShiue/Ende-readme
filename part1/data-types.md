@@ -7,10 +7,13 @@ I'll first consider its easiest usage, though.
 Let's show how to define a C/Java-like `enum` in Ende:
 
 ```
+@allPub: \\ I will explain this is the next chapter.
 data Unit = unit
+@allPub:
 data Bool =
     true
     false
+@allPub:
 data Season =
     spring
     summer
