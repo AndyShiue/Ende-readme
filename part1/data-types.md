@@ -67,6 +67,7 @@ Variants may also take parameters.
 The `OptionI32` below is a type that could possibly carry an `I32`.
 
 ```
+@allPub:
 data OptionI32 =
     some(I32)
     none
@@ -83,6 +84,7 @@ fn unwrapOr42(OptionI32) -> I32 where match
 Parameters of variants can be named, that is, to be indexed by a string:
 
 ```
+@allPub:
 data Point = new {
     "x" -: I32
     "y" -: I32

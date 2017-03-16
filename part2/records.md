@@ -9,7 +9,7 @@ Of course, it's just another record.
 @allPub:
 data Monoid[T] = new {
     "unit" -: T
-    "append" -: (T; T) -> T
+    "_++_" -: (T; T) -> T
 }
 ```
 
@@ -25,37 +25,37 @@ The `i32Monoid` below is a simple `impl`:
 #pub:
 impl i32Monoid : Monoid[I32] = Monoid::new {
     "unit" -: 0i32
-    "append" -: fn(left : I32; right : I32) -> I32 = left + right
+    "_++_" -: fn(left : I32; right : I32) -> I32 = left + right
 }
 ```
 
-If `i32Monoid` is in scope, we can call the `append` method on `I32`:
+If `i32Monoid` is in scope, we can call the `_++_` method on `I32`:
 
 ```
 \\ They are equivalent:
 
-let sum1 = i32Monoid."append"(1i32, 2i32)
-let sum2 = 1i32#append(2i32)
+let sum1 = i32Monoid."_++_"(1i32, 2i32)
+let sum2 = 1i32#_++_(2i32)
 ```
 
 In order to write a function that is generic over types implementing a trait, the third mode is introduced.  
 It's called the **instance mode**, and is delimited by `[()]`.  
 Arguments in the instance mode can also be inferred, however not by looking at other arguments, but by searching for appropriate `impl`s.  
-Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `append` method:
+Here is a function generic over types implementing `Monoid`; it sums up all the values in a `List` using `Monoid`'s `_++_` method:
 
 ```
-fn concat[T][(Monoid[T])](List[T]) -> T where match
+fn sum[T][(Monoid[T])](List[T]) -> T where match
     (List::nil) => unit
-    (List::cons(head; tail)) => head#append(concat(tail))
+    (List::cons(head; tail)) => head ++ concat(tail)
 ```
 
 You can see that when you put an argument inside the instance mode, the fields of it are automatically brought into scope without the quotation marks \(except those using weird characters that would be invalid identifiers in the syntax\); it's just a syntax sugar.
 
-When you write `concat(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.  
+When you write `sum(list)`, the compiler automatically chooses the right `impl` of `Monoid`; if there are 0 or more than 1 choices, the compiler generates an error.  
 Nonetheless, you can explicitly provide a specific `impl`, delimiting which in `[()]`:
 
 ```
-let sum = concat[(i32Monoid)](i32Vec)
+let _ = concat[(i32Monoid)](i32Vec)
 ```
 
 ## `impl` Functions
@@ -73,7 +73,7 @@ First, define a `Group` trait.
 @allPub:
 data Group[T] = new {
     "unit" -: T
-    "append" -: (T; T) -> T
+    "_++_" -: (T; T) -> T
     "inverse" -: (T) -> T
 }
 ```
@@ -86,7 +86,7 @@ The answer is obviously, again, using `impl`s.
 #pub:
 impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
     "unit" -: unit
-    "append" -: append
+    "_++_" -: _++_
 }
 ```
 
@@ -95,21 +95,23 @@ impl groupToMonoid[T][(Group[T])] -> Monoid[T] = Monoid::new {
 ## Supertrait Arguments
 
 What we don't have yet is the ability to define one trait to be a supertrait of another one.  
-In other words, asserting if you implement a trait, another trait must be implemented.  
+In other words, asserting if you implement a trait, another trait must also be implemented.  
 You may ask, isn't the above `impl` functions enough?  
 Not really.  
-Imagine you want to define an `Abelian` trait, the code you need to add would be:
+Imagine if you want to define an `Abelian` trait, the code you need to add would be:
 
 ```
+@allPub:
 data Abelian[T] = new {
     "unit" -: T
-    "append" -: (T; T) -> T
+    "_++_" -: (T; T) -> T
     "inverse" -: (T) -> T
 }
 
+#pub:
 impl abelianToGroup[T][(Abelian[T])] -> Group[T] = Group::new {
     "unit" -: unit
-    "append" -: append
+    "_++_" -: _++_
     "inverse" -: inverse
 }
 ```
@@ -167,7 +169,7 @@ data Add[L, R] = add[Output] {
 
 The `impl` ought to specify the `Output` type.  
 If you want to access the output type specified by an instance of a trait, simply do a pattern matching.  
-Or you can put them inside the `const` mode to make calling it with the dot syntax possible.
+Or you can put them inside the named`const` mode to make calling it with the dot syntax possible.
 
 ## Auto `impl`s
 

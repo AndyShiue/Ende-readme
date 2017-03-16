@@ -15,7 +15,7 @@ mod module where
         three
     #pub:
     mod inner where
-        #pub:
+        @allPub:
         data Circle = new { "radius" -: U32 }
 ```
 
@@ -44,7 +44,7 @@ If neither or both are presented, the compiler emits an error.
 
 There are two ways to access an item in a `mod`.  
 One is to write its fully qualified name, e.g. `module::inner::Circle`.  
-The other way is to `use` the items.
+The other way is to `use` it.
 
 ```
 use module::inner::Circle

@@ -40,7 +40,7 @@ A term of a variadic type is a list of types the types of all of which are the s
 varargs (T1; T2; T3) ... : Ordered[''U]
 ```
 
-Now that `Int : Type<1>`, so the type of `varargs (Int; Type<0>; Int; Type<0>; Int; Type<0> ...)` is `Ordered[''Type<1>]`.
+Now that `Int : Type<1>`, so the type of `varargs (Int; Type<0>; Int; Type<0>; Int; Type<0> ...)` can be `Ordered[''Type<1>]`.
 
 ## Hierarchies
 
@@ -80,7 +80,7 @@ It sounds reasonable to say that all the universes I mentioned are so called _sm
 #lang("Ordered"): @allPub:
 universe Ordered[''U : Universe] =
     nil
-    cons(U, Ordered[''U])
+    cons(U; Ordered[''U])
 ```
 
 Now types of function types could be:
@@ -102,7 +102,7 @@ Row types are defined in terms of the unordered universe constructor, the defini
 #lang("Unordered"): @allPub:
 universe Unordered[''U : Universe] =
     nil
-    cons(U, Unordered[''U])
+    cons(U; Unordered[''U])
 
 universe KeyValue[Label; ''U : Universe] =
     _-:_(_0_ : Label; _1_ : U)

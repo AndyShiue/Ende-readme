@@ -29,7 +29,7 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 5. **Functions**:  
    The types of the parameters and the return type of any functions must be constants.  
-   Functions are always constants, but there's a difference between `const fn`s and normal functions.  
+   Functions you declared are always constants, but there's a difference between `const fn`s and normal functions.  
    `const fn`s are functions that could be run at compile time \(also at runtime\).  
    The return value of a `const fn` is a constant if and only if all of its arguments are constants in that invocation.  
    The operations you can do in the body of a `const fn` are more limited.  
@@ -58,13 +58,13 @@ Now, let's go through all kinds of terms I introduced and see if they are consta
 
 6. `data`:  
    In normal `data`, all variants are constants.  
-   In addition, all variants with parameters in `data` are `const fn`s.  
+   In addition, all variants with parameters are `const fn`s.  
    If you get a part of constant `data` by pattern matching or field accessing, what you get would still be a constant.
 
 7. `impl`**s**:  
    Did I mention `impl`s are first-class citizens of Ende?  
    They can be returned and passed as arguments too.  
-   `impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.  
+   All`impl`s are always constants; all `impl`s mentioned before are also `const fn`s that are guaranteed to be total.  
    Nevertheless, Auto `impl`s need not be `const fn`s.  
    Auto `impl`s that operate only at runtime are moreover annotated `#dyn:`.  
    They exist because sometimes we can never get the value of the parameter at compile time, e.g. dereferencing a pointer into its underlying type.
@@ -113,9 +113,9 @@ Literal of type `Nat` has a suffix `nat`.
 And here's the `const fn factorial`:
 
 ```
-const fn factorial(m : Nat) -> Nat where match
+const fn factorial(n : Nat) -> Nat where match
     (0nat) => 1nat
-    (Nat::succ(n)) => m * factorial(n)
+    (Nat::succ(m)) => n * factorial(m)
 ```
 
 

@@ -21,7 +21,7 @@ I haven't mentioned function types, have I?
 Function types are literally the types of functions and are written as `(A; B; C; ...) -> R`.  
 `A`,`B`,`C`, ... are the types of the arguments, and `R` is the return type.  
 As a side note, similar to the ones in C++/Scala/Rust, arguments in normal mode cannot be curried in Ende.  
-However, arguments in `const` mode can:
+However, arguments in the `const` mode can:
 
 ```
 \\ They are different:

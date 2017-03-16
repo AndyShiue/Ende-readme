@@ -26,5 +26,5 @@ In order to assign a type to it, we need new modes in which parameters are named
 Let's call them **named mode**s.  
 The named normal mode is similar to the normal mode, except that the parameters are named and unordered; the named `const` mode corresponds to the `const` mode.  
 The above `new` is now of the type `{"example" -: Unit} -> Example`.  
-To be more general, now we can also have struct variants and arbitrary functions accepting named parameters accepting arguments in named modes.
+To be more general, now we can also have struct variants and arbitrary functions accepting named parameters.
 
