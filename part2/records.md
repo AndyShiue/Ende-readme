@@ -122,7 +122,7 @@ That is not tolerable.
 Can't we just store a `Group[T]` inside an `Abelian[T]`?  
 Yes, we can!  
 Moreover, we want to call the methods or more generally use the fields from the supertraits without accessing the fields explicitly.  
-**supertrait argument**s let us do all of that.
+**Supertrait argument**s let us do all of that.
 
 In order to use this feature, the trait `Group` and `Abelian` can be rewritten as below:
 
@@ -169,7 +169,7 @@ data Add[L, R] = add[Output] {
 
 The `impl` ought to specify the `Output` type.  
 If you want to access the output type specified by an instance of a trait, simply do a pattern matching.  
-Or you can put them inside the named`const` mode to make calling it with the dot syntax possible.
+Or you can put them inside the named `const` mode to make calling it with the dot syntax possible.
 
 ## Auto `impl`s
 
