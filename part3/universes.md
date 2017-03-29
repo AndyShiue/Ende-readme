@@ -37,7 +37,7 @@ A term of a variadic type is a list of types the types of all of which are the s
 ```
    T1 : U    T2 : U    T3 : U    ...
 ---------------------------------------
-varargs (T1; T2; T3) ... : Ordered[''U]
+varargs (T1; T2; T3 ...) : Ordered[''U]
 ```
 
 Now that `Int : Type<1>`, so the type of `varargs (Int; Type<0>; Int; Type<0>; Int; Type<0> ...)` can be `Ordered[''Type<1>]`.
@@ -72,7 +72,7 @@ Ordered[''Type]<0> : Ordered[''Type]<1> : Ordered[''Type]<2> : Ordered[''Type]<3
 ```
 
 In reality there are infinite hierarchies because `Ordered[''Ordered[''Type]]` and so on are also hierarchies.  
-It sounds reasonable to say that all the universes I mentioned are so called _small_ universes the type of which is `Universe`.  
+It sounds reasonable to say that all the universes I mentioned are so called _small_ universes the type of which is `Universe<0>`.  
 `Universe` is special in that elements of it can inherit another one.  
 `Ordered` would become a constructor from `Universe` to `Universe` then.
 
@@ -104,6 +104,7 @@ universe Unordered[''U : Universe] =
     nil
     cons(U; Unordered[''U])
 
+@allPub:
 universe KeyValue[Label; ''U : Universe] =
     _-:_(_0_ : Label; _1_ : U)
 
@@ -112,5 +113,11 @@ fn Row[Code : Universe] -> Unordered[''KeyValue[Str; Code]] =
     Unordered[''KeyValue[Str; Code]]
 ```
 
+What is the rule to determine if a term belong to a custom universe?
+Below, I clarify the rule for it.
+Terms the type of which are `Type<0>` are types.
+To be more general, I introduce *generalized types*, the type of which are any universes.
+Inductively, a term is a generalized type iff
 
-
+1. It's a type, or
+2. It's a variant of a universe, and all of its fields are generalized types.
