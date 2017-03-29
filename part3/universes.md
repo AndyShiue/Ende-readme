@@ -113,11 +113,14 @@ fn Row[Code : Universe] -> Unordered[''KeyValue[Str; Code]] =
     Unordered[''KeyValue[Str; Code]]
 ```
 
-What is the rule to determine if a term belong to a custom universe?
-Below, I clarify the rule for it.
-Terms the type of which are `Type<0>` are types.
-To be more general, I introduce *generalized types*, the type of which are any universes.
+What is the rule to determine if a term belongs to a custom universe?  
+Below, I clarify the rule for it.  
+Terms the type of which are `Type<0>` are types.  
+To be more general, I introduce _generalized types_, the type of which are any universes.  
 Inductively, a term is a generalized type iff
 
 1. It's a type, or
 2. It's a variant of a universe, and all of its fields are generalized types.
+
+
+
