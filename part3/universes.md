@@ -120,4 +120,4 @@ To be more general, I introduce *generalized types*, the type of which are any u
 Inductively, a term is a generalized type iff
 
 1. It's a type, or
-2. It's a variant of a universe, and each of its fields are either a generalized type, or a term the type of the type of which is `Type`.
+2. It's a variant of a custom universe, and each of its fields are either a generalized type, or a term the type of the type of which is `Type`.
