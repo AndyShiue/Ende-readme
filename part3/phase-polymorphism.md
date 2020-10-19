@@ -43,7 +43,7 @@ See the following 2 examples for instance:
 
    ```
    #pub:
-   const fn if_then_else[T](_0_ : Bool, _1_ : Lazy[T], lazy _2_ : Lazy[T]) -> T =
+   const fn if_then_else_[T](_0_ : Bool; _1_ : Lazy[T]; _2_ : Lazy[T]) -> T =
        match _0_ {
            Bool::true => _1_#force()
            Bool::false => _2_#force()
